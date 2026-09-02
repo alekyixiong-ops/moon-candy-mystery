@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Mystery of the Moon-Candy Secret</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: "Georgia", "Times New Roman", serif;
+    background: linear-gradient(160deg,#1e1b4b 0%, #4c1d95 40%, #7c3aed 100%);
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center;
+    padding:30px 16px 60px;
+    color:#f5f3ff;
+  }
+  .book-title {
+    font-size:1.9rem; letter-spacing:2px; text-align:center; margin-bottom:8px; color:#fde68a;
+    text-shadow:0 0 20px rgba(253,230,138,.5);
+  }
+  .subtitle { text-align:center; color:#ddd6fe; margin-bottom:28px; font-style:italic; }
+  .page {
+    max-width:720px; width:100%; background:#fff; border-radius:18px; overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,.5); margin-bottom:34px;
+  }
+  .art { width:100%; display:block; background:#fdf2ff; }
+  .page-inner { padding:26px 30px 30px; }
+  .chapter { font-size:1.25rem; font-weight:bold; color:#a855f7; margin-bottom:6px; }
+  .text { font-size:1.15rem; line-height:1.65; color:#312e81; }
+  .text p { margin-bottom:14px; }
+  .quote { border-left:4px solid #c084fc; background:#faf5ff; padding:14px 16px; border-radius:0 10px 10px 0; color:#4c1d95; font-style:italic; margin:14px 0; }
+  .clue { background:#fff7ed; border:2px dashed #f59e0b; border-radius:12px; padding:14px 16px; margin:14px 0; color:#92400e; text-align:center; }
+  .finale { background:#fefce8; border:2px solid #eab308; border-radius:14px; padding:18px; text-align:center; color:#854d0e; margin-top:16px; }
+  .ps { background:#f3e8ff; border-radius:12px; padding:16px; color:#6b21a8; margin-top:16px; }
+  .nav { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin:10px 0 4px; }
+  .nav a { background:#fde68a; color:#78350f; font-weight:bold; text-decoration:none; padding:12px 22px; border-radius:30px; font-size:1.05rem; box-shadow:0 4px 12px rgba(0,0,0,.3); }
+  .credits { text-align:center; color:#ddd6fe; margin-bottom:30px; font-style:italic; }
+  .page-number { text-align:center; color:#a78bfa; font-size:.9rem; margin-bottom:6px; }
+</style>
+</head>
+<body>
+
+<div class="book-title">📖 The Mystery of<br>the Moon-Candy Secret</div>
+<div class="subtitle">A Charlotte Original Detective Story · written with love by Alice, the fairy 🧚</div>
+
+<!-- COVER -->
+<div class="page">
+  <svg class="art" viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cover art: Glimmer the sparkle-bunny on Furry Friends Island">
+    <defs>
+      <linearGradient id="ns" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2e1065"/><stop offset="55%" stop-color="#6d28d9"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient>
+      <radialGradient id="mg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fde68a" stop-opacity=".9"/><stop offset="100%" stop-color="#fde68a" stop-opacity="0"/></radialGradient>
+    </defs>
+    <rect width="720" height="420" fill="url(#ns)"/>
+    <circle cx="360" cy="120" r="70" fill="#fef3c7" opacity=".9"/>
+    <circle cx="360" cy="120" r="50" fill="#fbbf24"/>
+    <ellipse cx="280" cy="90" rx="70" ry="28" fill="#fff" opacity=".85"/>
+    <ellipse cx="320" cy="80" rx="46" ry="24" fill="#fff" opacity=".85"/>
+    <ellipse cx="500" cy="60" rx="60" ry="22" fill="#fff" opacity=".8"/>
+    <ellipse cx="160" cy="160" rx="55" ry="20" fill="#fff" opacity=".7"/>
+    <ellipse cx="360" cy="400" rx="380" ry="90" fill="#4c1d95"/>
+    <ellipse cx="360" cy="330" rx="60" ry="52" fill="#c084fc"/>
+    <ellipse cx="360" cy="270" rx="52" ry="46" fill="#e9d5ff"/>
+    <path d="M 330 235 Q 310 160 335 130" stroke="#ef4444" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M 348 230 Q 335 165 350 140" stroke="#f59e0b" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M 372 230 Q 385 165 370 140" stroke="#3b82f6" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M 390 235 Q 410 160 385 130" stroke="#22c55e" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <circle cx="345" cy="268" r="8" fill="#312e81"/><circle cx="377" cy="268" r="8" fill="#312e81"/>
+    <circle cx="347" cy="266" r="3" fill="#fff"/><circle cx="379" cy="266" r="3" fill="#fff"/>
+    <g transform="translate(361,284)"><path d="M0,-9 L2.5,-2.5 L9,0 L2.5,2.5 L0,9 L-2.5,2.5 L-9,0 L-2.5,-2.5 Z" fill="#f59e0b"/></g>
+    <path d="M 345 296 Q 361 308 377 296" stroke="#7c3aed" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="332" cy="382" rx="22" ry="14" fill="#a855f7"/>
+    <ellipse cx="390" cy="382" rx="22" ry="14" fill="#a855f7"/>
+    <g fill="#fde68a">
+      <g transform="translate(250,360) scale(.6)"><path d="M0,-9 L2.5,-2.5 L9,0 L2.5,2.5 L0,9 L-2.5,2.5 L-9,0 L-2.5,-2.5 Z"/></g>
+      <g transform="translate(200,340) scale(.45)"><path d="M0,-9 L2.5,-2.5 L9,0 L2.5,2.5 L0,9 L-2.5,2.5 L-9,0 L-2.5,-2.5 Z"/></g>
+      <g transform="translate(150,355) scale(.5)"><path d="M0,-9 L2.5,-2.5 L9,0 L2.5,2.5 L0,9 L-2.5,2.5 L-9,0 L-2.5,-2.5 Z"/></g>
+    </g>
+    <g transform="translate(360,90)" fill="#fde68a" opacity=".95"><circle cx="0" cy="0" r="55" fill="url(#mg)"/><path d="M0,-12 L4,-4 L12,0 L4,4 L0,12 L-4,4 L-12,0 L-4,-4 Z"/></g>
+  </svg>
+  <div class="page-inner">
+    <div class="chapter">★ The Mystery of the Moon-Candy Secret ★</div>
+    <div class="text" style="text-align:center; margin-top:10px;">
+      <p>A story made just for the detective who knows Furry Friends Island best.</p>
+      <p style="color:#a855f7; font-weight:bold;">CHARLOTTE'S MYSTERY · SEPTEMBER 11</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 1 -->
+<div class="page">
+  <svg class="art" viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Glimmer sad, her sparkle gone">
+    <defs><linearGradient id="s1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fdf2ff"/><stop offset="100%" stop-color="#e9d5ff"/></linearGradient></defs>
+    <rect width="720" height="380" fill="url(#s1)"/>
+    <ellipse cx="360" cy="340" rx="380" ry="80" fill="#c7a5f5"/>
+    <ellipse cx="360" cy="260" rx="70" ry="60" fill="#c084fc"/>
+    <ellipse cx="360" cy="205" rx="58" ry="50" fill="#e9d5ff"/>
+    <path d="M 328 175 Q 310 120 330 95" stroke="#ef4444" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 348 170 Q 338 125 348 105" stroke="#f59e0b" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 372 170 Q 382 125 372 105" stroke="#3b82f6" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 392 175 Q 410 120 390 95" stroke="#22c55e" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <circle cx="345" cy="208" r="8" fill="#312e81"/><circle cx="377" cy="208" r="8" fill="#312e81"/>
+    <path d="M 348 235 Q 361 225 374 235" stroke="#7c3aed" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M 300 150 q 8 12 0 20 q -8 -8 0 -20" fill="#60a5fa"/>
+  </svg>
+  <div class="page-inner">
+    <div class="chapter">Chapter 1 — The Vanished Sparkle</div>
+    <div class="text">
+      <p>One morning, on the far side of Furry Friends Island, something terrible happened: <strong>Glimmer the Sparkle-Bunny woke up... and her sparkle was GONE!</strong> 💔</p>
+      <p>Her magic nose was still there. Her bunny-unicorn ears still sparkled like fireworks! But the little star-trail she was famous for? <strong>Not a single twinkle.</strong></p>
+      <p>Poor Glimmer hopped across the Moon-Candy Forest and left only ordinary paw prints. She sat down by the Moonberry Pond and giggled — but even her jingle-bell laugh sounded flat. 🎵🔕</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page">
+  <svg class="art" viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The letter">
+    <defs><linearGradient id="s2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff7ed"/><stop offset="100%" stop-color="#ffedd5"/></linearGradient></defs>
+    <rect width="720" height="380" fill="url(#s2)"/>
+    <g transform="translate(160,60)">
+      <rect width="400" height="260" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>
+      <text x="60" y="60" font-size="20" font-family="Georgia" fill="#92400e">Dear Detective Charlotte,</text>
+      <text x="60" y="155" font-size="18" font-family="Georgia" fill="#92400e">"My sparkle has vanished.</text>
+      <text x="60" y="185" font-size="18" font-family="Georgia" fill="#92400e">Only a true detective can find it."</text>
+      <text x="60" y="250" font-size="18" font-family="Georgia" fill="#92400e">— Glimmer</text>
+    </g>
+  </svg>
+  <div class="page-inner">
+    <div class="chapter">Chapter 2 — The Letter</div>
+    <div class="text">
+      <p>That's when <strong>you</strong> got the letter. 📜</p>
+      <div class="quote">
+        <p>"Dear Detective Charlotte, Please help! My sparkle has vanished and only a true detective can find it. Come to Moon-Candy Forest — but beware, there are clues everywhere, and one of them is a <u>ROTTEN TRICK</u>. — Glimmer"</p>
+      </div>
+      <p>You grabbed your magnifying glass 🔍 and set off across the island. Your brother <strong>Chace</strong> wanted to come, but he was busy having a banana — his favorite, the one he calls <em>"nana!"</em> 🍌 So you went alone.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page">
+  <svg class="art" viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Clue 1: a deflated balloon">
+    <defs><linearGradient id="s3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#eff6ff"/><stop offset="100%" stop-color="#dbeafe"/></linearGradient></defs>
+    <rect width="720" height="380" fill="url(#s3)"/>
+    <ellipse cx="360" cy="340" rx="380" ry="80" fill="#9ab8f5"/>
+    <path d="M 300 120 Q 260 220 300 300 Q 340 220 300 120 Z" fill="#e64b7f" stroke="#b0235a" stroke-width="3"/>
+    <path d="M 300 300 C 302 330 296 340 300 360" stroke="#555" stroke-width="2" fill="none"/>
+    <rect x="330" y="250" width="90" height="30" rx="6" fill="#fff7ed" stroke="#f59e0b" stroke-width="2"/>
+    <text x="375" y="270" font-size="12" font-family="Georgia" fill="#92400e" text-anchor="middle">CLUE #1</text>
+  </svg>
+  <div class="page-inner">
+    <div class="chapter">Chapter 3 — Clue #1: The Balloon</div>
+    <div class="text">
+      <p>At the edge of the forest you found a strange, sagging thing half-buried in the leaves — <strong>a deflated party balloon</strong>, all wrinkled and sad. 🎈</p>
+      <p>You knew all about balloons that lose their gas — you'd <em>invented the Forever Float balloon</em> to stop that leak! But around its neck hung a label that read:</p>
+      <div class="clue">"I once floated tall and proud / But my secret leaked right out of me. / If you want Glimmer's stars, look close / At what's <u>NOT</u> where it should be."</div>
+      <p>Interesting. You tucked it in your pocket.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page">
+  <svg class="art" viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Clue 2: backwards footprints and a forgotten moonberry">
+    <defs><linearGradient id="s4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fce7f3"/><stop offset="100%" stop-color="#fbcfe8"/></linearGradient></defs>
+    <rect width="720" height="380" fill="url(#s4)"/>
+    <ellipse cx="360" cy="330" rx="280" ry="70" fill="#60a5fa"/>
+    <ellipse cx="360" cy="322" rx="260" ry="55" fill="#93c5fd"/>
+    <path d="M 180 260 q 8 20 -2 34 M 200 262 q -8 20 2 34" stroke="#b45309" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M 220 300 q 8 20 -2 34 M 240 302 q -8 20 2 34" stroke="#b45309" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <circle cx="540" cy="280" r="16" fill="#a855f7"/>
+    <circle cx="534" cy="274" r="5" fill="#e9d5ff"/>
+  </svg>
+  <div class="page-inner">
+    <div class="chapter">Chapter 4 — Clue #2: The Footprints</div>
+    <div class="text">
+      <p>Deeper in, past the glittery Moonberry trees 🌙🫐, you found <strong>Clue #2</strong>: a row of tiny footprints leading to the pond... but they were going the <strong>WRONG way — into the water</strong>, not out!</p>
+      <p>And beside the pond lay a single, dry moonberry, rolled far away from its bush.</p>
+      <p><em>Who would leave a moonberry behind?</em> You remembered that moonberries are Glimmer's favorite. Something was making her forget the things she loved.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page">
+  <svg class="art" viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Clue 3: a shaky note at Glimmer's door">
+    <defs><linearGradient id="s5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fefce8"/><stop offset="100%" stop-color="#fef9c3"/></linearGradient></defs>
+    <rect width="720" height="380" fill="url(#s5)"/>
+    <path d="M 120 100 Q 360 60 600 100 L 600 330 Q 360 380 120 330 Z" fill="#fcd34d" opacity=".5"/>
+    <rect x="300" y="200" width="120" height="160" rx="60 60 8 8" fill="#8b5cf6"/>
+    <circle cx="360" cy="290" r="8" fill="#fde68a"/>
+    <g transform="translate(200,120)" fill="#fff">
+      <rect width="200" height="120" rx="8" fill="#ffffff" stroke="#ca8a04" stroke-width="3" transform="rotate(-4)"/>
+      <text transform="rotate(-4)" x="20" y="40" font-size="14" font-family="Georgia" fill="#854d0e">"I didn't mean to, but I was</text>
+      <text transform="rotate(-4)" x="20" y="64" font-size="14" font-family="Georgia" fill="#854d0e">so hungry and tired and</text>
+      <text transform="rotate(-4)" x="20" y="88" font-size="14" font-family="Georgia" fill="#854d0e">THIRSTY..."</text>
+    </g>
+  </svg>
+  <div class="page-inner">
+    <div class="chapter">Chapter 5 — Clue #3: The Note</div>
+    <div class="text">
+      <p>At last you reached her cozy little hollow. On the doorstep sat <strong>Clue #3</strong> — a note written in shaky handwriting:</p>
+      <div class="clue">"I didn't mean to, but I was so hungry and tired and THIRSTY. I just wanted to feel cool and floaty again. If I tell you the truth, will you still be my friend?"</div>
+      <p>You frowned, reading it again... and again. Three clues. A deflated balloon. Backwards footprints heading INTO the water. A forgotten moonberry. A note about being thirsty, about wanting to "feel cool and floaty."</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6 -->
+<div class="page">
+  <svg class="art" viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The sparkle flickers back on">
+    <defs>
+      <linearGradient id="s6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fdf2ff"/><stop offset="100%" stop-color="#c084fc"/></linearGradient>
+      <radialGradient id="sp" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fde68a" stop-opacity=".95"/><stop offset="100%" stop-color="#fde68a" stop-opacity="0"/></radialGradient>
+    </defs>
+    <rect width="720" height="380" fill="url(#s6)"/>
+    <ellipse cx="360" cy="330" rx="380" ry="90" fill="#6d28d9"/>
+    <ellipse cx="360" cy="245" rx="75" ry="64" fill="#c084fc"/>
+    <ellipse cx="360" cy="190" rx="60" ry="52" fill="#e9d5ff"/>
+    <path d="M 326 155 Q 308 100 328 75" stroke="#ef4444" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 346 150 Q 336 105 346 85" stroke="#f59e0b" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 374 150 Q 384 105 374 85" stroke="#3b82f6" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 394 155 Q 412 100 392 75" stroke="#22c55e" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 345 220 Q 361 234 377 220" stroke="#7c3aed" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <g fill="#fde68a">
+      <circle cx="330" cy="290" r="20" fill="url(#sp)"/>
+      <circle cx="395" cy="300" r="18" fill="url(#sp)"/>
+      <path d="M 250 355 L 253 347 L 260 345 L 253 343 L 250 335 L 247 343 L 240 345 L 247 347 Z"/>
+    </g>
+  </svg>
+  <div class="page-inner">
+    <div class="chapter">Chapter 6 — The Sparkle Comes Back</div>
+    <div class="text">
+      <p>And then — like a sparkle finally switching back on — <strong>you knew.</strong> 💡</p>
+      <p>You knelt by Glimmer's hollow and said softly: <em>"Glimmer... you're not sad. You're DRY. Your sparkle didn't vanish — it just fizzled out because you haven't had a drink all day! The balloon popped from a little leak. Your footprints led into the pond because you went to splash in the water to cool off. You forgot your moonberry because you were too tired to remember. The sparkle is still in you, Glimmer — it's just thirsty!"</em> 🫧</p>
+      <p>Glimmer's eyes went wide. She hopped to the pond and took the biggest, sparkliest sip of cool moon-water she'd ever had... and <strong>POOF!</strong> ✨ her little star-trail flickered back to life, brighter than before!</p>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL -->
+<div class="page">
+  <svg class="art" viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Glimmer hops home leaving a star trail to Charlotte's doorstep">
+    <defs>
+      <linearGradient id="sf" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2e1065"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient>
+      <radialGradient id="mm" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#fef3c7"/></radialGradient>
+    </defs>
+    <rect width="720" height="380" fill="url(#sf)"/>
+    <circle cx="600" cy="80" r="34" fill="url(#mm)"/>
+    <g fill="#fde68a" opacity=".9">
+      <g transform="translate(90,300) scale(.7)"><path d="M0,-14 L4,-4 L14,0 L4,4 L0,14 L-4,4 L-14,0 L-4,-4 Z"/></g>
+      <g transform="translate(170,260) scale(.6)"><path d="M0,-14 L4,-4 L14,0 L4,4 L0,14 L-4,4 L-14,0 L-4,-4 Z"/></g>
+      <g transform="translate(250,320) scale(.65)"><path d="M0,-14 L4,-4 L14,0 L4,4 L0,14 L-4,4 L-14,0 L-4,-4 Z"/></g>
+      <g transform="translate(330,270) scale(.55)"><path d="M0,-14 L4,-4 L14,0 L4,4 L0,14 L-4,4 L-14,0 L-4,-4 Z"/></g>
+    </g>
+    <ellipse cx="140" cy="280" rx="36" ry="30" fill="#c084fc"/>
+    <ellipse cx="140" cy="248" rx="28" ry="24" fill="#e9d5ff"/>
+    <circle cx="132" cy="250" r="4" fill="#312e81"/><circle cx="148" cy="250" r="4" fill="#312e81"/>
+    <text x="450" y="110" font-size="26" font-family="Georgia" fill="#fde68a" text-anchor="middle" font-weight="bold">🎉 HAPPY BIRTHDAY,</text>
+    <text x="450" y="150" font-size="30" font-family="Georgia" fill="#fff" text-anchor="middle" font-weight="bold">CHARLOTTE! 🎉</text>
+  </svg>
+  <div class="page-inner">
+    <div class="chapter">The End 🎁</div>
+    <div class="text">
+      <p><em>"You solved it, Detective!"</em> Glimmer giggled — and now her laugh rang like a hundred tiny bells. 🎵🔔</p>
+      <p>As the sun set over Furry Friends Island, Glimmer hopped home leaving a glittering trail of pink stars... all the way to <strong>your own doorstep</strong>. She'd saved the prettiest star for her favorite detective. 🌟</p>
+      <div class="finale">🎂 <strong>This mystery is my birthday gift to you, Charlotte.</strong> 🎂<br>You are the bravest, smartest detective on Furry Friends Island.<br>Happy September 11! — Alice 🧚💜</div>
+      <div class="ps">🧩 <strong>P.S. — The ROTTEN TRICK.</strong> That's for you to find, detective. Look very closely at one of the clues — one of them was never the answer at all. Some mysteries hide their secret in what ISN'T there. 🔍</div>
+    </div>
+  </div>
+</div>
+
+<div class="credits">Written with love by Alice 🧚 for Charlotte's birthday 🎂</div>
+<div class="page-number">The Mystery of the Moon-Candy Secret · An illustrated storybook</div>
+
+</body>
+</html>

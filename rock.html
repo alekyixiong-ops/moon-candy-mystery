@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charlotte's Rock Detective Field Notebook</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:linear-gradient(170deg,#2b1b10 0%,#4a3220 40%,#6b4a2c 100%);
+    font-family:Georgia,'Times New Roman',serif; color:#fdf6ec;
+    display:flex; flex-direction:column; align-items:center;
+    padding:26px 14px 60px; min-height:100vh;
+  }
+  h1{font-size:1.65rem;color:#ffd88a;text-align:center;text-shadow:0 0 18px rgba(255,216,138,.45);letter-spacing:1px;}
+  .sub{color:#f0d9b8;font-style:italic;margin:6px 0 26px;text-align:center;font-size:.98rem;}
+  .card{
+    width:100%; max-width:760px; background:#fffdf8; color:#3a2a1a;
+    border-radius:18px; overflow:hidden; margin-bottom:26px;
+    box-shadow:0 18px 45px rgba(0,0,0,.5);
+  }
+  .card-head{
+    background:linear-gradient(90deg,#8a5a2b,#b07d43);
+    color:#fff; padding:14px 22px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;
+  }
+  .card-head .num{font-size:1.15rem;font-weight:bold;letter-spacing:1px;}
+  .card-head .stamp{
+    background:#ffd88a;color:#5a3a12;font-weight:bold;font-size:.8rem;
+    padding:4px 12px;border-radius:20px;letter-spacing:1px;
+  }
+  .art{width:100%;display:block;background:#f7f2e8;}
+  .body{padding:22px 26px 26px;}
+  .name{font-size:1.7rem;font-weight:bold;color:#8a5a2b;margin-bottom:2px;text-align:center;}
+  .tag{text-align:center;color:#a08060;font-style:italic;margin-bottom:18px;}
+  table{width:100%;border-collapse:collapse;font-size:.98rem;margin-bottom:16px;}
+  td{padding:9px 6px;border-bottom:1px dashed #e0d3c0;vertical-align:top;}
+  td.k{width:42%;color:#8a5a2b;font-weight:bold;}
+  .sect{margin-top:16px;background:#faf4e8;border-left:5px solid #b07d43;border-radius:0 10px 10px 0;padding:14px 16px;}
+  .sect h3{color:#8a5a2b;font-size:1.05rem;margin-bottom:6px;}
+  .sect p{line-height:1.65;}
+  .minerals{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;}
+  .min{flex:1 1 150px;background:#fff;border:2px solid #e8dcc8;border-radius:12px;padding:12px;}
+  .min b{display:block;color:#8a5a2b;margin-bottom:4px;}
+  .dot{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+  .blank{background:#fffdf8;border:2px dashed #c9a877;}
+  .blank .card-head{background:#d9c3a2;color:#5a4020;}
+  .foot{color:#f0d9b8;font-size:.92rem;text-align:center;line-height:1.7;max-width:720px;}
+  .box{background:rgba(255,255,255,.08);border-radius:14px;padding:16px 20px;margin-bottom:22px;max-width:760px;width:100%;}
+  .box h2{color:#ffd88a;font-size:1.1rem;margin-bottom:8px;}
+  .box ul{margin-left:20px;line-height:1.8;font-size:.96rem;}
+</style>
+</head>
+<body>
+
+<h1>&#128300; Charlotte&#39;s Rock Detective Field Notebook</h1>
+<div class="sub">Specimen log &middot; identified in the field &middot; Alice the fairy, lab assistant &#129498;&#65039;</div>
+
+<!-- ================= SPECIMEN 1 ================= -->
+<div class="card">
+  <div class="card-head">
+    <span class="num">SPECIMEN #1</span>
+    <span class="stamp">&#10003; IDENTIFIED</span>
+  </div>
+
+  <svg class="art" viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Granite specimen magnified, showing three minerals">
+    <defs>
+      <radialGradient id="rockg" cx="38%" cy="30%" r="75%">
+        <stop offset="0%" stop-color="#e8ddd0"/><stop offset="70%" stop-color="#cbb9a4"/><stop offset="100%" stop-color="#a8917a"/>
+      </radialGradient>
+      <clipPath id="rock"><path d="M 150 330 Q 110 250 140 180 Q 170 110 250 92 Q 340 72 420 100 Q 500 128 528 200 Q 552 268 512 322 Q 470 372 380 380 Q 250 392 150 330 Z"/></clipPath>
+      <clipPath id="zoom"><circle cx="565" cy="180" r="108"/></clipPath>
+    </defs>
+    <rect width="760" height="420" fill="#f7f2e8"/>
+
+    <!-- rock -->
+    <path d="M 150 330 Q 110 250 140 180 Q 170 110 250 92 Q 340 72 420 100 Q 500 128 528 200 Q 552 268 512 322 Q 470 372 380 380 Q 250 392 150 330 Z" fill="url(#rockg)" stroke="#8a6f52" stroke-width="4"/>
+    <g clip-path="url(#rock)">
+      <!-- feldspar: white / pink blocks -->
+      <g fill="#fffaf2">
+        <rect x="180" y="150" width="34" height="26" rx="4" transform="rotate(-12 197 163)"/>
+        <rect x="290" y="120" width="30" height="24" rx="4" transform="rotate(18 305 132)"/>
+        <rect x="380" y="230" width="36" height="26" rx="4" transform="rotate(-8 398 243)"/>
+        <rect x="230" y="290" width="32" height="24" rx="4" transform="rotate(14 246 302)"/>
+        <rect x="450" y="170" width="30" height="22" rx="4" transform="rotate(-20 465 181)"/>
+      </g>
+      <g fill="#ffd9e2">
+        <rect x="250" y="200" width="32" height="24" rx="4" transform="rotate(9 266 212)"/>
+        <rect x="420" y="290" width="30" height="24" rx="4" transform="rotate(-15 435 302)"/>
+        <rect x="330" y="300" width="28" height="22" rx="4" transform="rotate(22 344 311)"/>
+      </g>
+      <!-- quartz: glassy grey -->
+      <g fill="#b9c3c9" opacity="0.92">
+        <ellipse cx="215" cy="230" rx="19" ry="15" transform="rotate(-10 215 230)"/>
+        <ellipse cx="330" cy="165" rx="21" ry="16" transform="rotate(12 330 165)"/>
+        <ellipse cx="470" cy="240" rx="18" ry="14" transform="rotate(-18 470 240)"/>
+        <ellipse cx="390" cy="330" rx="19" ry="14" transform="rotate(6 390 330)"/>
+        <ellipse cx="280" cy="350" rx="17" ry="13"/>
+      </g>
+      <!-- mica: black shiny flakes -->
+      <g fill="#2a2a30">
+        <path d="M 200 175 l 22 7 l -14 9 z"/><path d="M 300 250 l 24 6 l -16 10 z"/>
+        <path d="M 430 140 l 20 8 l -15 8 z"/><path d="M 350 220 l 22 6 l -15 9 z"/>
+        <path d="M 250 320 l 20 7 l -14 8 z"/><path d="M 480 300 l 20 7 l -14 8 z"/>
+        <path d="M 170 250 l 19 7 l -13 8 z"/>
+      </g>
+      <!-- mica sparkle glints -->
+      <g fill="#ffffff" opacity="0.85">
+        <circle cx="212" cy="185" r="2.4"/><circle cx="312" cy="258" r="2"/>
+        <circle cx="442" cy="148" r="2.2"/><circle cx="362" cy="228" r="2"/>
+      </g>
+    </g>
+
+    <!-- labels on rock -->
+    <g font-family="Georgia,serif" font-size="15">
+      <g stroke="#8a5a2b" stroke-width="2" fill="none">
+        <path d="M 195 162 L 120 120"/><path d="M 330 168 L 300 70"/><path d="M 205 178 L 120 235"/>
+      </g>
+      <g fill="#6b4a2c">
+        <text x="30" y="112">feldspar</text>
+        <text x="248" y="58">quartz</text>
+        <text x="30" y="252">mica</text>
+      </g>
+    </g>
+
+    <!-- magnifier -->
+    <g>
+      <circle cx="565" cy="180" r="108" fill="#fffdf8" stroke="#8a5a2b" stroke-width="6"/>
+      <g clip-path="url(#zoom)">
+        <rect x="457" y="72" width="216" height="216" fill="#d9cbb9"/>
+        <g fill="#fffaf2">
+          <rect x="490" y="110" width="40" height="30" rx="5" transform="rotate(-10 510 125)"/>
+          <rect x="580" y="150" width="36" height="28" rx="5" transform="rotate(14 598 164)"/>
+          <rect x="500" y="200" width="38" height="28" rx="5" transform="rotate(-6 519 214)"/>
+        </g>
+        <g fill="#ffd9e2">
+          <rect x="545" y="105" width="34" height="26" rx="5" transform="rotate(8 562 118)"/>
+        </g>
+        <g fill="#b9c3c9">
+          <ellipse cx="470" cy="170" rx="24" ry="18"/><ellipse cx="600" cy="230" rx="26" ry="19"/>
+          <ellipse cx="530" cy="255" rx="24" ry="17"/>
+        </g>
+        <g fill="#2a2a30">
+          <path d="M 560 190 l 30 9 l -20 12 z"/><path d="M 480 235 l 28 8 l -19 11 z"/>
+          <path d="M 605 120 l 26 9 l -19 10 z"/>
+        </g>
+        <g fill="#fff" opacity="0.9">
+          <circle cx="575" cy="196" r="3"/><circle cx="494" cy="240" r="2.6"/><circle cx="618" cy="126" r="2.4"/>
+        </g>
+      </g>
+      <line x1="642" y1="257" x2="700" y2="330" stroke="#8a5a2b" stroke-width="14" stroke-linecap="round"/>
+      <text x="565" y="372" font-family="Georgia,serif" font-size="15" fill="#6b4a2c" text-anchor="middle">zoomed in: 3 minerals!</text>
+    </g>
+  </svg>
+
+  <div class="body">
+    <div class="name">GRANITE</div>
+    <div class="tag">igneous rock &middot; frozen magma &middot; &#127981;&#65039; &#8594; &#129704;</div>
+
+    <table>
+      <tr><td class="k">&#128207; Size</td><td>a little smaller than a fist</td></tr>
+      <tr><td class="k">&#128205; Found at</td><td>school &#127979;</td></tr>
+      <tr><td class="k">&#128300; Type</td><td>igneous (fire-made) &mdash; cooled magma, <b>intrusive</b></td></tr>
+      <tr><td class="k">&#128142; Minerals seen</td><td>all three! feldspar + quartz + mica &#10003;</td></tr>
+      <tr><td class="k">&#128296; Hardness</td><td>6&ndash;7 on the Mohs scale (scratches glass!)</td></tr>
+      <tr><td class="k">&#129514; Vinegar test</td><td>no bubbles &#8594; not limestone &#10003;</td></tr>
+      <tr><td class="k">&#129522; Magnet test</td><td>usually nothing &#10003;</td></tr>
+    </table>
+
+    <div class="sect">
+      <h3>&#128269; Why that proves it&#39;s granite</h3>
+      <p>You spotted <b>all three</b> minerals &mdash; that&#39;s the real scientist&#39;s test. Not many rocks show three different crystals you can see with your own eyes. Granite is one of the few. <b>Congratulations, Detective &mdash; you identified a rock in the field.</b> &#127881;</p>
+      <div class="minerals">
+        <div class="min"><b><span class="dot" style="background:#fffaf2;border:1px solid #ccc"></span>Feldspar</b>white / pink blocks. The most common mineral in granite. Weathers into <i>clay</i>.</div>
+        <div class="min"><b><span class="dot" style="background:#b9c3c9"></span>Quartz</b>glassy grey bits. <b>Hardness 7</b> &mdash; harder than steel!</div>
+        <div class="min"><b><span class="dot" style="background:#2a2a30"></span>Mica</b>black shiny flakes that catch the light. Softest of the three &mdash; it peels into sheets!</div>
+      </div>
+    </div>
+
+    <div class="sect">
+      <h3>&#128293; Its life story</h3>
+      <p>Your rock began <b>deep underground</b> as molten magma &mdash; liquid fire. Then it cooled <b>very slowly</b>, over thousands of years, and that slow cooling let the crystals grow <b>big</b> enough for you to see. That&#39;s why granite is speckly and lava rocks are smooth: <b>magma took its time, lava had to hurry.</b> &#128034;</p>
+    </div>
+
+    <div class="sect">
+      <h3>&#127469;&#127472; Bonus: your rock knows Hong Kong</h3>
+      <p>Hong Kong sits on a huge <b>granite</b> body &mdash; Lion Rock &#129409; is granite! When HK&#39;s granite weathers, its feldspar rots into <b>soft clay</b>, which is why heavy rain can cause landslides here. Your little school rock is a piece of the city&#39;s bones. &#127959;&#65039;</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= BLANK SPECIMEN ================= -->
+<div class="card blank">
+  <div class="card-head">
+    <span class="num">SPECIMEN #2</span>
+    <span class="stamp">&#128269; OPEN CASE</span>
+  </div>
+  <div class="body">
+    <div class="name">? ? ?</div>
+    <div class="tag">waiting for Charlotte&#39;s next discovery</div>
+    <table>
+      <tr><td class="k">&#128207; Size</td><td>&nbsp;</td></tr>
+      <tr><td class="k">&#128205; Found at</td><td>&nbsp;</td></tr>
+      <tr><td class="k">&#127912; Colour</td><td>&nbsp;</td></tr>
+      <tr><td class="k">&#128300; Grains</td><td>sandy / sparkly / layered / smooth</td></tr>
+      <tr><td class="k">&#128295; Scratch test</td><td>fingernail / coin / nail / glass</td></tr>
+      <tr><td class="k">&#129514; Vinegar test</td><td>bubbles? yes / no</td></tr>
+      <tr><td class="k">&#129522; Magnet test</td><td>sticks? yes / no</td></tr>
+      <tr><td class="k">&#128220; Verdict</td><td>&nbsp;</td></tr>
+    </table>
+    <p style="text-align:center;color:#8a5a2b;font-style:italic;">Send Alice the results and she&#39;ll draw your next ID card! &#129498;&#65039;</p>
+  </div>
+</div>
+
+<div class="box">
+  <h2>&#129513; Field Kit Checklist</h2>
+  <ul>
+    <li>&#128300; magnifying glass (or a phone camera zoom!)</li>
+    <li>&#127869;&#65039; white tile or back of a plate &mdash; for the streak test</li>
+    <li>&#129514; a little vinegar &mdash; the fizz test</li>
+    <li>&#128295; a steel nail + a coin &mdash; the hardness test (ask a grown-up)</li>
+    <li>&#129522; a magnet</li>
+    <li>&#128167; water &mdash; wet rocks show their sparkle better!</li>
+    <li>&#128211; this notebook &#128522;</li>
+  </ul>
+</div>
+
+<div class="foot">
+  Made for Charlotte, Rock Detective &#129704;&#65039;&#128300;<br>
+  Specimen #1 identified in the field, 17 September &middot; Alice the fairy &#129498;&#65039;&#10024;
+</div>
+
+</body>
+</html>

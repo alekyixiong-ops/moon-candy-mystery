@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The E-Notation Game — Calculator Edition</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    background:radial-gradient(circle at 50% 0%,#3b2a6b 0%,#1b1233 55%,#0d0820 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#f3eeff;
+    min-height:100vh;padding:20px 12px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:1.5rem;color:#b9a2ff;text-align:center;text-shadow:0 0 20px rgba(185,162,255,.5);letter-spacing:1px;}
+  .sub{color:#c9bdf0;font-style:italic;font-size:.92rem;margin:6px 0 18px;text-align:center;}
+  .tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;justify-content:center;}
+  .tab{
+    background:rgba(255,255,255,.09);color:#ddd4ff;border:2px solid rgba(255,255,255,.15);
+    padding:10px 16px;border-radius:24px;font-family:inherit;font-size:.95rem;cursor:pointer;transition:.15s;
+  }
+  .tab:hover{background:rgba(255,255,255,.16);}
+  .tab.active{background:#7c3aed;border-color:#c4a2ff;color:#fff;font-weight:bold;}
+  .panel{display:none;width:100%;max-width:460px;}
+  .panel.active{display:block;}
+  .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;}
+
+  /* calculator */
+  .display{
+    background:#0a0618;border:2px solid #6d4bd0;border-radius:14px;
+    padding:12px 14px;margin-bottom:14px;text-align:right;
+  }
+  .expr{color:#9d8ac9;font-size:.82rem;height:18px;overflow:hidden;white-space:nowrap;}
+  .main{color:#f5f0ff;font-size:1.9rem;font-weight:bold;letter-spacing:1px;overflow:hidden;white-space:nowrap;}
+  .keys{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
+  .keys button{
+    font-family:inherit;font-size:1.15rem;padding:14px 0;border-radius:12px;cursor:pointer;
+    background:#33265c;color:#f0eaff;border:1px solid #5b46a0;transition:.12s;
+  }
+  .keys button:active{transform:scale(.95);}
+  .keys .fn{background:#4a3670;font-size:.95rem;}
+  .keys .ee{background:#c2410c;border-color:#fdba74;font-weight:bold;}
+  .keys .eq{background:#7c3aed;border-color:#c4a2ff;font-weight:bold;grid-column:span 2;}
+  .keys .c{background:#7f1d1d;border-color:#f87171;}
+  .keys .x10{background:#0f766e;border-color:#5eead4;font-size:1rem;}
+  .tip{font-size:.86rem;color:#c1b4e8;margin-top:12px;line-height:1.6;text-align:center;}
+  code{background:rgba(255,255,255,.12);padding:1px 5px;border-radius:5px;font-size:.9em;}
+
+  /* quiz */
+  .levels{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+  .levels button{
+    font-family:inherit;font-size:.88rem;padding:11px 8px;border-radius:12px;cursor:pointer;
+    background:rgba(255,255,255,.08);color:#e6ddff;border:1px solid rgba(255,255,255,.18);text-align:left;
+  }
+  .levels button.sel{background:#5b21b6;border-color:#c4a2ff;}
+  .levels button.done{background:#14532d;border-color:#86efac;}
+  .qhead{display:flex;justify-content:space-between;font-size:.82rem;color:#b9a2ff;margin-bottom:10px;}
+  .qtext{font-size:1.15rem;line-height:1.6;margin-bottom:14px;min-height:52px;}
+  .ansrow{display:flex;gap:8px;}
+  .ansrow input{
+    flex:1;font-family:inherit;font-size:1.05rem;padding:12px;border-radius:12px;
+    border:2px solid #5b46a0;background:#0a0618;color:#f5f0ff;min-width:0;
+  }
+  .ansrow input:focus{outline:none;border-color:#c4a2ff;}
+  .ansrow button{
+    font-family:inherit;font-size:1rem;padding:12px 16px;border-radius:12px;cursor:pointer;
+    background:#7c3aed;color:#fff;border:1px solid #c4a2ff;font-weight:bold;white-space:nowrap;
+  }
+  .fb{margin-top:12px;font-size:.95rem;line-height:1.6;min-height:44px;}
+  .ok{color:#86efac;} .no{color:#fca5a5;} .nudge{color:#fcd34d;}
+  .choices{display:grid;gap:8px;margin-bottom:12px;}
+  .choices button{
+    font-family:inherit;font-size:.95rem;padding:12px;border-radius:12px;cursor:pointer;text-align:left;
+    background:rgba(255,255,255,.08);color:#e6ddff;border:1px solid rgba(255,255,255,.2);
+  }
+  .badge{margin-top:16px;background:#4c1d95;border:2px dashed #c4a2ff;border-radius:14px;padding:14px;text-align:center;font-size:.95rem;}
+
+  /* zero machine */
+  .zout{
+    margin-top:14px;background:#0a0618;border:2px solid #5b46a0;border-radius:14px;padding:14px;
+    font-family:ui-monospace,Menlo,monospace;font-size:.82rem;word-break:break-all;line-height:1.7;color:#d8ccff;
+  }
+  .znote{margin-top:10px;color:#b9a2ff;font-size:.9rem;line-height:1.6;}
+  .foot{margin-top:26px;color:#a99ad0;font-size:.82rem;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<h1>&#128290; THE E-NOTATION GAME</h1>
+<div class="sub">Calculator Edition &middot; made for Charlotte &#128300;</div>
+
+<div class="tabs">
+  <button class="tab active" data-panel="calc">&#128425; Calculator</button>
+  <button class="tab" data-panel="quiz">&#127918; Quiz Levels</button>
+  <button class="tab" data-panel="zero">&#128269; Zero Machine</button>
+</div>
+
+<!-- ============ CALCULATOR ============ -->
+<div class="panel active" id="calc">
+  <div class="card">
+    <div class="display">
+      <div class="expr" id="expr">&nbsp;</div>
+      <div class="main" id="disp">0</div>
+    </div>
+    <div class="keys">
+      <button class="c" data-k="C">C</button>
+      <button class="fn" data-k="DEL">&#9003;</button>
+      <button class="fn" data-k="SIGN">+/&minus;</button>
+      <button class="fn" data-k="OP" data-v="÷">&divide;</button>
+
+      <button data-k="D" data-v="7">7</button>
+      <button data-k="D" data-v="8">8</button>
+      <button data-k="D" data-v="9">9</button>
+      <button class="fn" data-k="OP" data-v="×">&times;</button>
+
+      <button data-k="D" data-v="4">4</button>
+      <button data-k="D" data-v="5">5</button>
+      <button data-k="D" data-v="6">6</button>
+      <button class="fn" data-k="OP" data-v="−">&minus;</button>
+
+      <button data-k="D" data-v="1">1</button>
+      <button data-k="D" data-v="2">2</button>
+      <button data-k="D" data-v="3">3</button>
+      <button class="fn" data-k="OP" data-v="+">+</button>
+
+      <button data-k="D" data-v="0">0</button>
+      <button data-k="D" data-v=".">.</button>
+      <button class="ee" data-k="EE">EE</button>
+      <button class="eq" data-k="EQ">=</button>
+
+      <button class="x10" data-k="TEN" style="grid-column:span 4;">&#215;10 &nbsp;(find the edge of the universe &#128165;)</button>
+    </div>
+    <p class="tip">
+      <b>This is the EE button you were looking for!</b> &#127919;<br>
+      To type <code>1e-50</code>: press <b>1</b> &rarr; <b>EE</b> &rarr; <b>50</b> &rarr; <b>+/&minus;</b>
+    </p>
+  </div>
+</div>
+
+<!-- ============ QUIZ ============ -->
+<div class="panel" id="quiz">
+  <div class="levels" id="levels"></div>
+  <div class="card">
+    <div class="qhead"><span id="qlevel">Pick a level!</span><span id="qscore"></span></div>
+    <div class="qtext" id="qtext">Choose a level above to start. &#127918;</div>
+    <div id="chargr"></div>
+    <div class="ansrow" id="ansrow">
+      <input id="ansinput" placeholder="your answer..." autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button id="checkbtn">Check</button>
+    </div>
+    <div class="fb" id="fb"></div>
+    <div id="badge"></div>
+  </div>
+</div>
+
+<!-- ============ ZERO MACHINE ============ -->
+<div class="panel" id="zero">
+  <div class="card">
+    <div class="qtext">Type any code and I&#39;ll write it out <b>in full</b> &mdash; every last zero! &#128269;</div>
+    <div class="ansrow">
+      <input id="zinput" value="1.0001e-50" autocomplete="off">
+      <button id="zbtn">Show me</button>
+    </div>
+    <div class="zout" id="zout"></div>
+    <div class="znote" id="znote"></div>
+  </div>
+</div>
+
+<div class="foot">
+  Made for Charlotte, Calculator Whisperer in training &#127942;<br>
+  Alice the fairy &#129498;&#65039;&#10024;
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------------- tabs ---------------- */
+  var tabs=document.querySelectorAll('.tab');
+  var panels=document.querySelectorAll('.panel');
+  for(var i=0;i<tabs.length;i++){
+    tabs[i].addEventListener('click',function(){
+      for(var j=0;j<tabs.length;j++) tabs[j].classList.remove('active');
+      for(var k=0;k<panels.length;k++) panels[k].classList.remove('active');
+      this.classList.add('active');
+      document.getElementById(this.getAttribute('data-panel')).classList.add('active');
+    });
+  }
+
+  /* ---------------- formatting ---------------- */
+  var LIMIT=9.9999999e99;
+  function fmt(x){
+    if(!isFinite(x)||isNaN(x)) return 'ERROR \uD83D\uDCA5';
+    if(Math.abs(x)>LIMIT) return 'ERROR \uD83D\uDCA5';
+    if(x===0) return '0';
+    var a=Math.abs(x);
+    if(a>=1e10||a<1e-4){
+      var s=x.toExponential(7);
+      var p=s.split('e');
+      var m=p[0].replace(/0+$/,'').replace(/\.$/,'');
+      var e=parseInt(p[1],10);
+      return m+'e'+e;
+    }
+    return String(x);
+  }
+  function plain(x){
+    if(!isFinite(x)||isNaN(x)) return 'ERROR';
+    if(Math.abs(x)>LIMIT) return 'ERROR';
+    return String(x);
+  }
+  function parseNum(s){
+    s=String(s).replace(/e[+\-]?$/,'');
+    var v=Number(s);
+    return isNaN(v)?0:v;
+  }
+  function calc(a,op,b){
+    if(op==='+') return a+b;
+    if(op==='−') return a-b;
+    if(op==='×') return a*b;
+    if(op==='÷') return b===0?NaN:a/b;
+    return b;
+  }
+
+  /* ---------------- calculator ---------------- */
+  var cur='0', acc=null, op=null, fresh=true;
+  var dispEl=document.getElementById('disp'), exprEl=document.getElementById('expr');
+
+  function draw(){
+    dispEl.textContent = cur.length>16? cur.slice(0,16)+'…' : cur;
+    exprEl.innerHTML = (acc===null? '&nbsp;' : fmt(acc)+' '+op) ;
+  }
+
+  function pressDigit(d){
+    if(fresh){ cur = (d==='.')? '0.' : d; fresh=false; }
+    else{
+      if(d==='.'){
+        if(cur.indexOf('e')>=0){ /* allow only once after e */ }
+        else if(cur.indexOf('.')>=0) return;
+      }
+      if(cur==='0'&&d!=='.') cur=d; else cur=cur+d;
+    }
+    if(cur.length>22) cur=cur.slice(0,22);
+    draw();
+  }
+
+  function pressEE(){
+    if(cur.indexOf('e')>=0) return;
+    if(cur===''||cur==='0'){ cur='1e'; }
+    else{ cur=cur+'e'; }
+    fresh=false;
+    draw();
+  }
+
+  function pressSign(){
+    if(cur.indexOf('e')>=0){
+      var p=cur.split('e');
+      var e=p[1];
+      if(e==='' ) e='-';
+      else if(e.charAt(0)==='-') e=e.slice(1);
+      else e='-'+e;
+      cur=p[0]+'e'+e;
+    }else{
+      cur = (cur.charAt(0)==='-')? cur.slice(1) : '-'+cur;
+    }
+    draw();
+  }
+
+  function pressOp(o){
+    var v=parseNum(cur);
+    if(op!==null && !fresh){ acc=calc(acc,op,v); cur=plain(acc); }
+    else{ acc=v; }
+    op=o; fresh=true;
+    draw();
+  }
+
+  function pressEq(){
+    var v=parseNum(cur);
+    if(op!==null){ acc=calc(acc,op,v); cur=fmt(acc); acc=null; op=null; }
+    else{ cur=fmt(v); }
+    fresh=true;
+    draw();
+  }
+
+  function pressTen(){
+    var v=parseNum(cur);
+    if(Math.abs(v)>LIMIT){ cur='ERROR \uD83D\uDCA5'; }
+    else{
+      var n=v*10;
+      if(Math.abs(n)>LIMIT) cur='ERROR \uD83D\uDCA5';
+      else cur=fmt(n);
+    }
+    fresh=true;
+    draw();
+  }
+
+  document.querySelectorAll('.keys button').forEach(function(b){
+    b.addEventListener('click',function(){
+      var k=this.getAttribute('data-k');
+      if(k==='D') pressDigit(this.getAttribute('data-v'));
+      else if(k==='EE') pressEE();
+      else if(k==='SIGN') pressSign();
+      else if(k==='OP') pressOp(this.getAttribute('data-v'));
+      else if(k==='EQ') pressEq();
+      else if(k==='TEN') pressTen();
+      else if(k==='C'){ cur='0'; acc=null; op=null; fresh=true; draw(); }
+      else if(k==='DEL'){
+        if(cur==='ERROR \uD83D\uDCA5'){ cur='0'; }
+        else cur = cur.length>1? cur.slice(0,-1) : '0';
+        draw();
+      }
+    });
+  });
+
+  /* ---------------- quiz ---------------- */
+  var LEVELS=[
+    {name:'\uD83D\uDFE2 1. Read the code', qs:[
+      {q:'What is <code>2e3</code> as a normal number?', ans:2000},
+      {q:'What is <code>4.5e6</code>?', ans:4500000},
+      {q:'What is <code>7e-2</code>?', ans:0.07},
+      {q:'What is <code>1e-6</code>?', ans:0.000001}
+    ]},
+    {name:'\uD83D\uDFE1 2. Write the code', qs:[
+      {q:'Write <b>three million</b> as e-notation (like 3e6)', ans:3e6, code:true},
+      {q:'Write <b>one thousandth</b> as e-notation', ans:1e-3, code:true},
+      {q:'Write <b>forty-two billion</b> as e-notation', ans:4.2e10, code:true},
+      {q:'The width of an atom is 0.0000000001 m. Code it!', ans:1e-10, code:true}
+    ]},
+    {name:'\uD83D\uDFE0 3. Make it panic \uD83D\uDE31', qs:[
+      {q:'Do it on the calculator: <code>99,999,999 × 99,999,999</code> = ?', ans:9999999800000001},
+      {q:'Do it on the calculator: <code>1e9 × 1e9</code> = ?', ans:1e18},
+      {q:'Do it on the calculator: <code>2^100</code> = ? (use the calculator!)', ans:Math.pow(2,100)}
+    ]},
+    {name:'\uD83D\uDD34 4. Edge of the universe', qs:[
+      {q:'Press ×10 on the calculator again and again. What&#39;s the BIGGEST number it can show?', ans:9.9999999e99, loose:true},
+      {q:'And what happens if you multiply THAT by 10 one more time?', choices:['ERROR \uD83D\uDCA5','a bigger number','the screen melts','nothing at all'], correct:0}
+    ]},
+    {name:'\uD83C\uDF81 Bonus: science codes', qs:[
+      {q:'Speed of light in m/s (it&#39;s 300,000,000)', ans:3e8, code:true},
+      {q:'Width of an atom in metres', ans:1e-10, code:true},
+      {q:'Distance from Earth to the Sun, in metres (150,000,000,000)', ans:1.5e11, code:true},
+      {q:'How tall are YOU, in metres? (about 1.4)', ans:1.4, code:true, tol:0.3}
+    ]}
+  ];
+
+  var qlevel=document.getElementById('qlevel'), qtext=document.getElementById('qtext'),
+      qscore=document.getElementById('qscore'), fb=document.getElementById('fb'),
+      ansinput=document.getElementById('ansinput'), checkbtn=document.getElementById('checkbtn'),
+      ansrow=document.getElementById('ansrow'), chargr=document.getElementById('chargr'),
+      levelsEl=document.getElementById('levels'), badge=document.getElementById('badge');
+
+  var solved={};   // "L-Q" -> true
+  var cL=null, cQ=0, waiting=false;
+
+  function totalQs(){ var t=0; for(var i=0;i<LEVELS.length;i++) t+=LEVELS[i].qs.length; return t; }
+  function solvedCount(){ var n=0; for(var k in solved) if(solved[k]) n++; return n; }
+
+  function buildLevels(){
+    levelsEl.innerHTML='';
+    LEVELS.forEach(function(L,i){
+      var b=document.createElement('button');
+      b.textContent=L.name;
+      b.setAttribute('data-i',i);
+      b.addEventListener('click',function(){ startLevel(i); });
+      levelsEl.appendChild(b);
+    });
+  }
+  function refreshLevels(){
+    var bs=levelsEl.querySelectorAll('button');
+    LEVELS.forEach(function(L,i){
+      var all=true;
+      for(var j=0;j<L.qs.length;j++) if(!solved[i+'-'+j]) all=false;
+      bs[i].classList.toggle('done',all);
+      bs[i].classList.toggle('sel',cL===i);
+    });
+    qscore.textContent='\u2713 '+solvedCount()+' / '+totalQs();
+    if(solvedCount()===totalQs() && !document.getElementById('thebadge')){
+      badge.innerHTML='<div class="badge" id="thebadge">\uD83C\uDFC6 <b>ALL LEVELS COMPLETE!</b><br>You are officially a <b>CALCULATOR WHISPERER</b>! \uD83C\uDF89\uD83D\uDC51</div>';
+    }
+  }
+
+  function firstUnsolved(i){
+    for(var j=0;j<LEVELS[i].qs.length;j++) if(!solved[i+'-'+j]) return j;
+    return -1;
+  }
+
+  function startLevel(i){
+    cL=i;
+    var j=firstUnsolved(i);
+    if(j<0) j=0;
+    cQ=j;
+    showQ();
+    refreshLevels();
+  }
+
+  function showQ(){
+    var L=LEVELS[cL], q=L.qs[cQ];
+    qlevel.textContent=L.name;
+    qtext.innerHTML=q.q;
+    fb.innerHTML=''; ansinput.value=''; waiting=false;
+    if(q.choices){
+      ansrow.style.display='none';
+      chargr.innerHTML='';
+      var wrap=document.createElement('div');
+      wrap.className='choices';
+      q.choices.forEach(function(c,idx){
+        var b=document.createElement('button');
+        b.textContent=c;
+        b.addEventListener('click',function(){ judgeChoices(idx); });
+        wrap.appendChild(b);
+      });
+      chargr.appendChild(wrap);
+    }else{
+      ansrow.style.display='flex';
+      chargr.innerHTML='';
+      ansinput.focus();
+    }
+    refreshLevels();
+  }
+
+  function norm(s){
+    s=String(s).toLowerCase().trim();
+    s=s.replace(/[\s,]/g,'');
+    s=s.replace(/[×x·*]\s*10\s*\^?/g,'e');
+    s=s.replace(/10\^/g,'e');
+    s=s.replace(/\u00d710/g,'e');
+    s=s.replace(/＋/g,'+').replace(/−/g,'-');
+    s=s.replace(/\^/g,'');
+    return s;
+  }
+
+  function judge(userStr){
+    var L=LEVELS[cL], q=L.qs[cQ];
+    var n=norm(userStr);
+    if(n===''){ fb.innerHTML='<span class="nudge">Type an answer first! \u270F\uFE0F</span>'; return; }
+    var isCode = n.indexOf('e')>=0;
+    var val = Number(n.replace(/e[+\-]?$/,''));
+    if(isNaN(val)){ fb.innerHTML='<span class="no">Hmm, I can\'t read that as a number. Try again? \uD83E\uDD14</span>'; return; }
+
+    var ok;
+    if(q.loose) ok = Math.abs(val) >= 9.9e99;
+    else{
+      var tol = q.tol!==undefined? q.tol : Math.max(Math.abs(q.ans)*1e-6, 1e-12);
+      ok = Math.abs(val-q.ans) <= tol;
+    }
+
+    if(ok && q.code && !isCode){
+      fb.innerHTML='<span class="nudge">\u2705 The value is right! But now write it as a <b>CODE</b> \u2014 use <code>e</code>! (like 3e6)</span>';
+      return;
+    }
+    if(ok){
+      solved[cL+'-'+cQ]=true;
+      fb.innerHTML='<span class="ok">\u2705 <b>Correct!</b> '+(isCode?'Nice code! \uD83C\uDFAF':'Perfect! \u2b50')+'</span>';
+      waiting=true;
+      setTimeout(function(){
+        if(!waiting) return;
+        var j=firstUnsolved(cL);
+        if(j<0){
+          fb.innerHTML='<span class="ok">\uD83C\uDF89 <b>Level complete!</b> Pick another level!</span>';
+          refreshLevels();
+        }else{
+          cQ=j; showQ();
+        }
+      },1000);
+      refreshLevels();
+    }else{
+      fb.innerHTML='<span class="no">\u274C Not quite \u2014 try again! '+
+        (q.code?'<br><span style="color:#c1b4e8;font-size:.9em">Remember: a code looks like <code>5e3</code> \u2014 number, then e, then how many places the point moves.</span>':'<br><span style="color:#c1b4e8;font-size:.9em">Hint: positive exponent = BIG, negative exponent = tiny.</span>')+'</span>';
+    }
+  }
+
+  function judgeChoices(idx){
+    var q=LEVELS[cL].qs[cQ];
+    if(idx===q.correct){
+      solved[cL+'-'+cQ]=true;
+      fb.innerHTML='<span class="ok">\u2705 <b>Correct!</b> You found the edge of the universe. \uD83C\uDF0C</span>';
+      refreshLevels();
+      setTimeout(function(){ var j=firstUnsolved(cL); if(j>=0){ cQ=j; showQ(); } },1000);
+    }else{
+      fb.innerHTML='<span class="no">\u274C Not that one \u2014 press ×10 on the calculator and watch! \uD83D\uDC40</span>';
+    }
+  }
+
+  checkbtn.addEventListener('click',function(){ judge(ansinput.value); });
+  ansinput.addEventListener('keydown',function(e){ if(e.key==='Enter') judge(ansinput.value); });
+
+  buildLevels();
+  refreshLevels();
+
+  /* ---------------- zero machine ---------------- */
+  var zinput=document.getElementById('zinput'), zout=document.getElementById('zout'), znote=document.getElementById('znote');
+  function showZeros(){
+    var s=String(zinput.value).toLowerCase().replace(/\s/g,'');
+    s=s.replace(/[×x·*]10\^?/g,'e').replace(/10\^/g,'e');
+    if(s.indexOf('e')<0){
+      zout.textContent=s;
+      znote.textContent='That one has no e \u2014 it\'s already a normal number! Try something like 1.0001e-50 \uD83D\uDE0A';
+      return;
+    }
+    var p=s.split('e');
+    var m=p[0], exp=parseInt(p[1],10);
+    if(isNaN(exp)) exp=0;
+    var neg=false;
+    if(m.charAt(0)==='-'){ neg=true; m=m.slice(1); }
+    var parts=m.split('.');
+    var ip=parts[0]||'0', fp=parts[1]||'';
+    var digits=ip+fp;
+    var pointPos=ip.length+exp;
+    var out, zeros=0;
+    if(pointPos<=0){ zeros=-pointPos; out='0.'+repeat('0',zeros)+digits; }
+    else if(pointPos>=digits.length){ out=digits+repeat('0',pointPos-digits.length); }
+    else { out=digits.slice(0,pointPos)+'.'+digits.slice(pointPos); }
+    if(neg) out='-'+out;
+    zout.textContent=out;
+    znote.innerHTML = zeros>0
+      ? 'That\'s a decimal point, then <b>'+zeros+' zeros</b>, then '+digits+'. &#128561; That is <b>'+s+'</b> written out in full. Tiny, isn\'t it?'
+      : 'Written out in full, with every zero. &#128290;';
+  }
+  function repeat(ch,n){ var o=''; for(var i=0;i<n;i++) o+=ch; return o; }
+  document.getElementById('zbtn').addEventListener('click',showZeros);
+  zinput.addEventListener('keydown',function(e){ if(e.key==='Enter') showZeros(); });
+  showZeros();
+
+  draw();
+})();
+</script>
+</body>
+</html>

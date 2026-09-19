@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charlotte's Scientific Calculator Decoder</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:radial-gradient(circle at 50% 0%,#3b2a6b 0%,#1b1233 55%,#0d0820 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#f3eeff;
+    padding:24px 12px 60px;display:flex;flex-direction:column;align-items:center;min-height:100vh;
+  }
+  h1{font-size:1.45rem;color:#b9a2ff;text-align:center;text-shadow:0 0 20px rgba(185,162,255,.5);}
+  .sub{color:#c9bdf0;font-style:italic;font-size:.92rem;margin:6px 0 20px;text-align:center;}
+  .wrap{width:100%;max-width:700px;}
+  .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:16px;padding:18px 20px;margin-bottom:18px;}
+  .card h2{font-size:1.08rem;color:#c4a2ff;margin-bottom:12px;}
+  table{width:100%;border-collapse:collapse;font-size:.92rem;}
+  th,td{padding:9px 8px;text-align:left;border-bottom:1px solid rgba(255,255,255,.10);vertical-align:top;}
+  th{color:#b9a2ff;font-size:.82rem;letter-spacing:.5px;}
+  td:first-child{
+    font-family:ui-monospace,Menlo,monospace;font-weight:bold;color:#fdba74;white-space:nowrap;width:74px;
+  }
+  td.try{font-family:ui-monospace,Menlo,monospace;color:#86efac;font-size:.86rem;white-space:nowrap;}
+  p{line-height:1.7;font-size:.95rem;margin-bottom:10px;}
+  .hot{background:rgba(253,186,116,.10);border:1px solid rgba(253,186,116,.45);}
+  .hot h2{color:#fdba74;}
+  .warn{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.5);}
+  .warn h2{color:#fca5a5;}
+  ul{margin-left:20px;line-height:1.85;font-size:.94rem;}
+  .foot{margin-top:22px;color:#a99ad0;font-size:.82rem;text-align:center;line-height:1.7;}
+  code{background:rgba(255,255,255,.13);padding:1px 5px;border-radius:5px;}
+</style>
+</head>
+<body>
+
+<h1>&#128300; Scientific Calculator Decoder</h1>
+<div class="sub">Every mystery button, in plain English &middot; for Charlotte, Calculator Whisperer &#127942;</div>
+
+<div class="wrap">
+
+  <div class="card hot">
+    <h2>&#127919; YOUR STARTER KIT &mdash; learn these 6 today</h2>
+    <table>
+      <tr><th>Button</th><th>What it does</th><th>Try it</th></tr>
+      <tr><td>x&#178;</td><td><b>squared</b> &mdash; multiply the number by itself</td><td class="try">7 x&#178; = 49</td></tr>
+      <tr><td>&#8730;</td><td><b>square root</b> &mdash; what number times itself makes this?</td><td class="try">&#8730;144 = 12</td></tr>
+      <tr><td>x&#696;</td><td><b>power</b> &mdash; type base, press x&#696;, type exponent</td><td class="try">2 x&#696; 10 = 1024</td></tr>
+      <tr><td>&#960;</td><td><b>pi</b> = 3.14159&hellip; the circle number</td><td class="try">&#960; &times; 2 = 6.283</td></tr>
+      <tr><td>x!</td><td><b>factorial</b> &mdash; multiply every whole number down to 1</td><td class="try">5! = 120</td></tr>
+      <tr><td>EE</td><td><b>scientific notation</b> (you already know this one! &#128522;)</td><td class="try">3 EE 8 = 3e8</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>&#128290; POWERS &amp; ROOTS</h2>
+    <table>
+      <tr><th>Button</th><th>What it does</th><th>Try it</th></tr>
+      <tr><td>x&#178;</td><td>squared &mdash; number &times; itself</td><td class="try">9 x&#178; = 81</td></tr>
+      <tr><td>x&#179;</td><td>cubed &mdash; number &times; itself &times; itself</td><td class="try">3 x&#179; = 27</td></tr>
+      <tr><td>&#8730;</td><td>square root</td><td class="try">&#8730;169 = 13</td></tr>
+      <tr><td>&#8731;</td><td>cube root (usually 2nd + &#8730;)</td><td class="try">&#8731;27 = 3</td></tr>
+      <tr><td>1/x</td><td>reciprocal &mdash; 1 divided by the number</td><td class="try">1/x of 4 = 0.25</td></tr>
+      <tr><td>x!</td><td>factorial &mdash; 4! means 4&times;3&times;2&times;1 = 24</td><td class="try">10! = 3628800</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>&#128302; THE BIG &amp; THE TINY (science buttons)</h2>
+    <table>
+      <tr><th>Button</th><th>What it does</th><th>Try it</th></tr>
+      <tr><td>EE</td><td>&times;10 to the power &mdash; for huge or tiny numbers</td><td class="try">1 EE 50 +/&minus;</td></tr>
+      <tr><td>10&#739;</td><td>ten to the power of x</td><td class="try">10&#739; 6 = 1,000,000</td></tr>
+      <tr><td>e&#739;</td><td>e to the power x</td><td class="try">e&#739; 1 = 2.718&hellip;</td></tr>
+      <tr><td>e</td><td><b>Euler&#39;s number</b> = 2.718281828&hellip; nature&#39;s favourite number (growth, money, spirals!)</td><td class="try">e = 2.71828</td></tr>
+      <tr><td>%</td><td>percent</td><td class="try">50% of 200 = 100</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>&#128208; TRIANGLE BUTTONS (trigonometry)</h2>
+    <p>These three describe <b>triangles and circles</b>. You&#39;ll meet them properly in a few years &mdash; but here&#39;s the gist:</p>
+    <table>
+      <tr><th>Button</th><th>What it does</th><th>Try it</th></tr>
+      <tr><td>sin</td><td>sine &mdash; the &#8220;up-down&#8221; ratio of an angle</td><td class="try">sin 30 = 0.5</td></tr>
+      <tr><td>cos</td><td>cosine &mdash; the &#8220;sideways&#8221; ratio</td><td class="try">cos 60 = 0.5</td></tr>
+      <tr><td>tan</td><td>tangent &mdash; the &#8220;slope&#8221;</td><td class="try">tan 45 = 1</td></tr>
+      <tr><td>sin&#8315;&#185;</td><td>works <b>backwards</b>: give the ratio, get the angle (2nd + sin)</td><td class="try">sin&#8315;&#185; 0.5 = 30&deg;</td></tr>
+      <tr><td>sinh cosh tanh</td><td>hyperbolic versions &mdash; <b>university level</b>. Ignore them for now! &#128522;</td><td class="try">later!</td></tr>
+    </table>
+  </div>
+
+  <div class="card warn">
+    <h2>&#9888;&#65039; THE #1 CALCULATOR TRAP: DEG vs RAD</h2>
+    <p>Your <code>Rad</code> button switches the <b>angle mode</b>, and different modes give <b>totally different answers</b>!</p>
+    <ul>
+      <li><b>DEG</b> (degrees): a full circle = <b>360&deg;</b> &rarr; <code>sin 30 = 0.5</code> &#9989;</li>
+      <li><b>RAD</b> (radians): a full circle = <b>2&#960;</b> &rarr; <code>sin 30 = &minus;0.988</code> &#128561;</li>
+    </ul>
+    <p style="margin-top:8px;">Same buttons, wildly different answers &mdash; that&#39;s why everyone gets tricked at least once. If your trig answers look crazy, <b>check the mode</b>! &#128161;</p>
+  </div>
+
+  <div class="card">
+    <h2>&#128290; LOG BUTTONS (the &#8220;how many zeros?&#8221; buttons)</h2>
+    <table>
+      <tr><th>Button</th><th>What it does</th><th>Try it</th></tr>
+      <tr><td>log</td><td>logarithm base 10 &mdash; asks &#8220;10 to WHAT power gives this?&#8221;</td><td class="try">log 1000 = 3</td></tr>
+      <tr><td>ln</td><td>natural log &mdash; same idea, but with <b>e</b></td><td class="try">ln e = 1</td></tr>
+      <tr><td>10&#739;</td><td>the <b>undo</b> button for log</td><td class="try">10&#739; 3 = 1000</td></tr>
+      <tr><td>e&#739;</td><td>the <b>undo</b> button for ln</td><td class="try">e&#739; 0 = 1</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>&#128190; MEMORY BUTTONS (your calculator&#39;s pockets)</h2>
+    <table>
+      <tr><th>Button</th><th>What it does</th></tr>
+      <tr><td>mc</td><td><b>memory clear</b> &mdash; empty the pocket</td></tr>
+      <tr><td>m+</td><td><b>memory plus</b> &mdash; add the number on screen into the pocket</td></tr>
+      <tr><td>m&minus;</td><td><b>memory minus</b> &mdash; subtract it from the pocket</td></tr>
+      <tr><td>mr</td><td><b>memory recall</b> &mdash; show what&#39;s in the pocket</td></tr>
+      <tr><td>STO / RCL</td><td>store / recall into letter slots (A, B, C&hellip;) on fancier models</td></tr>
+      <tr><td>Ans</td><td>the <b>last answer</b> &mdash; reuse it without retyping!</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>&#128273; THE SECRET SHIFT KEYS</h2>
+    <p><b>2nd</b> (or <b>Shift</b> / <b>Alpha</b>) is like the Shift key on a keyboard: press it first, and every button gets a <b>second secret job</b>.</p>
+    <ul>
+      <li><code>2nd + sin</code> = sin&#8315;&#185; (angle from a ratio)</li>
+      <li><code>2nd + &#8730;</code> = &#8731; (cube root)</li>
+      <li><code>2nd + log</code> = 10&#739;</li>
+      <li><code>2nd + ln</code> = e&#739;</li>
+    </ul>
+    <p style="margin-top:8px;">&#128161; If a button isn&#39;t doing what you expect, look for the <b>tiny coloured writing above it</b> &mdash; that&#39;s its 2nd job!</p>
+  </div>
+
+  <div class="card">
+    <h2>&#127922; THE FUN ONES</h2>
+    <table>
+      <tr><th>Button</th><th>What it does</th></tr>
+      <tr><td>Rand</td><td>a <b>random number</b> between 0 and 1 &mdash; press it lots of times and watch the chaos!</td></tr>
+      <tr><td>RanInt</td><td>a random <b>whole number</b> in a range you choose (on some models)</td></tr>
+      <tr><td>MOD</td><td>remainder after dividing (e.g. 7 MOD 3 = 1)</td></tr>
+      <tr><td>Abs</td><td>turns negatives positive: |&minus;5| = 5</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>&#128218; DON&#39;T PANIC &#128522;</h2>
+    <p>You do <b>not</b> need most of these yet &mdash; cosh, tanh, ln and Rad are for secondary school and university. Right now, your <b>useful six</b> are:</p>
+    <p style="text-align:center;font-size:1.15rem;color:#fdba74;font-family:ui-monospace,Menlo,monospace;letter-spacing:2px;">x&#178; &nbsp; &#8730; &nbsp; x&#696; &nbsp; &#960; &nbsp; x! &nbsp; EE</p>
+    <p>Learn those and you&#39;ve already got superpowers. &#129497;&#8205;&#9792;&#65039; And the <b>C</b> button always forgives you &mdash; it wipes the screen and starts fresh. &#128522;</p>
+  </div>
+
+  <div class="foot">
+    Made for Charlotte, Calculator Whisperer in training &#127942;<br>
+    Alice the fairy &#129498;&#65039;&#10024;
+  </div>
+</div>
+
+</body>
+</html>

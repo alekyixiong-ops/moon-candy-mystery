@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Rand Lab — Charlotte's Randomness Lab</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    background:radial-gradient(circle at 50% 0%,#123b4a 0%,#0d2233 55%,#07131f 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#eaf7ff;
+    min-height:100vh;padding:20px 12px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:1.45rem;color:#7dd3fc;text-align:center;text-shadow:0 0 20px rgba(125,211,252,.45);letter-spacing:1px;}
+  .sub{color:#a5cfe0;font-style:italic;font-size:.9rem;margin:6px 0 16px;text-align:center;}
+  .tabs{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;max-width:520px;}
+  .tab{
+    background:rgba(255,255,255,.08);color:#d6ecf7;border:2px solid rgba(255,255,255,.15);
+    padding:9px 13px;border-radius:22px;font-family:inherit;font-size:.88rem;cursor:pointer;transition:.15s;
+  }
+  .tab.active{background:#0e7490;border-color:#7dd3fc;color:#fff;font-weight:bold;}
+  .panel{display:none;width:100%;max-width:460px;}
+  .panel.active{display:block;}
+  .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .card h2{font-size:1.05rem;color:#7dd3fc;margin-bottom:12px;}
+  p{line-height:1.7;font-size:.94rem;margin-bottom:10px;}
+  .big{font-size:2.4rem;font-weight:bold;text-align:center;color:#fdba74;font-family:ui-monospace,Menlo,monospace;letter-spacing:2px;margin:8px 0;}
+  .mono{font-family:ui-monospace,Menlo,monospace;font-size:.9rem;color:#86efac;}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+  .btnrow button{
+    flex:1 1 auto;font-family:inherit;font-size:.95rem;padding:12px 10px;border-radius:12px;cursor:pointer;
+    background:#0e7490;color:#fff;border:1px solid #7dd3fc;font-weight:bold;
+  }
+  .btnrow button.alt{background:#334155;border-color:#94a3b8;}
+  .btnrow button:active{transform:scale(.96);}
+  .bar{display:flex;align-items:center;gap:8px;margin:5px 0;font-family:ui-monospace,Menlo,monospace;font-size:.85rem;}
+  .bar .lab{width:26px;color:#7dd3fc;}
+  .bar .track{flex:1;height:16px;background:rgba(255,255,255,.10);border-radius:8px;overflow:hidden;}
+  .bar .fill{height:100%;background:linear-gradient(90deg,#0ea5e9,#7dd3fc);width:0%;transition:width .2s;}
+  .bar .val{width:74px;text-align:right;color:#cbe9f5;}
+  .stat{display:flex;justify-content:space-between;font-size:.88rem;color:#bfe0ee;padding:3px 0;font-family:ui-monospace,Menlo,monospace;}
+  .track2{position:relative;height:30px;background:rgba(255,255,255,.10);border-radius:10px;margin:14px 0 6px;overflow:hidden;}
+  .track2 .half{position:absolute;left:50%;top:0;bottom:0;width:2px;background:#f472b6;}
+  .track2 .needle{position:absolute;top:2px;bottom:2px;width:8px;border-radius:4px;background:#fdba74;transition:left .2s;}
+  .scale{display:flex;justify-content:space-between;font-size:.75rem;color:#8fb4c4;font-family:ui-monospace,Menlo,monospace;}
+  canvas{width:100%;max-width:340px;display:block;margin:0 auto;border-radius:12px;background:#06121c;border:1px solid #1e4557;}
+  .row{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
+  .row label{font-size:.9rem;color:#bfe0ee;width:56px;}
+  .row input{
+    flex:1;min-width:0;font-family:inherit;font-size:1rem;padding:10px;border-radius:10px;
+    border:2px solid #1e4557;background:#06121c;color:#eaf7ff;
+  }
+  .note{background:rgba(125,211,252,.10);border-left:4px solid #7dd3fc;border-radius:0 10px 10px 0;padding:12px 14px;font-size:.92rem;line-height:1.7;margin-bottom:12px;}
+  .foot{margin-top:22px;color:#8fb4c4;font-size:.82rem;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<h1>&#127922; THE RAND LAB</h1>
+<div class="sub">Everything you can do with the Rand button &middot; for Charlotte &#129497;&#8205;&#9792;&#65039;</div>
+
+<div class="tabs">
+  <button class="tab active" data-p="dice">&#127922; Dice</button>
+  <button class="tab" data-p="coin">&#129689; Coin</button>
+  <button class="tab" data-p="lab">&#128202; 0.5 Lab</button>
+  <button class="tab" data-p="pi">&#127919; &#960; Darts</button>
+  <button class="tab" data-p="range">&#128290; Range</button>
+  <button class="tab" data-p="about">&#8505;&#65039; About</button>
+</div>
+
+<!-- DICE -->
+<div class="panel active" id="dice">
+  <div class="card">
+    <h2>&#127922; Dice roller</h2>
+    <div class="big" id="diceOut">&#8211;</div>
+    <div class="btnrow">
+      <button data-roll="1">Roll once</button>
+      <button data-roll="10" class="alt">&#215;10</button>
+      <button data-roll="100" class="alt">&#215;100</button>
+      <button data-roll="1000" class="alt">&#215;1000</button>
+    </div>
+    <div style="margin-top:12px;" id="diceBars"></div>
+    <div class="stat"><span>total rolls</span><span id="diceTotal">0</span></div>
+    <p class="mono" style="margin-top:8px;">Rand &#215; 6, chop off the decimals, + 1 = a perfect die &#127922;</p>
+  </div>
+</div>
+
+<!-- COIN -->
+<div class="panel" id="coin">
+  <div class="card">
+    <h2>&#129689; Coin flipper</h2>
+    <div class="big" id="coinOut">&#8211;</div>
+    <div class="btnrow">
+      <button data-flip="1">Flip once</button>
+      <button data-flip="10" class="alt">&#215;10</button>
+      <button data-flip="100" class="alt">&#215;100</button>
+      <button data-flip="1000" class="alt">&#215;1000</button>
+    </div>
+    <div class="stat"><span>&#129689; heads</span><span id="cH">0</span></div>
+    <div class="stat"><span>&#129688; tails</span><span id="cT">0</span></div>
+    <div class="stat"><span>% heads</span><span id="cPct">&#8211;</span></div>
+    <p class="mono" style="margin-top:8px;">Rand &lt; 0.5 = heads &mdash; flip lots and watch it settle on 50 / 50 &#127919;</p>
+  </div>
+</div>
+
+<!-- 0.5 LAB -->
+<div class="panel" id="lab">
+  <div class="card">
+    <h2>&#128202; The 0.5 experiment</h2>
+    <p>Rand gives a number from <b>0 to 1</b>. So what&#39;s the <b>average</b> of lots of them? Make a prediction first! &#129300;</p>
+    <div class="big" id="labLast">0.000000</div>
+    <div class="btnrow">
+      <button data-press="1">Press Rand &#215;1</button>
+      <button data-press="10" class="alt">&#215;10</button>
+      <button data-press="100" class="alt">&#215;100</button>
+      <button data-press="1000" class="alt">&#215;1000</button>
+      <button data-press="0" class="alt" id="labReset">reset</button>
+    </div>
+    <div class="track2">
+      <div class="half"></div>
+      <div class="needle" id="labNeedle" style="left:0%;"></div>
+    </div>
+    <div class="scale"><span>0.0</span><span>0.5 (target &#127944;)</span><span>1.0</span></div>
+    <div class="stat"><span>presses</span><span id="labN">0</span></div>
+    <div class="stat"><span>running average</span><span id="labAvg">&#8211;</span></div>
+    <p class="mono" style="margin-top:8px;">Watch the average creep toward 0.500000... the more you press, the closer it gets! &#128200;</p>
+  </div>
+</div>
+
+<!-- PI DARTS -->
+<div class="panel" id="pi">
+  <div class="card">
+    <h2>&#127919; Find &#960; with darts!</h2>
+    <p>Throw random darts at a square. Count how many land inside the quarter-circle. Then: <b>&#960; &#8776; 4 &#215; (inside &divide; total)</b> &#128561;</p>
+    <canvas id="piCanvas" width="340" height="340"></canvas>
+    <div class="btnrow" style="margin-top:12px;">
+      <button data-throw="1">Throw 1</button>
+      <button data-throw="100" class="alt">&#215;100</button>
+      <button data-throw="1000" class="alt">&#215;1000</button>
+      <button data-auto="1" class="alt" id="piAuto">auto &#9654;</button>
+      <button data-throw="0" class="alt" id="piReset">reset</button>
+    </div>
+    <div class="stat"><span>darts thrown</span><span id="piN">0</span></div>
+    <div class="stat"><span>inside the circle</span><span id="piIn">0</span></div>
+    <div class="stat"><span>&#960; estimate</span><span id="piVal">&#8211;</span></div>
+    <div class="stat"><span>real &#960;</span><span>3.14159265...</span></div>
+    <p class="mono" style="margin-top:8px;">It creeps slowly &mdash; that&#39;s real maths! More darts = better answer &#128034;</p>
+  </div>
+</div>
+
+<!-- RANGE -->
+<div class="panel" id="range">
+  <div class="card">
+    <h2>&#128290; Random number in a range</h2>
+    <p>This is the magic formula for <b>RanInt</b>: pick any range you like!</p>
+    <div class="row"><label>low</label><input id="rLow" type="number" value="1"></div>
+    <div class="row"><label>high</label><input id="rHigh" type="number" value="50"></div>
+    <div class="btnrow"><button id="rGo">Give me a random number &#127922;</button></div>
+    <div class="big" id="rOut">&#8211;</div>
+    <p class="mono">floor( Rand &#215; (high &minus; low + 1) ) + low</p>
+    <p style="margin-top:12px;">&#128161; <b>Try this:</b> set low = 1 and high = 100, and press it ten times. Which numbers came up? Any pattern? (Spoiler: nope &mdash; that&#39;s the point!) &#128521;</p>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="panel" id="about">
+  <div class="card">
+    <h2>&#8505;&#65039; What Rand really does</h2>
+    <div class="note">Press <b>Rand</b> on your calculator and you get something like <span class="mono">0.639284</span> &mdash; always between <b>0</b> and <b>1</b>, never the same twice.</div>
+    <p><b>Why 0 to 1?</b> Because every other random thing can be <i>built</i> from it! &#128295;</p>
+    <p>&#127922; A die: <span class="mono">Rand &#215; 6, chop decimals, + 1</span><br>
+    &#129689; A coin: <span class="mono">Rand &lt; 0.5 &#8594; heads</span><br>
+    &#128290; A range: <span class="mono">floor(Rand &#215; (high&minus;low+1)) + low</span></p>
+    <p style="margin-top:12px;"><b>&#128274; The big secret:</b> computers and calculators can&#39;t actually be random. They follow a rule &mdash; a hidden starting number called a <b>seed</b> &mdash; and then pretend. That&#39;s why scientists call it <b>pseudo-random</b>: <i>&#8220;sort of random&#8221;</i>. &#127917;</p>
+    <p><b>&#127918; Why it matters:</b> mathematicians use random numbers to solve real problems &mdash; shuffling cards, predicting weather, testing medicines, and even finding &#960; (that&#39;s the darts game!). It has a grand name: <b>Monte Carlo method</b>, named after the casino city. &#127920;</p>
+  </div>
+</div>
+
+<div class="foot">
+  The Rand Lab &middot; made for Charlotte by Alice the fairy &#129498;&#65039;&#10024;<br>
+  Every number here is random &mdash; and every one is pretend-random. &#128521;
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+  function rnd(){ return Math.random(); }
+
+  /* tabs */
+  var tabs=document.querySelectorAll('.tab'), panels=document.querySelectorAll('.panel');
+  Array.prototype.forEach.call(tabs,function(t){
+    t.addEventListener('click',function(){
+      Array.prototype.forEach.call(tabs,function(x){x.classList.remove('active');});
+      Array.prototype.forEach.call(panels,function(x){x.classList.remove('active');});
+      t.classList.add('active');
+      $(t.getAttribute('data-p')).classList.add('active');
+    });
+  });
+
+  /* ---------- DICE ---------- */
+  var dice=[0,0,0,0,0,0], dTotal=0, dLast=0;
+  var faces=['\u2680','\u2681','\u2682','\u2683','\u2684','\u2685'];
+  (function buildBars(){
+    var h='';
+    for(var i=0;i<6;i++){
+      h+='<div class="bar"><span class="lab">'+(i+1)+'</span>'+
+         '<span class="track"><span class="fill" id="df'+i+'"></span></span>'+
+         '<span class="val" id="dv'+i+'">0</span></div>';
+    }
+    $('diceBars').innerHTML=h;
+  })();
+  function rollDice(n){
+    for(var i=0;i<n;i++){ var r=Math.floor(rnd()*6)+1; dice[r-1]++; dTotal++; dLast=r; }
+    $('diceOut').textContent = dTotal? faces[dLast-1] : '\u2013';
+    for(var j=0;j<6;j++){
+      var pct = dTotal? (dice[j]/dTotal*100) : 0;
+      $('df'+j).style.width=pct.toFixed(1)+'%';
+      $('dv'+j).textContent=dice[j]+'  '+(dTotal? '('+pct.toFixed(1)+'%)':'');
+    }
+    $('diceTotal').textContent=dTotal;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-roll]'),function(b){
+    b.addEventListener('click',function(){ rollDice(parseInt(this.getAttribute('data-roll'),10)); });
+  });
+  rollDice(0);
+
+  /* ---------- COIN ---------- */
+  var cH=0, cT=0, cLast='';
+  function flip(n){
+    for(var i=0;i<n;i++){ if(rnd()<0.5){ cH++; cLast='\uD83E\uDE99 HEADS'; } else { cT++; cLast='\uD83E\uDE98 TAILS'; } }
+    $('coinOut').textContent=cLast||'\u2013';
+    $('cH').textContent=cH; $('cT').textContent=cT;
+    var tt=cH+cT;
+    $('cPct').textContent = tt? (cH/tt*100).toFixed(1)+'%' : '\u2013';
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-flip]'),function(b){
+    b.addEventListener('click',function(){ flip(parseInt(this.getAttribute('data-flip'),10)); });
+  });
+
+  /* ---------- 0.5 LAB ---------- */
+  var labN=0, labSum=0;
+  function pressLab(n){
+    if(n===0){ labN=0; labSum=0; $('labLast').textContent='0.000000';
+      $('labN').textContent='0'; $('labAvg').textContent='\u2013'; $('labNeedle').style.left='0%'; return; }
+    var last=0;
+    for(var i=0;i<n;i++){ last=rnd(); labSum+=last; labN++; }
+    var avg=labSum/labN;
+    $('labLast').textContent=last.toFixed(6);
+    $('labN').textContent=labN;
+    $('labAvg').textContent=avg.toFixed(6);
+    $('labNeedle').style.left=(avg*100).toFixed(2)+'%';
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-press]'),function(b){
+    b.addEventListener('click',function(){ pressLab(parseInt(this.getAttribute('data-press'),10)); });
+  });
+
+  /* ---------- PI DARTS ---------- */
+  var cv=$('piCanvas'), ctx=cv.getContext('2d');
+  var piN=0, piIn=0, autoTimer=null;
+  function drawBoard(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.fillStyle='#06121c'; ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.strokeStyle='#1e4557'; ctx.lineWidth=2;
+    ctx.strokeRect(1,1,cv.width-2,cv.height-2);
+    ctx.beginPath(); ctx.arc(0,cv.height,cv.width,0,Math.PI*2);
+    ctx.strokeStyle='#0ea5e9'; ctx.lineWidth=2.5; ctx.stroke();
+    ctx.fillStyle='rgba(14,165,233,.07)'; ctx.fill();
+  }
+  function throwDarts(n){
+    for(var i=0;i<n;i++){
+      var x=rnd(), y=rnd();
+      var inside = (x*x+y*y)<=1;
+      piN++; if(inside) piIn++;
+      var px=x*cv.width, py=cv.height-(y*cv.height);
+      ctx.fillStyle = inside? 'rgba(125,211,252,.85)' : 'rgba(248,113,113,.75)';
+      ctx.beginPath(); ctx.arc(px,py,1.7,0,Math.PI*2); ctx.fill();
+    }
+    $('piN').textContent=piN;
+    $('piIn').textContent=piIn;
+    $('piVal').textContent = piN? (4*piIn/piN).toFixed(6) : '\u2013';
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-throw]'),function(b){
+    b.addEventListener('click',function(){
+      var n=parseInt(this.getAttribute('data-throw'),10);
+      if(n===0){ piN=0; piIn=0; drawBoard(); $('piN').textContent='0'; $('piIn').textContent='0'; $('piVal').textContent='\u2013'; return; }
+      throwDarts(n);
+    });
+  });
+  $('piAuto').addEventListener('click',function(){
+    if(autoTimer){ clearInterval(autoTimer); autoTimer=null; this.textContent='auto \u25B6'; return; }
+    this.textContent='stop \u25A0';
+    autoTimer=setInterval(function(){ throwDarts(20); },60);
+  });
+  drawBoard();
+
+  /* ---------- RANGE ---------- */
+  $('rGo').addEventListener('click',function(){
+    var lo=parseInt($('rLow').value,10), hi=parseInt($('rHigh').value,10);
+    if(isNaN(lo)||isNaN(hi)){ $('rOut').textContent='?'; return; }
+    if(hi<lo){ var t=lo; lo=hi; hi=t; }
+    var v=Math.floor(rnd()*(hi-lo+1))+lo;
+    $('rOut').textContent=v;
+  });
+
+})();
+</script>
+</body>
+</html>

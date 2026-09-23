@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Trig Lab — sin, cos &amp; tan</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    background:radial-gradient(circle at 50% 0%,#3a2450 0%,#1d1233 55%,#0e0820 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#f6f0ff;
+    min-height:100vh;padding:20px 12px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:1.45rem;color:#e9a0ff;text-align:center;text-shadow:0 0 20px rgba(233,160,255,.45);letter-spacing:1px;}
+  .sub{color:#cdbde8;font-style:italic;font-size:.9rem;margin:6px 0 16px;text-align:center;}
+  .tabs{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;max-width:520px;}
+  .tab{
+    background:rgba(255,255,255,.08);color:#e6dcff;border:2px solid rgba(255,255,255,.15);
+    padding:9px 13px;border-radius:22px;font-family:inherit;font-size:.88rem;cursor:pointer;transition:.15s;
+  }
+  .tab.active{background:#7c3aed;border-color:#e9a0ff;color:#fff;font-weight:bold;}
+  .panel{display:none;width:100%;max-width:460px;}
+  .panel.active{display:block;}
+  .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .card h2{font-size:1.05rem;color:#e9a0ff;margin-bottom:12px;}
+  p{line-height:1.7;font-size:.94rem;margin-bottom:10px;}
+  canvas{width:100%;display:block;border-radius:12px;background:#0d0720;border:1px solid #3a2450;}
+  .row{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
+  .row label{font-size:.9rem;color:#cdbde8;width:88px;}
+  .row input[type=range]{flex:1;min-width:0;accent-color:#a855f7;}
+  .row input[type=number]{
+    flex:1;min-width:0;font-family:inherit;font-size:1rem;padding:9px;border-radius:10px;
+    border:2px solid #3a2450;background:#0d0720;color:#f6f0ff;
+  }
+  .btnrow{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
+  .btnrow button{
+    flex:1 1 auto;font-family:inherit;font-size:.9rem;padding:10px 8px;border-radius:11px;cursor:pointer;
+    background:#7c3aed;color:#fff;border:1px solid #e9a0ff;font-weight:bold;
+  }
+  .btnrow button.alt{background:#3f3358;border-color:#a78bfa;}
+  .btnrow button:active{transform:scale(.96);}
+  .vals{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;}
+  .v{background:rgba(255,255,255,.07);border-radius:11px;padding:9px;text-align:center;}
+  .v b{display:block;font-size:.75rem;color:#c4a2ff;margin-bottom:3px;letter-spacing:.5px;}
+  .v span{font-family:ui-monospace,Menlo,monospace;font-size:1.05rem;color:#fdba74;}
+  .big{font-size:2rem;font-weight:bold;text-align:center;color:#fdba74;font-family:ui-monospace,Menlo,monospace;margin:6px 0;}
+  .note{background:rgba(233,160,255,.10);border-left:4px solid #e9a0ff;border-radius:0 10px 10px 0;padding:12px 14px;font-size:.92rem;line-height:1.7;margin-bottom:12px;}
+  .qtext{font-size:1.1rem;line-height:1.6;margin-bottom:12px;min-height:48px;}
+  .choices{display:grid;gap:8px;}
+  .choices button{
+    font-family:inherit;font-size:.95rem;padding:12px;border-radius:12px;cursor:pointer;text-align:left;
+    background:rgba(255,255,255,.08);color:#e6dcff;border:1px solid rgba(255,255,255,.2);
+  }
+  .fb{margin-top:12px;font-size:.95rem;line-height:1.6;min-height:40px;}
+  .ok{color:#86efac;} .no{color:#fca5a5;}
+  .foot{margin-top:22px;color:#a99ad0;font-size:.82rem;text-align:center;line-height:1.7;}
+  code{background:rgba(255,255,255,.13);padding:1px 5px;border-radius:5px;}
+</style>
+</head>
+<body>
+
+<h1>&#128208; THE TRIG LAB</h1>
+<div class="sub">sin &middot; cos &middot; tan &mdash; the triangle buttons &middot; for Charlotte &#128300;</div>
+
+<div class="tabs">
+  <button class="tab active" data-p="tri">&#128208; Triangle</button>
+  <button class="tab" data-p="cir">&#11093; Circle &rarr; Wave</button>
+  <button class="tab" data-p="tree">&#127956;&#65039; Tree height</button>
+  <button class="tab" data-p="quiz">&#127919; Quiz</button>
+</div>
+
+<!-- TRIANGLE -->
+<div class="panel active" id="tri">
+  <div class="card">
+    <h2>&#128208; The triangle explorer</h2>
+    <p>Every right-angled triangle has one angle we care about, <b>&theta;</b>. The three buttons just measure its <b>sides</b> and divide them! &#128200;</p>
+    <canvas id="triCv" width="340" height="260"></canvas>
+    <div class="row" style="margin-top:12px;"><label>&theta;</label><input type="range" id="triSlider" min="1" max="89" value="30"><span class="mono" id="triDeg" style="width:52px;text-align:right;font-family:ui-monospace,monospace;color:#fdba74;">30&deg;</span></div>
+    <div class="btnrow">
+      <button data-ang="30" class="alt">30&deg;</button>
+      <button data-ang="45" class="alt">45&deg;</button>
+      <button data-ang="60" class="alt">60&deg;</button>
+    </div>
+    <div class="vals">
+      <div class="v"><b>SIN</b><span id="vSin">0.5</span></div>
+      <div class="v"><b>COS</b><span id="vCos">0.8660</span></div>
+      <div class="v"><b>TAN</b><span id="vTan">0.5774</span></div>
+    </div>
+    <div class="note" style="margin-top:14px;">
+      <b>&#128161; SOH CAH TOA</b> &mdash; the famous memory spell:<br>
+      <b>S</b>in = <b>O</b>pposite &divide; <b>H</b>ypotenuse<br>
+      <b>C</b>os = <b>A</b>djacent &divide; <b>H</b>ypotenuse<br>
+      <b>T</b>an = <b>O</b>pposite &divide; <b>A</b>djacent
+    </div>
+  </div>
+</div>
+
+<!-- CIRCLE -->
+<div class="panel" id="cir">
+  <div class="card">
+    <h2>&#11093; The circle makes sense of it all</h2>
+    <p>Imagine a dot going round a circle of radius <b>1</b>. Its <b>height</b> is <b>sin</b>, its <b>width across</b> is <b>cos</b>. That&#39;s why they&#39;re never bigger than 1! &#128561;</p>
+    <canvas id="cirCv" width="340" height="300"></canvas>
+    <div class="vals" style="margin-top:12px;">
+      <div class="v"><b>SIN (height)</b><span id="cSin">0.00</span></div>
+      <div class="v"><b>COS (across)</b><span id="cCos">1.00</span></div>
+      <div class="v"><b>ANGLE</b><span id="cAng">0&deg;</span></div>
+    </div>
+    <div class="note" style="margin-top:14px;">
+      <b>&#127925; Now the magic:</b> if you unroll that going-round movement into a line, you get a <b>wave</b>! That&#39;s the ribbon on the right. Sound, light, radio, tides, springs&hellip; all of them are made of <b>sine waves</b>. So sin and cos are secretly the <b>shape of music</b>. &#127926;
+    </div>
+  </div>
+</div>
+
+<!-- TREE -->
+<div class="panel" id="tree">
+  <div class="card">
+    <h2>&#127956;&#65039; Measure a tree without climbing it</h2>
+    <p>Real surveyors do this! Stand a known distance from the tree, <b>look up to the top</b>, and measure the angle. Then:</p>
+    <div class="note"><b>height = distance &times; tan(angle)</b> &#128200;</div>
+    <div class="row"><label>distance (m)</label><input type="number" id="tDist" value="10" step="0.5"></div>
+    <div class="row"><label>angle (&deg;)</label><input type="number" id="tAng" value="40" step="1"></div>
+    <div class="btnrow"><button id="tGo">How tall is it? &#127795;</button></div>
+    <div class="big" id="tOut">&#8211;</div>
+    <p style="font-size:.9rem;color:#cdbde8;">&#128161; Sanity check: if the angle is 45&deg;, tan = 1, so the tree is exactly as tall as your distance away! &#129504;</p>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="panel" id="quiz">
+  <div class="card">
+    <h2>&#127919; Trig quiz</h2>
+    <div class="qtext" id="qtext">Press start!</div>
+    <div class="choices" id="choices"></div>
+    <div class="fb" id="fb"></div>
+    <div class="btnrow" style="margin-top:12px;"><button id="qNext" class="alt">next &#8594;</button><button id="qScoreBtn" class="alt" disabled style="opacity:.7;">score: <span id="qScore">0</span></button></div>
+  </div>
+</div>
+
+<div class="foot">
+  The Trig Lab &middot; made for Charlotte by Alice the fairy &#129498;&#65039;&#10024;<br>
+  &#9888;&#65039; Remember: check <b>DEG</b> mode on your calculator, or the answers go weird!
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+  var D=Math.PI/180;
+
+  /* tabs */
+  var tabs=document.querySelectorAll('.tab'), panels=document.querySelectorAll('.panel');
+  Array.prototype.forEach.call(tabs,function(t){
+    t.addEventListener('click',function(){
+      Array.prototype.forEach.call(tabs,function(x){x.classList.remove('active');});
+      Array.prototype.forEach.call(panels,function(x){x.classList.remove('active');});
+      t.classList.add('active');
+      $(t.getAttribute('data-p')).classList.add('active');
+      if(t.getAttribute('data-p')==='cir' && !cirRunning){ cirRunning=true; loop(); }
+    });
+  });
+
+  /* ---------- TRIANGLE ---------- */
+  var tctx=$('triCv').getContext('2d');
+  function drawTri(deg){
+    var W=340,H=260,ctx=tctx;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d0720'; ctx.fillRect(0,0,W,H);
+
+    var hyp=155, th=deg*D;
+    var b=hyp*Math.cos(th), h=hyp*Math.sin(th);
+    var x0=45, y0=218, x1=x0+b, y1=y0-h;
+
+    /* triangle */
+    ctx.beginPath();
+    ctx.moveTo(x0,y0); ctx.lineTo(x1,y0); ctx.lineTo(x1,y1); ctx.closePath();
+    var g=ctx.createLinearGradient(x0,y0,x1,y1);
+    g.addColorStop(0,'rgba(124,58,237,.45)'); g.addColorStop(1,'rgba(233,160,255,.35)');
+    ctx.fillStyle=g; ctx.fill();
+    ctx.strokeStyle='#e9a0ff'; ctx.lineWidth=2.5; ctx.stroke();
+
+    /* right-angle marker */
+    ctx.strokeStyle='#a78bfa'; ctx.lineWidth=2;
+    ctx.strokeRect(x1-16,y0-16,16,16);
+
+    /* theta arc */
+    ctx.beginPath(); ctx.arc(x0,y0,30,-th,0);
+    ctx.strokeStyle='#fdba74'; ctx.lineWidth=3; ctx.stroke();
+    ctx.fillStyle='#fdba74'; ctx.font='16px Georgia';
+    ctx.fillText('\u03B8', x0+38, y0-9);
+
+    /* labels */
+    ctx.font='13px Georgia'; ctx.fillStyle='#c4a2ff';
+    ctx.fillText('adjacent', x0+b/2-28, y0+20);
+    ctx.save(); ctx.translate(x1+8, y1+h/2); ctx.rotate(Math.PI/2); ctx.fillStyle='#86efac';
+    ctx.fillText('opposite', -26,0); ctx.restore();
+    ctx.fillStyle='#fdba74';
+    ctx.save(); ctx.translate((x0+x1)/2-52,(y0+y1)/2-6); ctx.rotate(-th); ctx.fillText('hypotenuse',0,0); ctx.restore();
+
+    /* values */
+    var s=Math.sin(th), c=Math.cos(th), t=Math.tan(th);
+    $('vSin').textContent=s.toFixed(4);
+    $('vCos').textContent=c.toFixed(4);
+    $('vTan').textContent= deg>=89.5? '\u221E huge' : t.toFixed(4);
+    $('triDeg').textContent=deg+'\u00B0';
+    $('triSlider').value=deg;
+  }
+  $('triSlider').addEventListener('input',function(){ drawTri(parseInt(this.value,10)); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ang]'),function(b){
+    b.addEventListener('click',function(){ drawTri(parseInt(this.getAttribute('data-ang'),10)); });
+  });
+  drawTri(30);
+
+  /* ---------- CIRCLE + WAVE ---------- */
+  var cctx=$('cirCv').getContext('2d');
+  var phase=0, cirRunning=false;
+  function drawCircle(){
+    var W=340,H=300,ctx=cctx;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d0720'; ctx.fillRect(0,0,W,H);
+
+    var cx=88, cy=150, r=82;
+    /* axes */
+    ctx.strokeStyle='rgba(167,139,250,.35)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(cx-r-12,cy); ctx.lineTo(cx+r+12,cy);
+    ctx.moveTo(cx,cy-r-12); ctx.lineTo(cx,cy+r+12); ctx.stroke();
+    /* circle */
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle='#7c3aed'; ctx.lineWidth=2.5; ctx.stroke();
+
+    var s=Math.sin(phase), c=Math.cos(phase);
+    var px=cx+r*c, py=cy-r*s;
+
+    /* radius */
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py);
+    ctx.strokeStyle='#e9a0ff'; ctx.lineWidth=2.5; ctx.stroke();
+    /* sin = height (vertical dashed) */
+    ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,cy);
+    ctx.strokeStyle='#fdba74'; ctx.lineWidth=3.5; ctx.setLineDash([5,4]); ctx.stroke(); ctx.setLineDash([]);
+    /* cos = across */
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,cy);
+    ctx.strokeStyle='#86efac'; ctx.lineWidth=3.5; ctx.stroke();
+    /* dot */
+    ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
+
+    /* wave panel */
+    var wx0=196, wx1=332, wcy=150, amp=62;
+    ctx.strokeStyle='rgba(167,139,250,.35)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(wx0,wcy); ctx.lineTo(wx1,wcy); ctx.stroke();
+
+    ctx.beginPath();
+    var span=wx1-wx0;
+    for(var k=0;k<=phase;k+=0.02){
+      var xx=wx0+(k/(Math.PI*2))*span;
+      var yy=wcy-amp*Math.sin(k);
+      if(k===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+    }
+    ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=3; ctx.stroke();
+
+    if(phase>0.001){
+      var dx=wx0+(phase/(Math.PI*2))*span, dy=wcy-amp*Math.sin(phase);
+      ctx.beginPath(); ctx.arc(dx,dy,5,0,Math.PI*2); ctx.fillStyle='#fdba74'; ctx.fill();
+      /* connector from circle height to wave */
+      ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(wx0-6,(py)); ctx.strokeStyle='rgba(253,186,116,.35)'; ctx.lineWidth=2; ctx.stroke();
+    }
+    ctx.fillStyle='#c4a2ff'; ctx.font='12px Georgia';
+    ctx.fillText('the wave!', wx0+34, wcy-amp-10);
+    ctx.fillStyle='#fdba74'; ctx.fillText('sin', px+8, (py+cy)/2);
+    ctx.fillStyle='#86efac'; ctx.fillText('cos', (cx+px)/2, cy+16);
+
+    $('cSin').textContent=s.toFixed(2);
+    $('cCos').textContent=c.toFixed(2);
+    var deg=(phase/D)%360;
+    $('cAng').textContent=deg.toFixed(0)+'\u00B0';
+  }
+  function loop(){
+    phase+=0.045;
+    if(phase>Math.PI*2) phase=0;
+    drawCircle();
+    if(cirRunning) requestAnimationFrame(loop);
+  }
+  drawCircle();
+
+  /* ---------- TREE ---------- */
+  $('tGo').addEventListener('click',function(){
+    var d=parseFloat($('tDist').value), a=parseFloat($('tAng').value);
+    if(isNaN(d)||isNaN(a)){ $('tOut').textContent='?'; return; }
+    if(a<=0||a>=90){
+      $('tOut').textContent='??';
+      return;
+    }
+    var hgt=d*Math.tan(a*D);
+    $('tOut').textContent=hgt.toFixed(2)+' m tall';
+  });
+
+  /* ---------- QUIZ ---------- */
+  var QS=[
+    {q:'sin = which sides divided?', o:['opposite \u00F7 hypotenuse','adjacent \u00F7 hypotenuse','opposite \u00F7 adjacent','hypotenuse \u00F7 opposite'], c:0},
+    {q:'cos = ?', o:['opposite \u00F7 hypotenuse','adjacent \u00F7 hypotenuse','adjacent \u00F7 opposite','1 \u00F7 tan'], c:1},
+    {q:'tan = ?', o:['adjacent \u00F7 opposite','opposite \u00D7 adjacent','opposite \u00F7 adjacent','hypotenuse \u00F7 adjacent'], c:2},
+    {q:'What is sin 30\u00B0?', o:['1','0.5','0.866','0'], c:1},
+    {q:'What is sin 90\u00B0?', o:['0','0.5','1','\u221E'], c:2},
+    {q:'What is tan 45\u00B0?', o:['0','0.5','1','2'], c:2},
+    {q:'If sin \u03B8 = 0.5, what is \u03B8?', o:['15\u00B0','30\u00B0','45\u00B0','60\u00B0'], c:1},
+    {q:'Which button finds the ANGLE when you know the ratio?', o:['2nd + sin (sin\u207B\u00B9)','x\u00B2','Rand','ln'], c:0},
+    {q:'sin and cos are always between...', o:['0 and 1','\u22121 and 1','\u2212\u221E and \u221E','0 and 360'], c:1},
+    {q:'Sound, light and tides are all shaped like a...', o:['triangle','square wave','sine wave','circle'], c:2}
+  ];
+  var qi=0, score=0, locked=false;
+  function showQ(){
+    locked=false;
+    $('qtext').innerHTML=QS[qi].q;
+    $('fb').innerHTML='';
+    $('choices').innerHTML='';
+    QS[qi].o.forEach(function(opt,i){
+      var b=document.createElement('button');
+      b.textContent=opt;
+      b.addEventListener('click',function(){ answer(i); });
+      $('choices').appendChild(b);
+    });
+  }
+  function answer(i){
+    if(locked) return;
+    locked=true;
+    if(i===QS[qi].c){ score++; $('fb').innerHTML='<span class="ok">\u2705 <b>Yes!</b> Nice work, trig-master.</span>'; }
+    else $('fb').innerHTML='<span class="no">\u274C Not that one. The answer was <b>'+QS[qi].o[QS[qi].c]+'</b>.</span>';
+    $('qScore').textContent=score;
+  }
+  $('qNext').addEventListener('click',function(){ qi=(qi+1)%QS.length; showQ(); });
+  showQ();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Button Box — every remaining scientific calculator key</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    background:radial-gradient(circle at 50% 0%,#2a1b46 0%,#150e2b 55%,#080512 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#f4f0ff;
+    min-height:100vh;padding:20px 12px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:1.4rem;color:#ffd479;text-align:center;text-shadow:0 0 22px rgba(255,212,121,.4);letter-spacing:1px;}
+  .sub{color:#c9bce6;font-style:italic;font-size:.9rem;margin:6px 0 16px;text-align:center;}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;max-width:540px;}
+  .tab{
+    background:rgba(255,255,255,.08);color:#e8e0ff;border:2px solid rgba(255,255,255,.15);
+    padding:8px 12px;border-radius:20px;font-family:inherit;font-size:.85rem;cursor:pointer;transition:.15s;
+  }
+  .tab.active{background:#7c3aed;border-color:#ffd479;color:#fff;font-weight:bold;}
+  .panel{display:none;width:100%;max-width:470px;}
+  .panel.active{display:block;}
+  .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .card h2{font-size:1.05rem;color:#ffd479;margin-bottom:12px;}
+  p{line-height:1.7;font-size:.94rem;margin-bottom:10px;}
+  code{background:rgba(255,255,255,.13);padding:1px 5px;border-radius:5px;font-family:ui-monospace,Menlo,monospace;font-size:.88rem;}
+  .mono{font-family:ui-monospace,Menlo,monospace;color:#86efac;font-size:.9rem;}
+  .row{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
+  .row label{font-size:.9rem;color:#c9bce6;width:96px;}
+  .row input{
+    flex:1;min-width:0;font-family:inherit;font-size:1rem;padding:9px;border-radius:10px;
+    border:2px solid #3a2a5e;background:#0c0720;color:#fff;
+  }
+  .btnrow{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
+  .btnrow button{
+    flex:1 1 auto;font-family:inherit;font-size:.9rem;padding:10px 8px;border-radius:11px;cursor:pointer;
+    background:#7c3aed;color:#fff;border:1px solid #ffd479;font-weight:bold;
+  }
+  .btnrow button.alt{background:#3d2f5c;border-color:#a78bfa;}
+  .btnrow button:active{transform:scale(.95);}
+  .big{font-size:1.7rem;font-weight:bold;text-align:center;color:#fdba74;font-family:ui-monospace,Menlo,monospace;margin:8px 0;word-break:break-all;}
+  .out{font-family:ui-monospace,Menlo,monospace;font-size:.95rem;color:#fdba74;background:rgba(0,0,0,.3);border-radius:10px;padding:10px;margin-top:10px;word-break:break-all;line-height:1.6;}
+  .note{background:rgba(255,212,121,.10);border-left:4px solid #ffd479;border-radius:0 10px 10px 0;padding:12px 14px;font-size:.92rem;line-height:1.7;margin:12px 0;}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:8px;}
+  th,td{padding:6px 5px;text-align:left;border-bottom:1px solid rgba(255,255,255,.12);}
+  th{color:#c4a2ff;font-weight:normal;}
+  td.k{font-family:ui-monospace,Menlo,monospace;color:#fdba74;}
+  canvas{width:100%;display:block;border-radius:12px;background:#0c0720;border:1px solid #3a2a5e;}
+  .ladder{margin-top:10px;}
+  .ladder div{
+    display:flex;align-items:center;gap:8px;font-size:.82rem;padding:4px 0;
+    border-bottom:1px solid rgba(255,255,255,.08);font-family:ui-monospace,Menlo,monospace;
+  }
+  .ladder .nm{flex:1;color:#d6caf5;font-family:Georgia,serif;}
+  .ladder .cd{color:#86efac;}
+  .memdisp{background:#0c0720;border:2px solid #3a2a5e;border-radius:12px;padding:12px;text-align:right;font-family:ui-monospace,Menlo,monospace;margin-bottom:10px;}
+  .memdisp .m{font-size:.8rem;color:#86efac;min-height:18px;}
+  .memdisp .v{font-size:1.5rem;color:#fff;min-height:30px;word-break:break-all;}
+  .pad{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .pad button{
+    font-family:ui-monospace,Menlo,monospace;font-size:1rem;padding:12px 4px;border-radius:10px;cursor:pointer;
+    background:rgba(255,255,255,.10);color:#fff;border:1px solid rgba(255,255,255,.18);
+  }
+  .pad button:active{transform:scale(.95);}
+  .pad button.op{background:#4c1d95;border-color:#a78bfa;}
+  .pad button.mem{background:#134e4a;border-color:#5eead4;font-size:.8rem;color:#5eead4;}
+  .pad button.go{background:#b45309;border-color:#ffd479;}
+  .qtext{font-size:1.08rem;line-height:1.6;margin-bottom:12px;min-height:46px;}
+  .choices{display:grid;gap:8px;}
+  .choices button{
+    font-family:inherit;font-size:.94rem;padding:11px;border-radius:12px;cursor:pointer;text-align:left;
+    background:rgba(255,255,255,.08);color:#e8e0ff;border:1px solid rgba(255,255,255,.2);
+  }
+  .fb{margin-top:12px;font-size:.95rem;line-height:1.6;min-height:40px;}
+  .ok{color:#86efac;} .no{color:#fca5a5;}
+  .foot{margin-top:22px;color:#a99ad0;font-size:.82rem;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<h1>&#127381; THE BUTTON BOX</h1>
+<div class="sub">Every other key on the scientific calculator &middot; for Charlotte &#129497;&#8205;&#9792;&#65039;</div>
+
+<div class="tabs">
+  <button class="tab active" data-p="log">&#128200; log &amp; ln</button>
+  <button class="tab" data-p="fact">&#127881; x!</button>
+  <button class="tab" data-p="pow">&#9889; Powers</button>
+  <button class="tab" data-p="rec">&#128260; 1/x</button>
+  <button class="tab" data-p="grow">&#127793; e&#739; &amp; 10&#739;</button>
+  <button class="tab" data-p="mem">&#128190; Memory</button>
+  <button class="tab" data-p="second">&#127917; 2nd</button>
+  <button class="tab" data-p="quiz">&#127919; Quiz</button>
+</div>
+
+<!-- LOG -->
+<div class="panel active" id="log">
+  <div class="card">
+    <h2>&#128200; log &amp; ln &mdash; the &ldquo;how many zeros?&rdquo; buttons</h2>
+    <p><b>log</b> asks: <i>&ldquo;10 to the power WHAT gives this number?&rdquo;</i></p>
+    <div class="row"><label>number</label><input type="number" id="logIn" value="1000" step="any"></div>
+    <div class="btnrow"><button id="logGo">Ask the log button &#128200;</button></div>
+    <div class="out" id="logOut">log 1000 = 3 &nbsp;&rarr;&nbsp; because 10&#179; = 1000</div>
+    <div class="note">
+      &#128161; <b>log</b> is the opposite of <b>10&#739;</b>. They undo each other!<br>
+      log 100 = 2 &middot; log 1000 = 3 &middot; log 1,000,000 = 6 &middot; log 1 = 0 🎯
+    </div>
+    <p><b>ln</b> is <i>the same idea</i>, but it uses the number <b>e</b> (2.718...) instead of 10. Scientists use ln for growth and radioactivity.</p>
+  </div>
+  <div class="card">
+    <h2>&#129518; The zero-ladder</h2>
+    <p>Why do scientists love logs? Because they turn <b>gigantic</b> numbers into <b>small friendly ones</b>:</p>
+    <div class="ladder" id="ladder"></div>
+  </div>
+</div>
+
+<!-- FACTORIAL -->
+<div class="panel" id="fact">
+  <div class="card">
+    <h2>&#127881; x! &mdash; the factorial button</h2>
+    <p><b>x!</b> means: multiply every whole number down to 1. It counts <b>ways to arrange things</b>! &#127922;</p>
+    <div class="row"><label>number</label><input type="number" id="fIn" value="5" min="1" max="300"></div>
+    <div class="btnrow">
+      <button id="fGo">Shout it &#127881;</button>
+      <button data-f="5" class="alt">5!</button>
+      <button data-f="10" class="alt">10!</button>
+      <button data-f="52" class="alt">52!</button>
+    </div>
+    <div class="out" id="fOut">5! = 5 &times; 4 &times; 3 &times; 2 &times; 1 = 120</div>
+    <div class="note">
+      <b>&#127183; How many ways to shuffle a deck of cards?</b><br>
+      52! &mdash; that number is so huge that if every star in the universe shuffled cards every second since the Big Bang, they still wouldn&#39;t have seen them all. Not even close. &#128561;
+    </div>
+    <p><b>Watch it explode:</b> 10! = 3,628,800. By 20! you&#39;re in the <i>quintillions</i> (that&#39;s 19 digits!) &mdash; and your calculator gives up around <b>69!</b> &#128165;</p>
+  </div>
+</div>
+
+<!-- POWERS -->
+<div class="panel" id="pow">
+  <div class="card">
+    <h2>&#9889; The power family: x&sup2; x&sup3; x&#8319;</h2>
+    <p>These are all the same button wearing different hats: <b>multiply the number by itself</b>. &#128170;</p>
+    <div class="row"><label>number</label><input type="number" id="pIn" value="7" step="any"></div>
+    <div class="btnrow"><button id="pGo">Show me the powers &#9889;</button></div>
+    <div class="out" id="pOut"></div>
+    <table>
+      <tr><th>Button</th><th>Name</th><th>Means</th></tr>
+      <tr><td class="k">x&sup2;</td><td>squared</td><td>n &times; n <span style="color:#8fb4c4">(the square!)</span></td></tr>
+      <tr><td class="k">x&sup3;</td><td>cubed</td><td>n &times; n &times; n <span style="color:#8fb4c4">(the cube!)</span></td></tr>
+      <tr><td class="k">x&#8319;</td><td>power</td><td>n &times; itself n times</td></tr>
+      <tr><td class="k">&radic;</td><td>square root</td><td>the opposite of x&sup2; &#128260;</td></tr>
+      <tr><td class="k">2nd + &radic;</td><td>cube root</td><td>the opposite of x&sup3;</td></tr>
+    </table>
+    <div class="note">
+      <b>&#127806; The rice-and-chessboard legend:</b><br>
+      A king offered a reward: 1 grain of rice on square 1, 2 on square 2, 4 on square 3, doubling each time. By square 64 the pile would be <b>18,446,744,073,709,551,615</b> grains &mdash; more rice than the whole world grows in centuries! That&#39;s <code>2&#8319;</code> for you. 😄
+    </div>
+  </div>
+</div>
+
+<!-- RECIPROCAL -->
+<div class="panel" id="rec">
+  <div class="card">
+    <h2>&#128260; 1/x &mdash; the flip button</h2>
+    <p>Press <b>1/x</b> and the number does a cartwheel: it becomes <b>1 &divide; the number</b>. &#129504;</p>
+    <div class="row"><label>number</label><input type="number" id="rIn" value="4" step="any"></div>
+    <div class="btnrow"><button id="rGo">Flip it &#128260;</button><button data-r="4" class="alt">&frac14;</button><button data-r="8" class="alt">&frac18;</button><button data-r="0.25" class="alt">0.25</button></div>
+    <div class="out" id="rOut">1 &divide; 4 = 0.25</div>
+    <div class="note">
+      <b>&#127919; The pattern to spot:</b><br>
+      Flip a <b>big</b> number &rarr; get a <b>tiny</b> one. Flip a <b>tiny</b> one &rarr; get a <b>big</b> one.<br>
+      1 &divide; 1000 = 0.001 &nbsp;&harr;&nbsp; 1 &divide; 0.001 = 1000 &#128561;
+    </div>
+    <p>&#9888;&#65039; And <code>1 &divide; 0</code>? That would need a number that &times; 0 gives 1 &mdash; impossible! That&#39;s why your calculator screams <b>ERROR</b> or <b>Math ERROR</b>. 🚫</p>
+  </div>
+</div>
+
+<!-- GROWTH -->
+<div class="panel" id="grow">
+  <div class="card">
+    <h2>&#127793; e&#739; &amp; 10&#739; &mdash; the growth buttons</h2>
+    <p>These are just <b>powers of special numbers</b>: <b>10&#739;</b> is powers of ten, <b>e&#739;</b> is powers of <b>e = 2.718281828...</b></p>
+    <canvas id="gCv" width="340" height="220"></canvas>
+    <div class="note" style="margin-top:12px;">
+      &#127793; <b>Why does a weird number like 2.718... get its own button?</b><br>
+      Because it&#39;s the number of <b>natural growth</b> &mdash; things that grow in proportion to how big they already are: <b>bacteria, money in the bank, radioactivity, rabbits</b>. Mathematicians call it Euler&#39;s number. It even hides inside snail shells and sunflower seeds! &#127804;
+    </div>
+    <p class="mono">10&#8309; = 10 &middot; 10&sup2; = 100 &middot; 10&#179; = 1000 ... but also 10&#8315;&sup2; = 0.01 &#11015;</p>
+  </div>
+</div>
+
+<!-- MEMORY -->
+<div class="panel" id="mem">
+  <div class="card">
+    <h2>&#128190; mc &middot; m+ &middot; m&minus; &middot; mr &mdash; the calculator&#39;s pockets</h2>
+    <p>These four buttons are a <b>tiny secret storage box</b> inside your calculator. Perfect for carrying a number from one sum to the next! Click the real thing below &#128071;</p>
+    <div class="memdisp"><div class="m" id="mSlot">memory: empty</div><div class="v" id="mDisp">0</div></div>
+    <div class="pad" id="mPad"></div>
+    <table style="margin-top:12px;">
+      <tr><th>Button</th><th>Plain English</th></tr>
+      <tr><td class="k">mc</td><td>memory <b>clear</b> &mdash; empty the pocket</td></tr>
+      <tr><td class="k">m+</td><td>memory <b>plus</b> &mdash; add my number to the pocket</td></tr>
+      <tr><td class="k">m&minus;</td><td>memory <b>minus</b> &mdash; subtract from the pocket</td></tr>
+      <tr><td class="k">mr</td><td>memory <b>recall</b> &mdash; put the pocket&#39;s number back</td></tr>
+    </table>
+    <div class="note">&#128161; <b>Try this:</b> type 25, press <b>m+</b>. Then 17, press <b>m+</b>. Then press <b>mr</b> &mdash; ta-da, 42! You never had to write anything down. &#128229;</div>
+  </div>
+</div>
+
+<!-- 2ND -->
+<div class="panel" id="second">
+  <div class="card">
+    <h2>&#127917; 2nd &mdash; the secret Shift key</h2>
+    <p><b>Everything on a scientific calculator has a hidden second job.</b> Press <b>2nd</b> and the whole keyboard flips over! Tap the buttons to see both sides &#128071;</p>
+    <div class="btnrow" id="sBtnRow"></div>
+    <div class="out" id="sOut">Press 2nd, then tap a button above. &#127917;</div>
+    <table style="margin-top:12px;" id="sTable">
+      <tr><th>Button</th><th>2nd + button</th></tr>
+    </table>
+    <div class="note">&#128161; <b>Why it matters:</b> you said <code>sin 30&deg; = 0.5</code>. That&#39;s <i>forwards</i>. But what if you know the side and want the <b>angle</b>? That&#39;s backwards &mdash; so you press <b>2nd + sin</b> (which is <b>sin&#8315;&sup1;</b>, called &ldquo;inverse sine&rdquo;). Same for cos&#8315;&sup1; and tan&#8315;&sup1;. &#128260;</div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="panel" id="quiz">
+  <div class="card">
+    <h2>&#127919; The Button Box quiz</h2>
+    <div class="qtext" id="qtext">Get ready!</div>
+    <div class="choices" id="choices"></div>
+    <div class="fb" id="fb"></div>
+    <div class="btnrow" style="margin-top:12px;">
+      <button id="qNext" class="alt">next &#8594;</button>
+      <button class="alt" disabled style="opacity:.75;">score: <span id="qScore">0</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="foot">
+  The Button Box &middot; made for Charlotte by Alice the fairy &#129498;&#65039;&#10024;<br>
+  That&#39;s the <b>whole keyboard</b> decoded! &#127881;
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+  var D=Math.PI/180;
+
+  var tabs=document.querySelectorAll('.tab'), panels=document.querySelectorAll('.panel');
+  Array.prototype.forEach.call(tabs,function(t){
+    t.addEventListener('click',function(){
+      Array.prototype.forEach.call(tabs,function(x){x.classList.remove('active');});
+      Array.prototype.forEach.call(panels,function(x){x.classList.remove('active');});
+      t.classList.add('active');
+      $(t.getAttribute('data-p')).classList.add('active');
+    });
+  });
+
+  /* ---------- LOG ---------- */
+  function fmt(n){
+    if(!isFinite(n)) return '\u221E';
+    var a=Math.abs(n);
+    if(a!==0 && (a<0.0001 || a>=1e15)) return n.toExponential(4);
+    return String(Math.round(n*1e8)/1e8);
+  }
+  $('logGo').addEventListener('click',function(){
+    var v=parseFloat($('logIn').value);
+    if(isNaN(v)||v<=0){ $('logOut').textContent='\u26A0\uFE0F log only works on numbers BIGGER than 0. (You can\u2019t have "how many zeros" of a negative or of zero!)'; return; }
+    var l=Math.log10(v), ln=Math.log(v);
+    $('logOut').innerHTML='log '+fmt(v)+' = <b>'+l.toFixed(6).replace(/0+$/,'').replace(/\.$/,'')+'</b> &nbsp;&rarr;&nbsp; because 10^that = '+fmt(v)+
+      '<br><span style="color:#86efac">ln '+fmt(v)+' = '+ln.toFixed(6)+'</span>';
+  });
+  (function ladder(){
+    var items=[
+      ['\u269B\uFE0F width of an atom','1e-10 m'],
+      ['\uD83E\uDDA0 a virus','1e-7 m'],
+      ['\uD83D\uDC1C an ant','1e-2 m'],
+      ['\uD83E\uDDD2 you!','1.5e0 m'],
+      ['\uD83C\uDF33 a tall tree','1e1 m'],
+      ['\uD83D\uDDFC\uFE0F Eiffel Tower','3e2 m'],
+      ['\uD83C\uDFD4\uFE0F Mount Everest','8.8e3 m'],
+      ['\uD83C\uDF19 the Moon away','3.8e8 m'],
+      ['\u2600\uFE0F the Sun away','1.5e11 m'],
+      ['\uD83C\uDF1F the next star','4e16 m']
+    ];
+    var h='';
+    items.forEach(function(it){ h+='<div><span class="nm">'+it[0]+'</span><span class="cd">'+it[1]+'</span></div>'; });
+    $('ladder').innerHTML=h;
+  })();
+
+  /* ---------- FACTORIAL ---------- */
+  function bigFact(n){
+    var r=1n;
+    for(var i=2n;i<=BigInt(n);i++) r*=i;
+    return r.toString();
+  }
+  function group(s){
+    return s.replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  }
+  function doFact(n){
+    if(isNaN(n)||n<1){ $('fOut').textContent='\u26A0\uFE0F Use a whole number from 1 upwards!'; return; }
+    n=Math.floor(n);
+    if(n>300){ $('fOut').textContent='\u26A0\uFE0F Even I would faint. Try 1\u2013300.'; return; }
+    var head;
+    if(n<=12){
+      var parts=[];
+      for(var i=n;i>=1;i--) parts.push(i);
+      head=n+'! = '+parts.join(' \u00D7 ')+' = ';
+    } else {
+      head=n+'! = '+n+' \u00D7 '+(n-1)+' \u00D7 '+(n-2)+' \u00D7 ... \u00D7 3 \u00D7 2 \u00D7 1 = ';
+    }
+    var v=bigFact(n);
+    var note=' <span style="color:#8fb4c4">('+v.length+' digits!)</span>';
+    $('fOut').innerHTML=head+'<b>'+group(v)+'</b>'+note;
+  }
+  $('fGo').addEventListener('click',function(){ doFact(parseInt($('fIn').value,10)); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-f]'),function(b){
+    b.addEventListener('click',function(){
+      var v=parseInt(this.getAttribute('data-f'),10);
+      $('fIn').value=v; doFact(v);
+    });
+  });
+
+  /* ---------- POWERS ---------- */
+  $('pGo').addEventListener('click',function(){
+    var n=parseFloat($('pIn').value);
+    if(isNaN(n)){ $('pOut').textContent='?'; return; }
+    var lines=[];
+    lines.push('n = '+fmt(n));
+    lines.push('x\u00B2 = '+fmt(n*n));
+    lines.push('x\u00B3 = '+fmt(n*n*n));
+    lines.push('x\u2074 = '+fmt(Math.pow(n,4)));
+    lines.push('x\u00B9\u2070 = '+fmt(Math.pow(n,10)));
+    lines.push('\u221A = '+fmt(Math.sqrt(n<0?NaN:n))+(n<0?' (can\u2019t root a negative!)':''));
+    lines.push('\u221B (2nd + \u221A) = '+fmt(Math.cbrt(n)));
+    $('pOut').innerHTML=lines.join('<br>');
+  });
+  doGoPow();
+  function doGoPow(){ $('pGo').click(); }
+
+  /* ---------- RECIPROCAL ---------- */
+  function doRec(v){
+    var n=parseFloat(v);
+    if(isNaN(n)){ $('rOut').textContent='?'; return; }
+    if(n===0){ $('rOut').innerHTML='1 \u00F7 0 = <b>ERROR</b> \uD83D\uDEAB no number times 0 can give 1!'; return; }
+    $('rOut').innerHTML='1 \u00F7 '+fmt(n)+' = <b>'+fmt(1/n)+'</b>';
+  }
+  $('rGo').addEventListener('click',function(){ doRec($('rIn').value); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-r]'),function(b){
+    b.addEventListener('click',function(){ $('rIn').value=this.getAttribute('data-r'); doRec($('rIn').value); });
+  });
+
+  /* ---------- GROWTH ---------- */
+  (function growth(){
+    var cv=$('gCv'), ctx=cv.getContext('2d'), W=cv.width, H=cv.height;
+    ctx.fillStyle='#0c0720'; ctx.fillRect(0,0,W,H);
+    var pad=30, maxX=10;
+    var maxLog=Math.log10(Math.pow(10,maxX)); /* = 10 */
+    function X(x){ return pad + (x/maxX)*(W-pad-12); }
+    function Y(y){ return H-24 - (Math.log10(y)/maxLog)*(H-24-12); }
+    /* grid */
+    ctx.strokeStyle='rgba(167,139,250,.20)'; ctx.lineWidth=1;
+    for(var g=0;g<=maxX;g+=2){
+      ctx.beginPath(); ctx.moveTo(X(g),12); ctx.lineTo(X(g),H-24); ctx.stroke();
+    }
+    ctx.fillStyle='#8fb4c4'; ctx.font='11px Georgia';
+    ctx.fillText('x \u2192', W-30, H-8);
+    ctx.fillText('size (log scale)', 4, 11);
+    function curve(base,col){
+      ctx.beginPath();
+      for(var x=0;x<=maxX;x+=0.05){
+        var y=Math.pow(base,x);
+        if(y>1e10) break;
+        var px=X(x), py=Y(y);
+        if(x===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.stroke();
+    }
+    curve(2,'#7dd3fc'); curve(Math.E,'#86efac'); curve(10,'#fdba74');
+    ctx.font='12px Georgia';
+    ctx.fillStyle='#fdba74'; ctx.fillText('10\u02E3 (fastest)', W-118, 26);
+    ctx.fillStyle='#86efac'; ctx.fillText('e\u02E3', W-52, 46);
+    ctx.fillStyle='#7dd3fc'; ctx.fillText('2\u02E3', W-34, 66);
+  })();
+
+  /* ---------- MEMORY CALC ---------- */
+  (function memory(){
+    var disp='0', mem=null;
+    var keys=[
+      ['7','d'],['8','d'],['9','d'],['mc','mem'],
+      ['4','d'],['5','d'],['6','d'],['m+','mem'],
+      ['1','d'],['2','d'],['3','d'],['m\u2212','mem'],
+      ['0','d'],['.','d'],['C','op'],['mr','mem'],
+      ['\u00D7','op'],['\u00F7','op'],['\u2212','op'],['+','op']
+    ];
+    var h='';
+    keys.forEach(function(k){ h+='<button class="'+k[1]+'" data-k="'+k[0]+'">'+k[0]+'</button>'; });
+    h+='<button class="go" data-k="=" style="grid-column:span 4;">=</button>';
+    $('mPad').innerHTML=h;
+    function render(){
+      $('mDisp').textContent=disp;
+      $('mSlot').textContent = mem===null? 'memory: empty' : 'memory: '+mem;
+    }
+    $('mPad').addEventListener('click',function(e){
+      var b=e.target.closest('button'); if(!b) return;
+      var k=b.getAttribute('data-k');
+      if(k==='C'){ disp='0'; }
+      else if(k==='mc'){ mem=null; }
+      else if(k==='m+'||k==='m\u2212'){
+        var v=parseFloat(disp)||0;
+        mem=(mem===null?0:mem)+(k==='m+'?v:-v);
+      }
+      else if(k==='mr'){ disp = mem===null? '0' : String(mem); }
+      else if(k==='='){ disp=String(eval(disp.replace(/\u00D7/g,'*').replace(/\u00F7/g,'/').replace(/\u2212/g,'-'))); }
+      else {
+        if(disp==='0' || disp==='ERROR') disp='';
+        disp+=k;
+      }
+      render();
+    });
+    render();
+  })();
+
+  /* ---------- 2ND ---------- */
+  (function second(){
+    var pairs=[
+      ['x\u00B2','\u221A'],['x\u00B3','\u221B'],['x\u207F','x\u02B1\u2044\u207F'],
+      ['sin','sin\u207B\u00B9'],['cos','cos\u207B\u00B9'],['tan','tan\u207B\u00B9'],
+      ['log','10\u02E3'],['ln','e\u02E3'],['1/x','x!'],
+      ['\u221A','x\u00B2'],['\u2192DEG','\u2192RAD'],['Rand','RanInt']
+    ];
+    var h='';
+    pairs.forEach(function(p,i){ h+='<button class="alt" data-s="'+i+'" style="flex:1 1 30%;">'+p[0]+'</button>'; });
+    $('sBtnRow').innerHTML=h;
+    var th='';
+    pairs.forEach(function(p){ th+='<tr><td class="k">'+p[0]+'</td><td class="k">2nd + \u2192 '+p[1]+'</td></tr>'; });
+    $('sTable').insertAdjacentHTML('beforeend',th);
+    $('sBtnRow').addEventListener('click',function(e){
+      var b=e.target.closest('button'); if(!b) return;
+      var i=parseInt(b.getAttribute('data-s'),10), p=pairs[i];
+      $('sOut').innerHTML='\uD83C\uDF92 <b>2nd</b> then <b>'+p[0]+'</b> &nbsp;\u27A1\uFE0F&nbsp; <b>'+p[1]+'</b>';
+    });
+  })();
+
+  /* ---------- QUIZ ---------- */
+  var QS=[
+    {q:'What does <b>log 1000</b> ask?',o:['10 to what power = 1000','how many 3s are in 1000','1000 \u00F7 10','1000 cubed'],c:0},
+    {q:'<b>4!</b> (factorial) = ?',o:['16','24','4','10'],c:1},
+    {q:'Which button <b>undoes</b> x\u00B2?',o:['x\u00B3','1/x','\u221A','log'],c:2},
+    {q:'<b>1/x</b> on the number 0 gives...',o:['0','1','ERROR','100'],c:2},
+    {q:'Which button turns 5 into 0.2?',o:['x!','1/x','ln','2nd'],c:1},
+    {q:'<b>e</b> is roughly...',o:['3.14','2.718','1.41','10'],c:1},
+    {q:'What do <b>mc, m+, m\u2212, mr</b> do?',o:['multiply','store a number in memory','change the mode','clear the screen'],c:1},
+    {q:'Press <b>2nd + sin</b> and you get...',o:['sinh','sin\u207B\u00B9 (finds the ANGLE)','bigger sine','nothing'],c:1},
+    {q:'10\u2076 is...',o:['100,000','1,000,000','60','10,000'],c:1},
+    {q:'Which EXPLODES fastest?',o:['2\u207F','e\u207F','10\u207F','n!'],c:3}
+  ];
+  var qi=0, score=0, locked=false;
+  function showQ(){
+    locked=false;
+    $('qtext').innerHTML=QS[qi].q;
+    $('fb').innerHTML='';
+    $('choices').innerHTML='';
+    QS[qi].o.forEach(function(opt,i){
+      var b=document.createElement('button');
+      b.innerHTML=opt;
+      b.addEventListener('click',function(){ answer(i); });
+      $('choices').appendChild(b);
+    });
+  }
+  function answer(i){
+    if(locked) return;
+    locked=true;
+    if(i===QS[qi].c){ score++; $('fb').innerHTML='<span class="ok">\u2705 <b>Yes!</b> Button master!</span>'; }
+    else $('fb').innerHTML='<span class="no">\u274C Not that one. Answer: <b>'+QS[qi].o[QS[qi].c]+'</b>.</span>';
+    $('qScore').textContent=score;
+  }
+  $('qNext').addEventListener('click',function(){ qi=(qi+1)%QS.length; showQ(); });
+  showQ();
+})();
+</script>
+</body>
+</html>

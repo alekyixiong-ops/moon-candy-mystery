@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Yeast Breath Lab — blow up a balloon with living creatures</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    background:linear-gradient(180deg,#fff8ec 0%,#ffeacc 45%,#ffdba8 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#4a2c12;
+    min-height:100vh;padding:18px 12px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:1.35rem;color:#a35c00;text-align:center;letter-spacing:.5px;}
+  .sub{color:#8a6a48;font-style:italic;font-size:.88rem;margin:6px 0 14px;text-align:center;}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;max-width:520px;}
+  .tab{
+    background:#fff;color:#7a4a12;border:2px solid #f0d0a0;padding:8px 12px;border-radius:20px;
+    font-family:inherit;font-size:.85rem;cursor:pointer;transition:.15s;
+  }
+  .tab.active{background:#f59e0b;border-color:#b45309;color:#fff;font-weight:bold;}
+  .panel{display:none;width:100%;max-width:480px;}
+  .panel.active{display:block;}
+  .card{background:#fff;border:1px solid #f2dcbb;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(180,120,40,.08);}
+  .card h2{font-size:1.05rem;color:#b45309;margin-bottom:10px;}
+  p{line-height:1.7;font-size:.94rem;margin-bottom:10px;}
+  code{background:#fdf0dc;padding:1px 5px;border-radius:5px;font-family:ui-monospace,Menlo,monospace;font-size:.88rem;color:#8a4b00;}
+  ul{margin:0 0 10px 20px;}
+  li{line-height:1.75;font-size:.94rem;margin-bottom:5px;}
+  .btnrow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0;}
+  .btnrow button{
+    flex:1 1 auto;font-family:inherit;font-size:.95rem;padding:12px 10px;border-radius:11px;cursor:pointer;
+    background:#f59e0b;color:#fff;border:1px solid #b45309;font-weight:bold;
+  }
+  .btnrow button.alt{background:#f6e6cd;color:#7a4a12;border-color:#e0bc85;}
+  .btnrow button:active{transform:scale(.96);}
+  .step{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed #f0dcc0;}
+  .step:last-child{border-bottom:none;}
+  .step input{width:22px;height:22px;accent-color:#f59e0b;flex:0 0 auto;margin-top:2px;}
+  .step.done .txt{opacity:.5;text-decoration:line-through;}
+  .step .num{color:#b45309;font-weight:bold;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;}
+  .txt{font-size:.94rem;line-height:1.65;}
+  .timer{font-family:ui-monospace,Menlo,monospace;font-size:3rem;text-align:center;color:#b45309;letter-spacing:2px;}
+  .tbar{height:14px;background:#f6e6cd;border-radius:8px;overflow:hidden;margin:10px 0;}
+  .tbar .fill{height:100%;width:0%;background:linear-gradient(90deg,#fbbf24,#f97316);transition:width .5s;}
+  .warn{background:#fff4f4;border-left:4px solid #ef4444;padding:10px 12px;border-radius:0 10px 10px 0;font-size:.9rem;line-height:1.65;margin:10px 0;}
+  .note{background:#fffaef;border-left:4px solid #fbbf24;padding:10px 12px;border-radius:0 10px 10px 0;font-size:.9rem;line-height:1.65;margin:10px 0;}
+  .now{background:#fff7e8;border:2px dashed #f5b942;border-radius:12px;padding:12px;font-size:.95rem;line-height:1.6;margin:10px 0;min-height:56px;}
+  .now b{color:#b45309;}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:8px;}
+  th,td{padding:7px 5px;text-align:left;border-bottom:1px solid #f2e2c8;}
+  th{color:#a35c00;font-weight:normal;font-size:.82rem;}
+  td.t{font-family:ui-monospace,Menlo,monospace;color:#8a4b00}
+  input[type=text],input[type=number]{
+    font-family:inherit;font-size:.95rem;padding:8px;border-radius:9px;border:2px solid #f0d0a0;background:#fffdf9;color:#4a2c12;
+  }
+  .row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+  .row label{font-size:.88rem;color:#8a6a48;width:150px;}
+  .row input{flex:1;min-width:80px;}
+  .pred{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;}
+  .pred button{
+    flex:1 1 28%;font-family:inherit;font-size:.9rem;padding:11px 8px;border-radius:11px;cursor:pointer;
+    background:#f6e6cd;color:#7a4a12;border:2px solid #e0bc85;
+  }
+  .pred button.pick{background:#f59e0b;color:#fff;border-color:#b45309;font-weight:bold;}
+  .foot{margin-top:22px;color:#a08258;font-size:.82rem;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<h1>&#127880; THE YEAST BREATH LAB</h1>
+<div class="sub">Blow up a balloon with living creatures &middot; for Charlotte &#129497;&#8205;&#9792;&#65039;</div>
+
+<div class="tabs">
+  <button class="tab active" data-p="kit">&#127890; What you need</button>
+  <button class="tab" data-p="do">&#128295; Do it</button>
+  <button class="tab" data-p="time">&#9201;&#65039; Timer</button>
+  <button class="tab" data-p="race">&#127937; The Great Yeast Race</button>
+  <button class="tab" data-p="sci">&#128300; What&#39;s happening?</button>
+</div>
+
+<!-- KIT -->
+<div class="panel active" id="kit">
+  <div class="card">
+    <h2>&#127890; Go and gather these</h2>
+    <ul>
+      <li>A <b>small plastic bottle</b> (500 ml is perfect) — clean and empty 💧</li>
+      <li><b>Yeast</b> — 1 teaspoon (borrow some from your mum!) 🥄</li>
+      <li><b>Sugar</b> — 1 teaspoon 🍬</li>
+      <li><b>Warm water</b> — half a cup. Warm-bath warm, <b>never hot</b> ☕</li>
+      <li><b>A balloon</b> 🎈</li>
+      <li>A <b>timer</b> — that&#39;s the next tab! ⏱️</li>
+      <li>Optional: a ruler or string, to measure the balloon 📏</li>
+    </ul>
+    <div class="warn">
+      <b>&#9888;&#65039; Three important rules</b><br>
+      1. Ask a grown-up first — and tell them yeast is alive, so this is real science! 🙋&#8205;&#9792;&#65039;<br>
+      2. <b>NEVER screw a lid on the bottle.</b> The gas builds up pressure and the bottle can pop. The balloon <i>is</i> the lid. 🎈<br>
+      3. <b>Don&#39;t drink it.</b> It&#39;s a science experiment, not a smoothie. 🙅&#8205;&#9792;&#65039;
+    </div>
+    <div class="note">&#128161; Ask your mum if she has <b>fast-action / instant yeast</b> — that works fastest. Plain dried yeast works too, it just takes a bit longer.</div>
+  </div>
+</div>
+
+<!-- DO -->
+<div class="panel" id="do">
+  <div class="card">
+    <h2>&#128295; The experiment, step by step</h2>
+    <div id="steps"></div>
+    <div class="btnrow">
+      <button class="alt" id="clearSteps">start over &#128260;</button>
+    </div>
+    <div class="note">&#128072; <b>When you get to step 5</b>, run over to the <b>Timer</b> tab and press start. Real scientists time everything!</div>
+  </div>
+</div>
+
+<!-- TIMER -->
+<div class="panel" id="time">
+  <div class="card">
+    <h2>&#9201;&#65039; Experiment timer</h2>
+    <div class="timer" id="clock">00:00</div>
+    <div class="tbar"><div class="fill" id="tfill"></div></div>
+    <div class="now" id="nowBox"><b>Press start</b> the moment you stretch the balloon on. &#127880;</div>
+    <div class="btnrow">
+      <button id="tStart">&#9654; start</button>
+      <button class="alt" id="tPause">&#10074;&#10074; pause</button>
+      <button class="alt" id="tReset">reset</button>
+    </div>
+    <h2 style="margin-top:16px;">&#128221; Balloon log</h2>
+    <p style="font-size:.9rem">Measure the balloon&#39;s widest part with a ruler or a piece of string, then write it here.</p>
+    <div class="row"><label>time (min)</label><input type="number" id="lTime" value="10" min="0" step="1"><label style="width:auto">balloon (cm)</label><input type="number" id="lSize" value="0" step="0.5"></div>
+    <div class="btnrow"><button class="alt" id="lAdd">&#10133; add to notebook</button></div>
+    <table id="logTable"><tr><th>time</th><th>balloon width</th><th></th></tr></table>
+    <div class="note">&#128161; <b>Ooh — a challenge:</b> draw a graph of time (across) against balloon size (up). Does it grow in a <i>straight line</i>… or does it curve? &#128200;</div>
+  </div>
+</div>
+
+<!-- RACE -->
+<div class="panel" id="race">
+  <div class="card">
+    <h2>&#127937; The Great Yeast Race</h2>
+    <p>Want to do <b>real</b> science? Now you&#39;re testing a question: <b>&ldquo;What makes yeast work fastest?&rdquo;</b></p>
+    <p>Set up <b>three bottles</b> — but change only <b>ONE</b> thing in each. That&#39;s called a <b>fair test</b>. &#9878;&#65039;</p>
+    <table>
+      <tr><th></th><th>water</th><th>sugar</th><th>yeast</th></tr>
+      <tr><td class="t">A</td><td class="t">warm</td><td class="t">1 tsp</td><td class="t">yes</td></tr>
+      <tr><td class="t">B</td><td class="t">warm</td><td class="t">none</td><td class="t">yes</td></tr>
+      <tr><td class="t">C</td><td class="t">cold</td><td class="t">1 tsp</td><td class="t">yes</td></tr>
+    </table>
+    <div class="note">&#128161; Bottle A is your <b>control</b> — the “normal” one. B and C each change one single thing. Compare them to A and you learn something!</div>
+    <p style="margin-top:14px"><b>&#129300; Make your prediction first:</b> which balloon wins?</p>
+    <div class="pred" id="pred">
+      <button data-p="A">&#127942; A (warm + sugar)</button>
+      <button data-p="B">&#129689; B (no sugar)</button>
+      <button data-p="C">&#10052;&#65039; C (cold)</button>
+    </div>
+    <div class="now" id="predOut">Pick one — then write your guess down before you test. <b>Never peek!</b> &#128064;</div>
+    <div class="note">&#127775; <b>Scientist&#39;s habit:</b> a wrong prediction is still useful. It means you&#39;ve <i>learned</i> something you didn&#39;t know. That&#39;s the whole point! &#129504;</div>
+  </div>
+</div>
+
+<!-- SCIENCE -->
+<div class="panel" id="sci">
+  <div class="card">
+    <h2>&#128300; What&#39;s actually happening?</h2>
+    <p>Those tiny living creatures are <b>breathing</b> — and the balloon is catching their breath. &#128168;</p>
+    <p><b>Yeast eats sugar</b> and turns it into two things:</p>
+    <ul>
+      <li>&#128168; <b>carbon dioxide gas</b> → this fills the balloon</li>
+      <li>&#127866; <b>alcohol</b> → stays in the water (that&#39;s why it smells beery!)</li>
+    </ul>
+    <p>Scientists have a fancy name for it: <b>fermentation</b>. &#128218;</p>
+    <div class="note">
+      <b>&#128293; Why warm water?</b><br>
+      Yeast are little living creatures, so they work faster when they&#39;re <b>cosy</b>. Warm bath = fast. Cold = slow and sleepy. <b>Hot = dead.</b> That&#39;s why your mum checks the temperature — too hot and you&#39;ve boiled your helpers alive. 🥵
+    </div>
+    <div class="note">
+      <b>&#127838; This is EXACTLY how bread works.</b><br>
+      In your bread dough there&#39;s no balloon — the gas gets trapped inside the stretchy dough instead. Same creatures, same burps, same gas. You&#39;re not doing a trick — you&#39;re doing <b>what your mum&#39;s bread is doing right now.</b> &#128155;
+    </div>
+    <p><b>&#128290; One more wonder:</b> one yeast cell can make a baby every 90 minutes or so. Start with one at breakfast and by bedtime… you&#39;d have hundreds. They never stop budding! &#128166;</p>
+  </div>
+</div>
+
+<div class="foot">
+  The Yeast Breath Lab &middot; made for Charlotte by Alice the fairy &#129498;&#65039;&#10024;<br>
+  Tell me what happened — I want the numbers! &#128200;
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+
+  var tabs=document.querySelectorAll('.tab'), panels=document.querySelectorAll('.panel');
+  Array.prototype.forEach.call(tabs,function(t){
+    t.addEventListener('click',function(){
+      Array.prototype.forEach.call(tabs,function(x){x.classList.remove('active');});
+      Array.prototype.forEach.call(panels,function(x){x.classList.remove('active');});
+      t.classList.add('active');
+      $(t.getAttribute('data-p')).classList.add('active');
+    });
+  });
+
+  /* ---------- STEPS ---------- */
+  var STEPS=[
+    'Ask a grown-up first, and tell them what you\u2019re doing. \uD83D\uDE4B\u200D\u2640\uFE0F',
+    'Pour <b>half a cup of warm water</b> into the bottle. Warm bath warm \u2014 not hot! \u2615',
+    'Add <b>1 teaspoon of sugar</b>. Swirl the bottle gently until it disappears. \uD83C\uDF6C',
+    'Add <b>1 teaspoon of yeast</b>. Swirl gently \u2014 <b>don\u2019t shake</b>, yeast don\u2019t like being jiggled. \uD83E\uDD44',
+    'Stretch the <b>balloon over the neck</b> and press it on well so no air sneaks out. \uD83C\uDF88',
+    'Go to the <b>Timer tab</b> and press START. Now watch! \u23F1\uFE0F',
+    'After about <b>5 minutes</b>: is there foam on top? Does it smell of bread? \uD83D\uDC43',
+    'After <b>20\u201330 minutes</b>: is the balloon standing up? Measure it and log it! \uD83D\uDCCF',
+    'Now clean up your mess before your mum sees it. \uD83E\uDDF9'
+  ];
+  var h='';
+  STEPS.forEach(function(s,i){
+    h+='<label class="step" id="st'+i+'"><input type="checkbox" data-s="'+i+'"><span class="num">'+(i+1)+'.</span><span class="txt">'+s+'</span></label>';
+  });
+  $('steps').innerHTML=h;
+  $('steps').addEventListener('change',function(e){
+    var b=e.target;
+    if(b.tagName!=='INPUT') return;
+    var i=b.getAttribute('data-s');
+    $('st'+i).classList.toggle('done', b.checked);
+  });
+  $('clearSteps').addEventListener('click',function(){
+    Array.prototype.forEach.call($('steps').querySelectorAll('input'),function(c){ c.checked=false; });
+    Array.prototype.forEach.call($('steps').querySelectorAll('.step'),function(s){ s.classList.remove('done'); });
+  });
+
+  /* ---------- TIMER ---------- */
+  var secs=0, running=false, iv=null;
+  var MARKS=[
+    [0,'<b>0:00</b> \u2014 balloon is floppy. The yeast are just waking up. \uD83D\uDE34'],
+    [120,'<b>2 minutes</b> \u2014 look closely at the water: tiny bubbles starting? \uD83E\uDEE7'],
+    [300,'<b>5 minutes</b> \u2014 foamy creamy top should be appearing! Smell it \u2014 bread? \uD83C\uDF5E'],
+    [600,'<b>10 minutes</b> \u2014 the balloon should be lifting. Measure it! \uD83D\uDCCF'],
+    [900,'<b>15 minutes</b> \u2014 balloon standing up now? \uD83C\uDF88'],
+    [1200,'<b>20 minutes</b> \u2014 nice puffy balloon! Is it slowing down or still growing? \uD83E\uDD14'],
+    [1800,'<b>30 minutes</b> \u2014 wow! Now try this: <b>feel the bottle</b>. Is it warm? The yeast make heat too! \uD83D\uDD25'],
+    [2700,'<b>45 minutes</b> \u2014 still going. They\u2019re running out of sugar though\u2026 \uD83C\uDF6C'],
+    [3600,'<b>1 hour</b> \u2014 slowing down. Out of food! That\u2019s why real bakers don\u2019t wait forever. \u231B'],
+    [5400,'<b>1\u00BD hours</b> \u2014 nearly stopped. A great experiment, Agent Charlotte. \uD83C\uDFC6']
+  ];
+  function markFor(t){
+    var m=MARKS[0][1];
+    for(var i=0;i<MARKS.length;i++){ if(t>=MARKS[i][0]) m=MARKS[i][1]; }
+    return m;
+  }
+  function paint(){
+    var m=Math.floor(secs/60), s=secs%60;
+    $('clock').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+    $('nowBox').innerHTML=markFor(secs);
+    var pct=Math.min(100, secs/1800*100);
+    $('tfill').style.width=pct.toFixed(1)+'%';
+  }
+  function start(){
+    if(running) return;
+    running=true;
+    iv=setInterval(function(){ secs++; paint(); if(secs>=7200){ stop(); } },1000);
+  }
+  function stop(){ running=false; if(iv){ clearInterval(iv); iv=null; } }
+  $('tStart').addEventListener('click',start);
+  $('tPause').addEventListener('click',function(){ stop(); });
+  $('tReset').addEventListener('click',function(){ stop(); secs=0; paint(); });
+  paint();
+
+  /* ---------- LOG ---------- */
+  var rows=[];
+  function paintLog(){
+    var t='<tr><th>time</th><th>balloon width</th><th></th></tr>';
+    rows.forEach(function(r,i){
+      t+='<tr><td class="t">'+r.t+' min</td><td class="t">'+r.v+' cm</td><td><button data-del="'+i+'" style="border:none;background:none;color:#ef4444;cursor:pointer;font-size:1rem;">&#10005;</button></td></tr>';
+    });
+    $('logTable').innerHTML=t;
+  }
+  $('lAdd').addEventListener('click',function(){
+    var t=parseFloat($('lTime').value), v=parseFloat($('lSize').value);
+    if(isNaN(t)||isNaN(v)) return;
+    rows.push({t:t,v:v});
+    rows.sort(function(a,b){ return a.t-b.t; });
+    paintLog();
+  });
+  $('logTable').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    rows.splice(parseInt(b.getAttribute('data-del'),10),1);
+    paintLog();
+  });
+  paintLog();
+
+  /* ---------- RACE ---------- */
+  $('pred').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    Array.prototype.forEach.call($('pred').querySelectorAll('button'),function(x){ x.classList.remove('pick'); });
+    b.classList.add('pick');
+    var p=b.getAttribute('data-p');
+    var txt={
+      A:'You picked <b>A (warm + sugar)</b> \u2014 the control. If you\u2019re right, the other two should be slower. Let\u2019s find out! \uD83C\uDFC1',
+      B:'You picked <b>B (no sugar)</b>! Brave guess \u2014 but sugar is yeast\u2019s FOOD. Without it they have to live on their own tiny reserves. Watch what happens\u2026 \uD83C\uDF6C',
+      C:'You picked <b>C (cold water)</b>! Good thinking \u2014 cold makes them sleepy. But is sleepy the same as hungry? Watch which balloon ends up smallest\u2026 \u2744\uFE0F'
+    };
+    $('predOut').innerHTML=txt[p]+'<br><br><b>Now test it!</b> Set up all three, tape a label on each, and start them at the same time. \u23F1\uFE0F';
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Shopping List Code — hide a message in a shopping list</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    background:linear-gradient(180deg,#eef7ee 0%,#dcecdc 60%,#c9e2c9 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#1f3a22;
+    min-height:100vh;padding:18px 12px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:1.35rem;color:#1f7a3a;text-align:center;letter-spacing:.5px;}
+  .sub{color:#5b7a5f;font-style:italic;font-size:.88rem;margin:6px 0 14px;text-align:center;}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;max-width:520px;}
+  .tab{
+    background:#fff;color:#2f5c37;border:2px solid #bcd9be;padding:9px 14px;border-radius:20px;
+    font-family:inherit;font-size:.88rem;cursor:pointer;transition:.15s;
+  }
+  .tab.active{background:#22a04a;border-color:#15703a;color:#fff;font-weight:bold;}
+  .panel{display:none;width:100%;max-width:480px;}
+  .panel.active{display:block;}
+  .card{background:#fff;border:1px solid #d6e8d7;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(40,110,60,.07);}
+  .card h2{font-size:1.05rem;color:#1f7a3a;margin-bottom:10px;}
+  p{line-height:1.7;font-size:.94rem;margin-bottom:10px;}
+  code{background:#eef7ee;padding:1px 5px;border-radius:5px;font-family:ui-monospace,Menlo,monospace;font-size:.88rem;color:#15703a;}
+  textarea{
+    width:100%;font-family:inherit;font-size:1rem;padding:10px;border-radius:10px;
+    border:2px solid #bcd9be;background:#fbfefb;color:#1f3a22;resize:vertical;
+  }
+  .btnrow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0;}
+  .btnrow button{
+    flex:1 1 auto;font-family:inherit;font-size:1rem;padding:13px 10px;border-radius:12px;cursor:pointer;
+    background:#22a04a;color:#fff;border:1px solid #15703a;font-weight:bold;
+  }
+  .btnrow button.alt{background:#eaf5ea;color:#2f5c37;border-color:#bcd9be;}
+  .btnrow button:active{transform:scale(.97);}
+  .lbl{font-size:.85rem;color:#5b7a5f;display:block;margin-bottom:5px;letter-spacing:.5px;}
+  label.chk{display:flex;align-items:center;gap:8px;font-size:.9rem;color:#2f5c37;margin:8px 0;cursor:pointer;}
+  label.chk input{width:20px;height:20px;accent-color:#22a04a;}
+
+  /* the paper */
+  .paper{
+    background:#fffdf5;border:1px solid #e8e0c8;border-radius:12px;padding:16px 14px;margin-top:12px;
+    box-shadow:0 3px 14px rgba(120,110,60,.13);position:relative;overflow:hidden;
+  }
+  .paper:before{
+    content:'';position:absolute;left:0;right:0;top:44px;bottom:0;
+    background:repeating-linear-gradient(180deg,transparent 0,transparent 31px,#eee6cc 31px,#eee6cc 32px);
+    pointer-events:none;opacity:.7;
+  }
+  .paper h3{
+    font-size:1.05rem;color:#8a6a2a;text-align:center;margin-bottom:12px;
+    border-bottom:2px dashed #e0d3ae;padding-bottom:8px;letter-spacing:1px;
+  }
+  .item{display:flex;align-items:center;gap:9px;font-size:1rem;line-height:32px;position:relative;}
+  .item .box{width:16px;height:16px;border:2px solid #b9ab84;border-radius:3px;flex:0 0 auto;}
+  .item .txt{flex:1;}
+  .item .fl{font-weight:bold;color:#15703a;}
+  .item .fl.hide{font-weight:normal;color:inherit;}
+  .item .em{font-size:1.05rem;}
+  .gap{height:32px;}
+  .outmsg{
+    font-family:ui-monospace,Menlo,monospace;font-size:1.05rem;color:#15703a;background:#eef7ee;
+    border-radius:10px;padding:12px;margin-top:12px;word-break:break-word;line-height:1.8;letter-spacing:1px;
+  }
+  .note{background:#f3faf3;border-left:4px solid #22a04a;padding:11px 13px;border-radius:0 10px 10px 0;font-size:.92rem;line-height:1.7;margin:12px 0;}
+  .warn{background:#fff8ec;border-left:4px solid #f0a020;padding:11px 13px;border-radius:0 10px 10px 0;font-size:.92rem;line-height:1.7;margin:12px 0;}
+  ul{margin:0 0 10px 20px;} li{line-height:1.75;font-size:.94rem;margin-bottom:4px;}
+  .foot{margin-top:22px;color:#6b8a6e;font-size:.82rem;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<h1>&#128722; THE SHOPPING LIST CODE</h1>
+<div class="sub">Hide a secret message inside an ordinary shopping list &middot; for Charlotte &#129497;&#8205;&#9792;&#65039;</div>
+
+<div class="tabs">
+  <button class="tab active" data-p="make">&#128722; Make a code</button>
+  <button class="tab" data-p="read">&#128064; Read a code</button>
+  <button class="tab" data-p="trick">&#129323; The trick</button>
+</div>
+
+<!-- MAKE -->
+<div class="panel active" id="make">
+  <div class="card">
+    <h2>&#128722; Turn your message into a shopping list</h2>
+    <label class="lbl">YOUR NORMAL MESSAGE</label>
+    <textarea id="mIn" rows="3">HELLO</textarea>
+    <label class="chk"><input type="checkbox" id="mSneak"> &#129323; <b>sneaky mode</b> &mdash; add fake items so it&#39;s harder to spot</label>
+    <div class="btnrow"><button id="mGo">&#128722; Make my shopping list!</button></div>
+    <div id="mOut"></div>
+    <div class="btnrow" id="mTools" style="display:none;">
+      <button class="alt" id="mPeek">&#128064; show me the secret letters</button>
+      <button class="alt" id="mCopy">&#128203; copy the list</button>
+    </div>
+    <div class="outmsg" id="mText" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- READ -->
+<div class="panel" id="read">
+  <div class="card">
+    <h2>&#128064; Read someone&#39;s shopping list</h2>
+    <label class="lbl">PASTE THE SHOPPING LIST HERE</label>
+    <textarea id="rIn" rows="6" placeholder="&#9744; 3 apples &#127822;&#10;&#9744; 12 eggs &#129370;&#10;..."></textarea>
+    <label class="chk"><input type="checkbox" id="rSneak"> &#129323; the message is on <b>every 2nd line</b> (sneaky mode)</label>
+    <div class="btnrow"><button id="rGo">&#128270; Read it!</button></div>
+    <div class="outmsg" id="rOut">&ndash;</div>
+    <div class="note">&#128161; Not sure? Try it <b>both ways</b> &mdash; one will give you real words, the other will give you nonsense. That&#39;s how you&#39;ll know! &#128521;</div>
+  </div>
+</div>
+
+<!-- TRICK -->
+<div class="panel" id="trick">
+  <div class="card">
+    <h2>&#129323; The trick &mdash; in one line</h2>
+    <div class="note" style="font-size:1rem;">
+      <b>The first letter of every food is a letter of your message.</b><br>
+      Read the first letters down the list &rarr; that&#39;s the secret. &#127881;
+    </div>
+    <p>That&#39;s the <b>whole</b> code. Nothing is scrambled, nothing is scrambled, nothing is swapped &mdash; the message is <b>hiding in plain sight</b>, like a spy&#39;s note on the kitchen table. &#128373;&#65039;</p>
+    <p><b>For example:</b></p>
+    <ul>
+      <li>&#9744; a jar of <b>H</b>oney &#127855;</li>
+      <li>&#9744; 12 <b>E</b>ggs &#129370;</li>
+      <li>&#9744; 4 <b>L</b>emons &#127819;</li>
+      <li>&#9744; 2 <b>L</b>ettuces &#129388;</li>
+      <li>&#9744; 3 <b>O</b>ranges &#127818;</li>
+    </ul>
+    <p>Read down the first letters: <b>H E L L O</b> &#128071;&#128064;</p>
+    <h2 style="margin-top:16px;">&#129323; Make it sneakier</h2>
+    <p>Tick <b>sneaky mode</b> and the tool slips in <b>fake items</b> between the real ones. Then the message is on <b>every 2nd line</b>. Now even someone who knows the trick can&#39;t just read it &mdash; they have to know <i>which lines</i> matter. &#128520;</p>
+    <h2 style="margin-top:16px;">&#127919; Why spies love it</h2>
+    <p>A coded message in numbers or jumbled letters <b>looks</b> suspicious. A shopping list looks like&hellip; a shopping list. Nobody looks twice at it on the fridge. &#127859;</p>
+    <div class="warn">&#9888;&#65039; <b>And the real-life rule:</b> if a stranger ever sends you a strange list, or asks you to keep a secret from your mum and dad &mdash; that&#39;s not a game. Tell a grown-up straight away. &#128110;</div>
+    <h2 style="margin-top:16px;">&#127775; Level up ideas</h2>
+    <ul>
+      <li>Write your friend&#39;s name as the message, then hand them the list. Watch their face. &#128514;</li>
+      <li>Hide the message on every <b>3rd</b> line instead. Or in the <b>last</b> letter of each word!</li>
+      <li>Make the <b>numbers</b> the code: 3 apples, 1 egg, 4 lemons, 1 orange &rarr; 3-1-4-1 &rarr; a phone number? &#128241;</li>
+    </ul>
+  </div>
+</div>
+
+<div class="foot">
+  The Shopping List Code &middot; made for Charlotte by Alice the fairy &#129498;&#65039;&#10024;<br>
+  Send me a shopping list any time &mdash; I&#39;ll read your secret. &#128140;
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+
+  var FOODS=[
+    ['A','apples','\uD83C\uDF4E'],['B','bananas','\uD83C\uDF4C'],['C','carrots','\uD83E\uDD55'],
+    ['D','doughnuts','\uD83C\uDF69'],['E','eggs','\uD83E\uDD5A'],['F','flour','\uD83C\uDF3E'],
+    ['G','grapes','\uD83C\uDF47'],['H','honey','\uD83C\uDF6F'],['I','ice cream','\uD83C\uDF66'],
+    ['J','jam','\uD83C\uDF53'],['K','kiwis','\uD83E\uDD5D'],['L','lemons','\uD83C\uDF4B'],
+    ['M','mangoes','\uD83E\uDD6D'],['N','noodles','\uD83C\uDF5C'],['O','oranges','\uD83C\uDF4A'],
+    ['P','potatoes','\uD83E\uDD54'],['Q','quinoa','\uD83C\uDF31'],['R','rice','\uD83C\uDF5A'],
+    ['S','strawberries','\uD83C\uDF53'],['T','tomatoes','\uD83C\uDF45'],['U','ugli fruit','\uD83C\uDF48'],
+    ['V','vanilla','\uD83E\uDED9'],['W','watermelon','\uD83C\uDF49'],['X','xigua','\uD83C\uDF49'],
+    ['Y','yoghurt','\uD83E\uDD5B'],['Z','zucchini','\uD83E\uDD52'],
+    /* extras that are still foods but not code letters */
+    ['?','lettuces','\uD83E\uDD6C']
+  ];
+  var QTY=['1','2','3','4','6','12','a bag of','a jar of','a bunch of','a pack of','a tub of','a pot of','a bottle of','500g of'];
+  var DECOY=['a loaf of bread','2 litres of milk','a block of butter','200g of cheese','a box of pasta',
+             '6 chicken legs','toilet roll','bin bags','coffee','washing up liquid','2 lemons','5 apples',
+             'a tin of beans','cereal','a pack of biscuits','orange juice'];
+
+  var CODE={};
+  FOODS.forEach(function(f){ if(f[0]!=='?') CODE[f[0]]=f; });
+
+  function foodFor(letter){
+    var f=CODE[letter];
+    if(!f) return null;
+    var q=QTY[Math.floor(Math.random()*QTY.length)];
+    var plural = f[1].charAt(f[1].length-1)==='s';
+    if(q==='1' && plural) q='1 pack of';
+    return {qty:q, word:f[1], emoji:f[2], letter:letter};
+  }
+  function decoyLine(){
+    var d=DECOY[Math.floor(Math.random()*DECOY.length)];
+    return {qty:'', word:d, emoji:'', letter:'', fake:true};
+  }
+
+  function build(msg, sneak){
+    var up=(msg||'').toUpperCase(), items=[], i, ch, f;
+    for(i=0;i<up.length;i++){
+      ch=up.charAt(i);
+      if(ch===' '){ items.push({space:true}); continue; }
+      if(ch<'A'||ch>'Z') continue;
+      f=foodFor(ch);
+      if(f) items.push(f);
+    }
+    if(!sneak) return items;
+    var out=[], j;
+    for(j=0;j<items.length;j++){
+      out.push(items[j]);
+      if(!items[j].space) out.push(decoyLine());
+    }
+    return out;
+  }
+
+  function paperHTML(items, reveal){
+    var h='<div class="paper"><h3>\uD83D\uDED2 SHOPPING LIST</h3>';
+    items.forEach(function(it){
+      if(it.space){ h+='<div class="gap"></div>'; return; }
+      var w=it.word;
+      var first=w.charAt(0).toUpperCase(), rest=w.slice(1);
+      var inner = reveal
+        ? '<span class="fl">'+first+'</span>'+rest
+        : first+rest;
+      var q=it.qty? it.qty+' ' : '';
+      h+='<div class="item"><span class="box"></span><span class="txt">'+q+inner+'</span>'+
+         (it.emoji? '<span class="em">'+it.emoji+'</span>':'')+'</div>';
+    });
+    h+='</div>';
+    return h;
+  }
+
+  function plainText(items){
+    var lines=[];
+    items.forEach(function(it){
+      if(it.space){ lines.push(''); return; }
+      var q=it.qty? it.qty+' ' : '';
+      lines.push('\u2610 '+q+it.word+(it.emoji?' '+it.emoji:''));
+    });
+    return lines.join('\n');
+  }
+
+  var lastItems=null, revealing=false;
+
+  function renderMake(){
+    if(!lastItems) return;
+    $('mOut').innerHTML=paperHTML(lastItems, revealing);
+    $('mText').textContent=plainText(lastItems);
+  }
+
+  $('mGo').addEventListener('click',function(){
+    var msg=$('mIn').value;
+    if(!msg.replace(/[^A-Za-z]/g,'').length){
+      $('mOut').innerHTML='<div class="warn">\u26A0\uFE0F Type a message first &mdash; letters only! (Numbers and punctuation get skipped.)</div>';
+      $('mTools').style.display='none';
+      return;
+    }
+    lastItems=build(msg, $('mSneak').checked);
+    revealing=false;
+    renderMake();
+    $('mTools').style.display='flex';
+    $('mText').style.display='block';
+  });
+
+  $('mPeek').addEventListener('click',function(){
+    revealing=!revealing;
+    this.textContent = revealing? '\uD83D\uDE48 hide the secret letters' : '\uD83D\uDC40 show me the secret letters';
+    renderMake();
+  });
+
+  $('mCopy').addEventListener('click',function(){
+    var t=$('mText').textContent;
+    var done=function(){ $('mCopy').textContent='\u2705 copied!'; setTimeout(function(){ $('mCopy').textContent='\uD83D\uDCCB copy the list'; },1600); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(done,function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta=document.createElement('textarea');
+      ta.value=t; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); done(); }catch(e){ alert('Long-press the list to copy it!'); }
+      document.body.removeChild(ta);
+    }
+  });
+
+  /* ---------- READ ---------- */
+  var SORTED=FOODS.slice().sort(function(a,b){ return b[1].length-a[1].length; });
+
+  function letterFromLine(line){
+    var low=line.toLowerCase(), best=null, pos=1e9, i, idx;
+    for(i=0;i<SORTED.length;i++){
+      idx=low.indexOf(SORTED[i][1]);
+      if(idx>=0 && idx<pos){ pos=idx; best=SORTED[i][0]; }
+    }
+    if(best && best!=='?') return best;
+    var m=low.match(/[a-z]+/);
+    return m? m[0].charAt(0).toUpperCase() : '';
+  }
+
+  $('rGo').addEventListener('click',function(){
+    var raw=$('rIn').value;
+    if(!raw.trim()){ $('rOut').textContent='\u26A0\uFE0F Paste a shopping list first!'; return; }
+    var lines=raw.split(/\r?\n/);
+    var sneak=$('rSneak').checked;
+    var msg='', kept=0, i;
+    for(i=0;i<lines.length;i++){
+      var ln=lines[i];
+      if(!ln.trim()){ msg+=' '; continue; }
+      if(sneak && (kept%2===1)){ kept++; continue; }
+      kept++;
+      msg+=letterFromLine(ln);
+    }
+    msg=msg.replace(/\s+/g,' ').trim();
+    $('rOut').textContent = msg || '?';
+  });
+
+  /* ---------- TABS ---------- */
+  var tabs=document.querySelectorAll('.tab'), panels=document.querySelectorAll('.panel');
+  Array.prototype.forEach.call(tabs,function(t){
+    t.addEventListener('click',function(){
+      Array.prototype.forEach.call(tabs,function(x){x.classList.remove('active');});
+      Array.prototype.forEach.call(panels,function(x){x.classList.remove('active');});
+      t.classList.add('active');
+      $(t.getAttribute('data-p')).classList.add('active');
+    });
+  });
+
+  /* first run */
+  $('mGo').click();
+})();
+</script>
+</body>
+</html>

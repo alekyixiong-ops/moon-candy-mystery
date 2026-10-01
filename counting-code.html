@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Not-So-Easy Shopping List — turn any message into a counting code</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    background:linear-gradient(180deg,#fff4f8 0%,#ffe3ee 55%,#ffd0e2 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#4a1f33;
+    min-height:100vh;padding:18px 12px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:1.3rem;color:#c2185b;text-align:center;letter-spacing:.5px;}
+  .sub{color:#8a5670;font-style:italic;font-size:.86rem;margin:6px 0 14px;text-align:center;max-width:440px;}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;max-width:520px;}
+  .tab{
+    background:#fff;color:#7a2b4c;border:2px solid #f3c6da;padding:9px 14px;border-radius:20px;
+    font-family:inherit;font-size:.88rem;cursor:pointer;transition:.15s;
+  }
+  .tab.active{background:#e91e63;border-color:#ad1457;color:#fff;font-weight:bold;}
+  .panel{display:none;width:100%;max-width:480px;}
+  .panel.active{display:block;}
+  .card{background:#fff;border:1px solid #f6dbe7;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(200,60,120,.09);}
+  .card h2{font-size:1.05rem;color:#c2185b;margin-bottom:10px;}
+  p{line-height:1.7;font-size:.94rem;margin-bottom:10px;}
+  code{background:#fdeef4;padding:1px 5px;border-radius:5px;font-family:ui-monospace,Menlo,monospace;font-size:.88rem;color:#ad1457;}
+  textarea{
+    width:100%;font-family:inherit;font-size:1rem;padding:10px;border-radius:10px;
+    border:2px solid #f3c6da;background:#fffafc;color:#4a1f33;resize:vertical;
+  }
+  .lbl{font-size:.85rem;color:#8a5670;display:block;margin-bottom:5px;letter-spacing:.5px;}
+  .btnrow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0;}
+  .btnrow button{
+    flex:1 1 auto;font-family:inherit;font-size:1rem;padding:13px 10px;border-radius:12px;cursor:pointer;
+    background:#e91e63;color:#fff;border:1px solid #ad1457;font-weight:bold;
+  }
+  .btnrow button.alt{background:#fdeef4;color:#7a2b4c;border-color:#f3c6da;}
+  .btnrow button:active{transform:scale(.97);}
+  label.chk{display:flex;align-items:flex-start;gap:8px;font-size:.9rem;color:#7a2b4c;margin:8px 0;cursor:pointer;line-height:1.5;}
+  label.chk input{width:20px;height:20px;accent-color:#e91e63;flex:0 0 auto;margin-top:1px;}
+
+  .paper{
+    background:#fffdf7;border:1px solid #f0e2d0;border-radius:12px;padding:16px 14px;margin-top:12px;
+    box-shadow:0 3px 16px rgba(160,120,90,.15);
+  }
+  .paper h3{
+    font-size:1.02rem;color:#a06a2a;text-align:center;margin-bottom:10px;
+    border-bottom:2px dashed #ecdcc4;padding-bottom:8px;letter-spacing:1px;
+  }
+  .row{display:flex;align-items:baseline;gap:10px;font-family:ui-monospace,Menlo,monospace;font-size:1.05rem;line-height:1.9;color:#3a2418;}
+  .row .n{color:#c2185b;font-weight:bold;min-width:18px;text-align:right;}
+  .row .w{letter-spacing:.5px;}
+  .row .w b{color:#15703a;}
+  .gap{height:10px;}
+  .outmsg{
+    font-family:ui-monospace,Menlo,monospace;font-size:1rem;color:#15703a;background:#f0faf2;
+    border-radius:10px;padding:12px;margin-top:12px;word-break:break-word;line-height:1.9;letter-spacing:1px;
+  }
+  .note{background:#fdf2f7;border-left:4px solid #e91e63;padding:11px 13px;border-radius:0 10px 10px 0;font-size:.92rem;line-height:1.7;margin:12px 0;}
+  .warn{background:#fff8ec;border-left:4px solid #f0a020;padding:11px 13px;border-radius:0 10px 10px 0;font-size:.92rem;line-height:1.7;margin:12px 0;}
+  ul{margin:0 0 10px 20px;} li{line-height:1.75;font-size:.94rem;margin-bottom:4px;}
+  .foot{margin-top:22px;color:#a4738c;font-size:.82rem;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<h1>&#128722; THE NOT-SO-EASY SHOPPING LIST</h1>
+<div class="sub">Turn any normal message into a counting code &middot; the kind from Charlotte&#39;s birthday &#127874;</div>
+
+<div class="tabs">
+  <button class="tab active" data-p="make">&#128290; Make a code</button>
+  <button class="tab" data-p="read">&#128269; Read a code</button>
+  <button class="tab" data-p="trick">&#128273; The rule</button>
+</div>
+
+<!-- MAKE -->
+<div class="panel active" id="make">
+  <div class="card">
+    <h2>&#128290; Turn your message into a list</h2>
+    <label class="lbl">YOUR NORMAL MESSAGE</label>
+    <textarea id="mIn" rows="3">YOU ARE THE BEST</textarea>
+    <label class="chk"><input type="checkbox" id="mTricky" checked> <span><b>Tricky mode</b> &#128520; &mdash; mix up the numbers (3s, 4s, 5s&hellip;) so you really have to count<br><span style="color:#8a5670;font-size:.85rem;">(untick it and every number is 1 &mdash; much easier!)</span></span></label>
+    <div class="btnrow"><button id="mGo">&#128722; Make my list!</button></div>
+    <div id="mOut"></div>
+    <div class="btnrow" id="mTools" style="display:none;">
+      <button class="alt" id="mAgain">&#127922; different words</button>
+      <button class="alt" id="mPeek">&#128064; show the hidden letters</button>
+      <button class="alt" id="mCopy">&#128203; copy</button>
+    </div>
+    <div class="outmsg" id="mText" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- READ -->
+<div class="panel" id="read">
+  <div class="card">
+    <h2>&#128269; Read a coded list</h2>
+    <label class="lbl">PASTE THE LIST HERE</label>
+    <textarea id="rIn" rows="7" placeholder="3 sky&#10;1 orange&#10;4 autumn&#10;..."></textarea>
+    <div class="btnrow"><button id="rGo">&#128269; Read it!</button></div>
+    <div class="outmsg" id="rOut">&ndash;</div>
+    <div class="note">&#128161; <b>How it works:</b> for every line, the number tells you <b>which letter of the word</b> to take. <code>5 grape</code> &rarr; g-r-a-p-e &rarr; the 5th letter is <b>E</b>.</div>
+  </div>
+</div>
+
+<!-- TRICK -->
+<div class="panel" id="trick">
+  <div class="card">
+    <h2>&#128273; The rule &mdash; one line</h2>
+    <div class="note" style="font-size:1rem;">
+      <b>The number tells you which letter of the word to take.</b><br>
+      <code>3 sky</code> &rarr; s-k-<b>y</b> &rarr; <b>Y</b> &#9989;
+    </div>
+    <p>Do it for every line, and the letters spell your secret message. &#127881;</p>
+    <h2 style="margin-top:16px;">&#127874; Where this came from</h2>
+    <p>This is <b>the exact code from your birthday</b>! I hid <b>&ldquo;YOU ARE THE BEST&rdquo;</b> in a list with 3s, 4s and 5s&hellip; and you cracked it in minutes, then sent it right back to me. &#128155;</p>
+    <p>Now <b>you</b> can make them yourself. &#128296;</p>
+    <h2 style="margin-top:16px;">&#128520; Make it even harder</h2>
+    <ul>
+      <li>Use <b>longer words</b> &mdash; counting to the 7th letter is harder! &#128290;</li>
+      <li>Put the number <b>after</b> the word: <code>sky 3</code></li>
+      <li>Hide <b>fake lines</b> in between, and read only every 2nd line</li>
+      <li>Use words from a <b>theme</b> (only animals? only food?) so it looks innocent &#128373;&#65039;</li>
+      <li>Or combine with the shopping list code: number <b>and</b> first letter! &#129504;</li>
+    </ul>
+    <div class="warn">&#9888;&#65039; <b>The real-life rule:</b> codes are for fun with friends and family. If a stranger ever asks you to keep a secret message, tell your mum or dad straight away. &#128110;</div>
+  </div>
+</div>
+
+<div class="foot">
+  The Not-So-Easy Shopping List &middot; made for Charlotte by Alice the fairy &#129498;&#65039;&#10024;<br>
+  Send me a list any time &mdash; I&#39;ll count my way to your secret. &#128140;
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+
+  var WORDS=[
+  'apple','orange','banana','grape','lemon','mango','peach','cherry','melon','berry','bread','butter',
+  'cheese','honey','sugar','pasta','pizza','noodle','carrot','potato','tomato','onion','pepper','salad',
+  'soup','rice','cake','cookie','chocolate','tea','coffee','juice','water','milk','egg','jam','olive',
+  'bean','corn','mushroom','pumpkin','cucumber','lettuce','cabbage','garlic','ginger','cinnamon','vanilla',
+  'yoghurt','sandwich','pancake','waffle','muffin','biscuit','cracker','popcorn','almond','walnut','coconut',
+  'pineapple','strawberry','blueberry','raspberry','watermelon','apricot','avocado','plum','lime','fig',
+  'pear','kiwi','papaya','guava','quince','sky','cloud','rain','storm','thunder','lightning','rainbow',
+  'sun','moon','star','planet','comet','rocket','galaxy','ocean','river','lake','waterfall','mountain',
+  'valley','forest','jungle','desert','island','beach','shell','coral','wave','tide','wind','breeze',
+  'snow','frost','fog','mist','shadow','light','flame','spark','stone','rock','crystal','diamond','silver',
+  'copper','iron','glass','metal','wood','paper','cotton','wool','silk','leather','plastic','rubber',
+  'brick','tower','castle','bridge','garden','flower','rose','tulip','daisy','lily','orchid','lotus',
+  'grass','leaf','branch','root','seed','tree','oak','pine','maple','willow','palm','moss','fern','cactus',
+  'bird','eagle','parrot','penguin','owl','swan','duck','goose','chicken','turkey','peacock','robin',
+  'sparrow','falcon','hawk','dove','cat','dog','rabbit','hamster','mouse','horse','pony','cow','sheep',
+  'goat','pig','frog','toad','snake','lizard','turtle','crocodile','dolphin','whale','shark','octopus',
+  'jellyfish','crab','lobster','shrimp','snail','spider','ant','bee','wasp','butterfly','dragonfly',
+  'beetle','cricket','grasshopper','moth','worm','tiger','lion','leopard','cheetah','elephant','giraffe',
+  'zebra','monkey','gorilla','panda','koala','kangaroo','hippo','rhino','camel','wolf','fox','bear','deer',
+  'squirrel','hedgehog','otter','seal','bat','unicorn','dragon','fairy','wizard','giant','ghost','robot',
+  'engine','train','plane','boat','bicycle','scooter','bus','truck','tractor','helicopter','balloon','kite',
+  'whistle','drum','guitar','piano','violin','trumpet','flute','bell','clock','watch','mirror','brush',
+  'pencil','crayon','marker','eraser','ruler','scissors','glue','tape','string','ribbon','button','zipper',
+  'pocket','jacket','jumper','trousers','shorts','skirt','dress','shirt','sock','shoe','boot','glove',
+  'scarf','hat','crown','ring','necklace','bracelet','umbrella','backpack','basket','bottle','cup','plate',
+  'spoon','fork','knife','kettle','teapot','oven','fridge','table','chair','sofa','bed','pillow','blanket',
+  'curtain','carpet','window','door','roof','wall','floor','stairs','fence','gate','path','road','street',
+  'city','village','market','shop','school','library','museum','hospital','airport','station','harbour',
+  'lighthouse','windmill','fountain','statue','temple','palace','pyramid','tunnel','cave','volcano',
+  'glacier','iceberg','meadow','canyon','cliff','swamp','pond','stream','spring','anchor','sail','compass',
+  'map','telescope','microscope','magnet','battery','bulb','switch','screen','keyboard','computer','camera',
+  'phone','radio','speaker','headphone','wheel','lever','screw','hammer','ladder','bucket','spade','broom',
+  'sponge','soap','towel','candle','lantern','torch','box','jar','tin','bag','chest','suitcase','wallet',
+  'purse','coin','ticket','stamp','letter','envelope','parcel','newspaper','magazine','book','story','poem',
+  'riddle','puzzle','game','toy','doll','marble','dice','card','domino','bubble','puppet','mask','costume',
+  'party','gift','wish','dream','magic','spell','potion','wand','treasure','pirate','captain','sailor',
+  'explorer','inventor','scientist','doctor','teacher','baker','farmer','painter','singer','dancer',
+  'writer','pilot','driver','builder','gardener','chef','knight','queen','king','prince','princess',
+  'mermaid','witch','elf','troll','phoenix','sphinx','mammoth','dinosaur','fossil','amber','gem','pearl',
+  'opal','jade','ruby','emerald','sapphire','topaz','quartz','granite','slate','chalk','clay','sand','mud',
+  'dust','ash','smoke','steam','sunset','sunrise','dawn','dusk','midnight','noon','morning','evening',
+  'week','month','year','hour','minute','second','moment','season','summer','autumn','winter','holiday',
+  'birthday','festival','carnival','circus','theatre','cinema','concert','parade','picnic','campfire',
+  'adventure','journey','voyage','quest','mystery','secret','whisper','echo','silence','music','melody',
+  'rhythm','harmony','song','dance','ballet','opera','jazz','waltz','legend','myth','fable','joke','laugh',
+  'smile','giggle','cheer','shout','murmur','chatter','xylophone','zero','zigzag','quiz','quill','quilt',
+  'quick','queue','question','exit','extra','oxygen','pixel','taxi','wax','axe','six','ox','buzz','fizz',
+  'freeze','sneeze','dozen','horizon','jungle','jolly'
+  ];
+
+  /* de-duplicate */
+  var seenW={}, BANK=[];
+  WORDS.forEach(function(w){ if(!seenW[w]){ seenW[w]=1; BANK.push(w); } });
+
+  /* index: letter -> words containing it */
+  var BY={};
+  'abcdefghijklmnopqrstuvwxyz'.split('').forEach(function(c){ BY[c]=[]; });
+  BANK.forEach(function(w){
+    var seen={};
+    for(var i=0;i<w.length;i++){
+      var c=w.charAt(i);
+      if(!seen[c]){ seen[c]=1; if(BY[c]) BY[c].push(w); }
+    }
+  });
+
+  function positions(word, letter){
+    var p=[], i;
+    for(i=0;i<word.length;i++){ if(word.charAt(i)===letter) p.push(i); }
+    return p;
+  }
+
+  function makeLine(letter, tricky, avoid){
+    var pool=BY[letter]||[];
+    if(!pool.length) return null;
+    var tries=0, word=pool[Math.floor(Math.random()*pool.length)];
+    while(avoid && word===avoid && tries<20){ word=pool[Math.floor(Math.random()*pool.length)]; tries++; }
+    var ps=positions(word,letter);
+    var idx = tricky ? ps[Math.floor(Math.random()*ps.length)] : ps[0];
+    return {n:idx+1, word:word, letter:letter, at:idx};
+  }
+
+  var lastItems=null, revealing=false, lastMsg='', lastTricky=true;
+
+  function build(msg, tricky){
+    var up=(msg||'').toUpperCase(), items=[], i, ch, line, prev=null;
+    for(i=0;i<up.length;i++){
+      ch=up.charAt(i);
+      if(ch===' '){ items.push({space:true}); prev=null; continue; }
+      if(ch<'A'||ch>'Z') continue;
+      line=makeLine(ch.toLowerCase(), tricky, prev);
+      if(line){ items.push(line); prev=line.word; }
+      else { items.push({letter:ch, missing:true}); }
+    }
+    return items;
+  }
+
+  function paperHTML(items, reveal){
+    var h='<div class="paper"><h3>&#128722; SHOPPING LIST</h3>';
+    items.forEach(function(it){
+      if(it.space){ h+='<div class="gap"></div>'; return; }
+      if(it.missing){ h+='<div class="row"><span class="n">?</span><span class="w" style="color:#c2185b">(no word found for '+it.letter+')</span></div>'; return; }
+      var w=it.word, out='';
+      for(var i=0;i<w.length;i++){
+        out += (reveal && i===it.at) ? '<b>'+w.charAt(i)+'</b>' : w.charAt(i);
+      }
+      h+='<div class="row"><span class="n">'+it.n+'</span><span class="w">'+out+'</span></div>';
+    });
+    h+='</div>';
+    return h;
+  }
+
+  function plainText(items){
+    var lines=[];
+    items.forEach(function(it){
+      if(it.space){ lines.push(''); return; }
+      if(it.missing) return;
+      lines.push(it.n+' '+it.word);
+    });
+    return lines.join('\n');
+  }
+
+  function renderMake(){
+    if(!lastItems) return;
+    $('mOut').innerHTML=paperHTML(lastItems, revealing);
+    $('mText').textContent=plainText(lastItems);
+  }
+
+  function runMake(){
+    var msg=$('mIn').value;
+    if(!msg.replace(/[^A-Za-z]/g,'').length){
+      $('mOut').innerHTML='<div class="warn">\u26A0\uFE0F Type a message first \u2014 letters only!</div>';
+      $('mTools').style.display='none';
+      return;
+    }
+    lastMsg=msg; lastTricky=$('mTricky').checked;
+    lastItems=build(msg, lastTricky);
+    revealing=false;
+    renderMake();
+    $('mTools').style.display='flex';
+    $('mText').style.display='block';
+  }
+
+  $('mGo').addEventListener('click',runMake);
+  $('mAgain').addEventListener('click',runMake);
+  $('mPeek').addEventListener('click',function(){
+    revealing=!revealing;
+    this.textContent = revealing? '\uD83D\uDE48 hide the letters' : '\uD83D\uDC40 show the hidden letters';
+    renderMake();
+  });
+  $('mCopy').addEventListener('click',function(){
+    var t=$('mText').textContent, b=this;
+    var done=function(){ b.textContent='\u2705 copied!'; setTimeout(function(){ b.textContent='\uD83D\uDCCB copy'; },1600); };
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,fb); } else { fb(); }
+    function fb(){
+      var ta=document.createElement('textarea');
+      ta.value=t; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); done(); }catch(e){ alert('Long-press the list to copy it!'); }
+      document.body.removeChild(ta);
+    }
+  });
+
+  /* ---------- READ ---------- */
+  $('rGo').addEventListener('click',function(){
+    var raw=$('rIn').value;
+    if(!raw.trim()){ $('rOut').textContent='\u26A0\uFE0F Paste a list first!'; return; }
+    var lines=raw.split(/\r?\n/), msg='', i, m, n, w;
+    for(i=0;i<lines.length;i++){
+      var ln=lines[i];
+      if(!ln.trim()){ msg+=' '; continue; }
+      m=ln.match(/(\d+)\s*[\.\)]?\s*([a-zA-Z][a-zA-Z\-']*)/);
+      if(!m){ continue; }
+      n=parseInt(m[1],10); w=m[2].toLowerCase();
+      msg += (n>=1 && n<=w.length) ? w.charAt(n-1) : '?';
+    }
+    msg=msg.replace(/\s+/g,' ').trim();
+    $('rOut').textContent = msg || '?';
+  });
+
+  /* ---------- TABS ---------- */
+  var tabs=document.querySelectorAll('.tab'), panels=document.querySelectorAll('.panel');
+  Array.prototype.forEach.call(tabs,function(t){
+    t.addEventListener('click',function(){
+      Array.prototype.forEach.call(tabs,function(x){x.classList.remove('active');});
+      Array.prototype.forEach.call(panels,function(x){x.classList.remove('active');});
+      t.classList.add('active');
+      $(t.getAttribute('data-p')).classList.add('active');
+    });
+  });
+
+  /* first run */
+  runMake();
+})();
+</script>
+</body>
+</html>

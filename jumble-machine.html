@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Jumble Machine — scramble words, solve jumbles</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    background:
+      radial-gradient(circle at 12% 6%,rgba(251,146,60,.20) 0%,transparent 42%),
+      radial-gradient(circle at 88% 94%,rgba(168,85,247,.22) 0%,transparent 45%),
+      linear-gradient(170deg,#1b1030 0%,#241243 55%,#120a22 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#f6f0ff;
+    min-height:100vh;padding:20px 12px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:1.4rem;color:#fdba74;text-align:center;letter-spacing:2px;text-shadow:0 0 22px rgba(253,186,116,.45);}
+  .sub{color:#c9b6ea;font-style:italic;font-size:.87rem;margin:6px 0 16px;text-align:center;}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;max-width:520px;}
+  .tab{
+    background:rgba(255,255,255,.07);color:#efe6ff;border:2px solid rgba(253,186,116,.28);
+    padding:9px 14px;border-radius:20px;font-family:inherit;font-size:.87rem;cursor:pointer;transition:.15s;
+  }
+  .tab.active{background:#c2410c;border-color:#fdba74;color:#fff;font-weight:bold;}
+  .panel{display:none;width:100%;max-width:480px;}
+  .panel.active{display:block;}
+  .card{background:rgba(255,255,255,.055);border:1px solid rgba(253,186,116,.20);border-radius:16px;padding:17px;margin-bottom:14px;}
+  .card h2{font-size:1.02rem;color:#fdba74;margin-bottom:11px;}
+  p{line-height:1.7;font-size:.94rem;margin-bottom:9px;color:#e6dcff;}
+  textarea{
+    width:100%;font-family:inherit;font-size:1.05rem;padding:11px;border-radius:10px;
+    border:2px solid rgba(253,186,116,.3);background:#150c28;color:#fff;resize:vertical;text-align:center;letter-spacing:2px;
+  }
+  .lbl{font-size:.84rem;color:#c9b6ea;display:block;margin-bottom:5px;letter-spacing:.5px;text-align:center;}
+  .btnrow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0;}
+  .btnrow button{
+    flex:1 1 auto;font-family:inherit;font-size:.95rem;padding:12px 9px;border-radius:12px;cursor:pointer;
+    background:#c2410c;color:#fff;border:1px solid #fdba74;font-weight:bold;
+  }
+  .btnrow button.alt{background:#2e1e4d;color:#e6dcff;border-color:rgba(253,186,116,.4);}
+  .btnrow button:active{transform:scale(.96);}
+  label.chk{display:flex;align-items:flex-start;gap:8px;font-size:.9rem;color:#e6dcff;margin:8px 0;cursor:pointer;line-height:1.5;}
+  label.chk input{width:20px;height:20px;accent-color:#fdba74;flex:0 0 auto;margin-top:1px;}
+  .tiles{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:14px 0;min-height:44px;}
+  .tile{
+    background:linear-gradient(160deg,#fbbf24,#f97316);color:#2b1400;font-family:ui-monospace,Menlo,monospace;
+    font-weight:bold;font-size:1.35rem;width:40px;height:46px;border-radius:9px;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #9a3412;letter-spacing:0;
+  }
+  .tile.sp{background:none;box-shadow:none;width:14px;}
+  .tile.q{background:linear-gradient(160deg,#a78bfa,#7c3aed);color:#fff;box-shadow:0 3px 0 #4c1d95;}
+  .answer{
+    font-family:ui-monospace,Menlo,monospace;font-size:1.1rem;color:#86efac;background:rgba(0,0,0,.3);
+    border-radius:10px;padding:11px;margin-top:10px;text-align:center;word-break:break-word;letter-spacing:2px;
+  }
+  .hint{color:#c9b6ea;font-size:.9rem;text-align:center;margin-top:8px;}
+  .note{background:rgba(253,186,116,.10);border-left:4px solid #fdba74;padding:11px 13px;border-radius:0 10px 10px 0;font-size:.92rem;line-height:1.7;margin:12px 0;color:#e6dcff;}
+  ul{margin:0 0 6px 20px;} li{line-height:1.7;font-size:.94rem;margin-bottom:5px;color:#e6dcff;}
+  .foot{margin-top:22px;color:#a48fc7;font-size:.82rem;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<h1>&#128292; THE JUMBLE MACHINE</h1>
+<div class="sub">Scramble words &middot; solve jumbles &middot; for Charlotte, Jumble Champion &#127942;</div>
+
+<div class="tabs">
+  <button class="tab active" data-p="make">&#128292; Jumble it</button>
+  <button class="tab" data-p="solve">&#128269; Solve it</button>
+  <button class="tab" data-p="chal">&#127922; Challenge me</button>
+</div>
+
+<!-- MAKE -->
+<div class="panel active" id="make">
+  <div class="card">
+    <h2>&#128292; Turn a word into a jumble</h2>
+    <label class="lbl">TYPE A WORD OR A WHOLE PHRASE</label>
+    <textarea id="mIn" rows="2">FURRY FRIENDS ISLAND</textarea>
+    <label class="chk"><input type="checkbox" id="mEasy"> <span><b>Easy mode</b> &#128522; &mdash; keep the first and last letter in place<br><span style="color:#c9b6ea;font-size:.85rem;">(untick it for a proper brain-scrambler &#129504;)</span></span></label>
+    <div class="btnrow">
+      <button id="mGo">&#128292; JUMBLE IT!</button>
+      <button class="alt" id="mAgain">&#127922; again</button>
+    </div>
+    <div class="tiles" id="mTiles"></div>
+    <div class="btnrow" id="mTools" style="display:none;">
+      <button class="alt" id="mShow">&#128064; show the answer</button>
+      <button class="alt" id="mCopy">&#128203; copy the jumble</button>
+    </div>
+    <div class="answer" id="mAns" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- SOLVE -->
+<div class="panel" id="solve">
+  <div class="card">
+    <h2>&#128269; Solve a jumble</h2>
+    <label class="lbl">PASTE THE JUMBLED LETTERS</label>
+    <textarea id="sIn" rows="2" placeholder="e.g.  rtneaga"></textarea>
+    <div class="btnrow"><button id="sGo">&#128269; SOLVE IT!</button></div>
+    <div class="answer" id="sOut">&ndash;</div>
+    <div class="note" id="sNote">&#128161; If it finds nothing, it will show you <b>smaller words hiding inside</b> the letters instead!</div>
+    <h2 style="margin-top:14px;">&#129513; Words hiding inside</h2>
+    <div class="answer" id="sSub" style="font-size:.95rem;color:#fdba74;">&ndash;</div>
+  </div>
+</div>
+
+<!-- CHALLENGE -->
+<div class="panel" id="chal">
+  <div class="card">
+    <h2>&#127922; Challenge me</h2>
+    <p>I&#39;ll jumble a secret word. <b>You</b> un-jumble it! &#128170;</p>
+    <div class="tiles" id="cTiles"></div>
+    <div class="hint" id="cHint">Length: &ndash;</div>
+    <div class="btnrow">
+      <button id="cReveal">&#128064; reveal</button>
+      <button class="alt" id="cNext">&#127922; next word</button>
+    </div>
+    <div class="answer" id="cAns" style="display:none;"></div>
+    <div class="note">&#127942; <b>Scoreboard:</b> one point for every word you crack before pressing reveal. Beat your own record! &#128200;</div>
+  </div>
+</div>
+
+<div class="foot">
+  The Jumble Machine &middot; made for Charlotte by Alice the fairy &#129498;&#65039;&#10024;<br>
+  (You earned this one &mdash; 5 out of 5! &#127881;)
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+
+  var BANK=("apple orange banana grape lemon mango peach cherry melon berry bread butter cheese honey sugar pasta pizza noodle carrot potato tomato onion pepper salad soup rice cake cookie chocolate tea coffee juice water milk egg jam olive bean corn mushroom pumpkin cucumber lettuce cabbage garlic ginger cinnamon vanilla yoghurt sandwich pancake waffle muffin biscuit cracker popcorn almond walnut coconut pineapple strawberry blueberry raspberry watermelon apricot avocado plum lime fig pear kiwi papaya guava quince sky cloud rain storm thunder lightning rainbow sun moon star planet comet rocket galaxy ocean river lake waterfall mountain valley forest jungle desert island beach shell coral wave tide wind breeze snow frost fog mist shadow light flame spark stone rock crystal diamond silver copper iron glass metal wood paper cotton wool silk leather plastic rubber brick tower castle bridge garden flower rose tulip daisy lily orchid lotus grass leaf branch root seed tree oak pine maple willow palm moss fern cactus bird eagle parrot penguin owl swan duck goose chicken turkey peacock robin sparrow falcon hawk dove cat dog rabbit hamster mouse horse pony cow sheep goat pig frog toad snake lizard turtle crocodile dolphin whale shark octopus jellyfish crab lobster shrimp snail spider ant bee wasp butterfly dragonfly beetle cricket grasshopper moth worm tiger lion leopard cheetah elephant giraffe zebra monkey gorilla panda koala kangaroo hippo rhino camel wolf fox bear deer squirrel hedgehog otter seal bat unicorn dragon fairy wizard giant ghost robot engine train plane boat bicycle scooter bus truck tractor helicopter balloon kite whistle drum guitar piano violin trumpet flute bell clock watch mirror brush pencil crayon marker eraser ruler scissors glue tape string ribbon button zipper pocket jacket jumper trousers shorts skirt dress shirt sock shoe boot glove scarf hat crown ring necklace bracelet umbrella backpack basket bottle cup plate spoon fork knife kettle teapot oven fridge table chair sofa bed pillow blanket curtain carpet window door roof wall floor stairs fence gate path road street city village market shop school library museum hospital airport station harbour lighthouse windmill fountain statue temple palace pyramid tunnel cave volcano glacier iceberg meadow canyon cliff swamp pond stream spring anchor sail compass map telescope microscope magnet battery bulb switch screen keyboard computer camera phone radio speaker headphone wheel lever screw hammer ladder bucket spade broom sponge soap towel candle lantern torch box jar tin bag chest suitcase wallet purse coin ticket stamp letter envelope parcel newspaper magazine book story poem riddle puzzle game toy doll marble dice card domino bubble puppet mask costume party gift wish dream magic spell potion wand treasure pirate captain sailor explorer inventor scientist doctor teacher baker farmer painter singer dancer writer pilot driver builder gardener chef knight queen king prince princess mermaid witch elf troll phoenix sphinx mammoth dinosaur fossil amber gem pearl opal jade ruby emerald sapphire topaz quartz granite slate chalk clay sand mud dust ash smoke steam sunset sunrise dawn dusk midnight noon morning evening week month year hour minute second moment season summer autumn winter holiday birthday festival carnival circus theatre cinema concert parade picnic campfire adventure journey voyage quest mystery secret whisper echo silence music melody rhythm harmony song dance ballet opera jazz waltz legend myth fable joke laugh smile giggle cheer shout murmur chatter xylophone zero zigzag quiz quill quilt quick queue question exit extra oxygen pixel taxi wax axe six ox buzz fizz freeze sneeze dozen horizon jolly").split(' ');
+
+  var seen={}, WORDS=[];
+  BANK.forEach(function(w){ if(!seen[w]){ seen[w]=1; WORDS.push(w); } });
+
+  function shuffleArr(a){
+    var i, j, t;
+    for(i=a.length-1;i>0;i--){ j=Math.floor(Math.random()*(i+1)); t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+  function scrambleWord(word, easy){
+    if(word.length<=3){
+      var s=shuffleArr(word.split('')).join('');
+      return s===word ? word : s;
+    }
+    if(easy){
+      var f=word.charAt(0), l=word.charAt(word.length-1);
+      var mid=word.slice(1,-1).split('');
+      var g=0, out;
+      do{ out=f+shuffleArr(mid).join('')+l; g++; }while(out===word && g<30);
+      return out;
+    }
+    var all=word.split(''), g2=0, o2;
+    do{ o2=shuffleArr(all).join(''); g2++; }while(o2===word && g2<30);
+    return o2;
+  }
+  function scrambleText(text, easy){
+    var out=[], parts=text.split(/(\s+)/), i, w;
+    for(i=0;i<parts.length;i++){
+      if(/^\s+$/.test(parts[i]) || parts[i]===''){ out.push(parts[i]); continue; }
+      w=parts[i].toLowerCase().replace(/[^a-z]/g,'');
+      out.push(w ? scrambleWord(w,easy) : parts[i]);
+    }
+    return out.join('');
+  }
+  function tilesHTML(text, colour){
+    var h='', i, ch;
+    for(i=0;i<text.length;i++){
+      ch=text.charAt(i);
+      if(ch===' '){ h+='<div class="tile sp"></div>'; continue; }
+      h+='<div class="tile'+(colour?' q':'')+'">'+ch.toUpperCase()+'</div>';
+    }
+    return h;
+  }
+
+  /* ---------- MAKE ---------- */
+  var lastJumble='';
+  function runMake(){
+    var txt=$('mIn').value;
+    if(!txt.replace(/[^A-Za-z]/g,'').length){
+      $('mTiles').innerHTML='<div style="color:#fca5a5;font-size:.9rem;">\u26A0\uFE0F Type a word first!</div>';
+      $('mTools').style.display='none';
+      return;
+    }
+    lastJumble=scrambleText(txt, $('mEasy').checked);
+    $('mTiles').innerHTML=tilesHTML(lastJumble,false);
+    $('mAns').style.display='none';
+    $('mTools').style.display='flex';
+  }
+  $('mGo').addEventListener('click',runMake);
+  $('mAgain').addEventListener('click',runMake);
+  $('mShow').addEventListener('click',function(){
+    $('mAns').textContent='\u2705 '+(lastJumble.toUpperCase());
+    $('mAns').style.display='block';
+  });
+  $('mCopy').addEventListener('click',function(){
+    var b=this;
+    var done=function(){ b.textContent='\u2705 copied!'; setTimeout(function(){ b.textContent='\uD83D\uDCCB copy the jumble'; },1600); };
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(lastJumble).then(done,fb); } else { fb(); }
+    function fb(){
+      var ta=document.createElement('textarea'); ta.value=lastJumble;
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); done(); }catch(e){ alert('Long-press the tiles to copy!'); }
+      document.body.removeChild(ta);
+    }
+  });
+
+  /* ---------- SOLVE ---------- */
+  function letters(s){ return s.toLowerCase().replace(/[^a-z]/g,''); }
+  function sortLetters(s){ return s.split('').sort().join(''); }
+  $('sGo').addEventListener('click',function(){
+    var raw=letters($('sIn').value);
+    if(!raw){ $('sOut').textContent='\u26A0\uFE0F Type the jumbled letters first!'; $('sSub').textContent='\u2013'; return; }
+    var target=sortLetters(raw), hits=[], i;
+    for(i=0;i<WORDS.length;i++){ if(WORDS[i].length===raw.length && sortLetters(WORDS[i])===target) hits.push(WORDS[i]); }
+    if(hits.length){
+      $('sOut').innerHTML='\u2705 <b>'+hits.map(function(w){return w.toUpperCase();}).join('</b> or <b>')+'</b>';
+    } else {
+      $('sOut').innerHTML='\uD83E\uDD14 Not a word I know \u2014 but look below! \uD83D\uDC47';
+    }
+    /* words hiding inside */
+    var cnt={}, j;
+    for(j=0;j<raw.length;j++){ cnt[raw.charAt(j)]=(cnt[raw.charAt(j)]||0)+1; }
+    var sub=[];
+    for(i=0;i<WORDS.length;i++){
+      var w=WORDS[i];
+      if(w.length<3 || w.length>raw.length) continue;
+      var c2={}, ok=true, k;
+      for(k=0;k<w.length;k++){ c2[w.charAt(k)]=(c2[w.charAt(k)]||0)+1; }
+      for(k in c2){ if((cnt[k]||0) < c2[k]){ ok=false; break; } }
+      if(ok) sub.push(w);
+    }
+    sub.sort(function(a,b){ return b.length-a.length || (a<b?-1:1); });
+    $('sSub').textContent = sub.length ? sub.slice(0,18).join('  \u00B7  ') : '\u2013';
+  });
+
+  /* ---------- CHALLENGE ---------- */
+  var cWord='';
+  function newChallenge(){
+    cWord=WORDS[Math.floor(Math.random()*WORDS.length)];
+    var j=scrambleWord(cWord, false);
+    $('cTiles').innerHTML=tilesHTML(j,true);
+    $('cHint').textContent='Length: '+cWord.length+' letters';
+    $('cAns').style.display='none';
+  }
+  $('cReveal').addEventListener('click',function(){
+    $('cAns').textContent='\u2705 '+cWord.toUpperCase();
+    $('cAns').style.display='block';
+  });
+  $('cNext').addEventListener('click',newChallenge);
+
+  /* ---------- TABS ---------- */
+  var tabs=document.querySelectorAll('.tab'), panels=document.querySelectorAll('.panel');
+  Array.prototype.forEach.call(tabs,function(t){
+    t.addEventListener('click',function(){
+      Array.prototype.forEach.call(tabs,function(x){x.classList.remove('active');});
+      Array.prototype.forEach.call(panels,function(x){x.classList.remove('active');});
+      t.classList.add('active');
+      $(t.getAttribute('data-p')).classList.add('active');
+    });
+  });
+
+  runMake();
+  newChallenge();
+})();
+</script>
+</body>
+</html>

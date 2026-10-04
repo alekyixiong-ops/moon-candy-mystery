@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Oobleck Lab — the liquid that turns into a solid</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    background:
+      radial-gradient(circle at 20% 5%,rgba(74,222,128,.22) 0%,transparent 45%),
+      radial-gradient(circle at 80% 95%,rgba(34,211,238,.16) 0%,transparent 45%),
+      linear-gradient(170deg,#0a2018 0%,#0e2a1f 55%,#061410 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#e9fff2;
+    min-height:100vh;padding:20px 12px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:1.4rem;color:#6ee7a8;text-align:center;letter-spacing:1.5px;text-shadow:0 0 22px rgba(110,231,168,.45);}
+  .sub{color:#9fd6b8;font-style:italic;font-size:.88rem;margin:6px 0 16px;text-align:center;}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;max-width:520px;}
+  .tab{
+    background:rgba(255,255,255,.07);color:#d8f5e3;border:2px solid rgba(110,231,168,.25);
+    padding:9px 14px;border-radius:20px;font-family:inherit;font-size:.87rem;cursor:pointer;transition:.15s;
+  }
+  .tab.active{background:#15803d;border-color:#6ee7a8;color:#fff;font-weight:bold;}
+  .panel{display:none;width:100%;max-width:480px;}
+  .panel.active{display:block;}
+  .card{background:rgba(255,255,255,.055);border:1px solid rgba(110,231,168,.20);border-radius:16px;padding:17px;margin-bottom:14px;}
+  .card h2{font-size:1.02rem;color:#6ee7a8;margin-bottom:11px;}
+  p{line-height:1.75;font-size:.94rem;margin-bottom:9px;color:#dcf5e6;}
+  ul{margin:0 0 6px 20px;} li{line-height:1.75;font-size:.94rem;margin-bottom:6px;color:#dcf5e6;}
+  li b{color:#6ee7a8;}
+  .row{display:flex;gap:10px;align-items:center;margin-bottom:10px;}
+  .row label{font-size:.9rem;color:#9fd6b8;flex:0 0 96px;}
+  .row input[type=range]{flex:1;accent-color:#22c55e;}
+  .big{font-size:1.6rem;font-family:ui-monospace,Menlo,monospace;color:#6ee7a8;text-align:center;}
+  .btnrow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0;}
+  .btnrow button{
+    flex:1 1 auto;font-family:inherit;font-size:.95rem;padding:12px 9px;border-radius:12px;cursor:pointer;
+    background:#15803d;color:#fff;border:1px solid #6ee7a8;font-weight:bold;
+  }
+  .btnrow button.alt{background:#1e3a2c;color:#c9f2d9;border-color:rgba(110,231,168,.4);}
+  .btnrow button:active{transform:scale(.96);}
+  .stage{
+    height:170px;border-radius:14px;background:radial-gradient(circle at 50% 120%,#0b2a1d 0%,#061410 70%);
+    border:1px solid rgba(110,231,168,.22);display:flex;align-items:center;justify-content:center;overflow:hidden;margin:12px 0;
+  }
+  .blob{
+    width:110px;height:100px;border-radius:50% 50% 44% 44%;
+    background:radial-gradient(circle at 35% 30%,#a7f3d0,#4ade80 45%,#15803d 100%);
+    box-shadow:0 0 30px rgba(74,222,128,.55),inset 0 -10px 20px rgba(0,0,0,.25);
+    transition:all .18s ease;position:relative;
+  }
+  .blob.hard{width:120px;height:118px;border-radius:14px;box-shadow:0 0 40px rgba(74,222,128,.9),inset 0 -6px 14px rgba(0,0,0,.35);}
+  .blob.drip{width:104px;height:150px;border-radius:50% 50% 40% 40%;transform:translateY(14px) scaleY(1.1);}
+  .blob.shake{animation:shake .3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+  .status{
+    text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:1rem;color:#fbbf24;
+    min-height:48px;line-height:1.5;padding:8px;background:rgba(0,0,0,.25);border-radius:10px;
+  }
+  .status b{color:#6ee7a8;}
+  .note{background:rgba(110,231,168,.10);border-left:4px solid #22c55e;padding:11px 13px;border-radius:0 10px 10px 0;font-size:.92rem;line-height:1.7;margin:12px 0;color:#dcf5e6;}
+  .warn{background:rgba(251,191,36,.10);border-left:4px solid #fbbf24;padding:11px 13px;border-radius:0 10px 10px 0;font-size:.92rem;line-height:1.7;margin:12px 0;color:#fde9c8;}
+  .ing{display:flex;justify-content:space-between;font-family:ui-monospace,Menlo,monospace;font-size:.95rem;padding:7px 0;border-bottom:1px dashed rgba(110,231,168,.2);color:#dcf5e6;}
+  .ing:last-child{border-bottom:none;}
+  .ing b{color:#6ee7a8;}
+  .foot{margin-top:22px;color:#7fae93;font-size:.82rem;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<h1>&#128994; THE OOBLECK LAB</h1>
+<div class="sub">The liquid that turns into a solid &middot; for Charlotte &#129497;&#8205;&#9792;&#65039;</div>
+
+<div class="tabs">
+  <button class="tab active" data-p="make">&#129379; Make it</button>
+  <button class="tab" data-p="test">&#128170; Test it</button>
+  <button class="tab" data-p="sci">&#129514; Why?!</button>
+</div>
+
+<!-- MAKE -->
+<div class="panel active" id="make">
+  <div class="card">
+    <h2>&#129379; What is oobleck?</h2>
+    <p>Oobleck is just <b>cornflour (cornstarch) + water</b>. That&#39;s it. Two boring things&#8230; that together become something <b>impossible</b>. &#128561;</p>
+    <p>It behaves like a <b>liquid</b> when you&#39;re gentle&#8230; and like a <b>SOLID</b> when you hit it. Same stuff. Different speed.</p>
+    <div class="note">&#128161; Scientists call it a <b>non-Newtonian fluid</b>. Oobleck is <b>shear-thickening</b> &mdash; &ldquo;shear&rdquo; means pushing it sideways/fast, and it gets <b>thicker</b> when you do. &#129504;</div>
+    <h2 style="margin-top:16px;">&#129518; The recipe</h2>
+    <div class="row"><label>batches</label><input type="range" id="scale" min="1" max="4" value="1"><span class="big" id="scaleOut" style="flex:0 0 44px;font-size:1.1rem;">1</span></div>
+    <div class="ing"><span>&#127838; cornflour</span><b id="cf">1 cup</b></div>
+    <div class="ing"><span>&#128167; water</span><b id="wt">&#189; cup</b></div>
+    <div class="ing"><span>&#127912; food colouring</span><b id="fc">a few drops</b></div>
+    <ul style="margin-top:12px;">
+      <li>Tip the <b>cornflour</b> into a bowl.</li>
+      <li>Add the <b>water a little at a time</b>, stirring. You want it to feel like <b>honey that won&#39;t pour</b>. &#127855;</li>
+      <li>If it&#39;s too runny &rarr; more cornflour. Too crumbly &rarr; a splash more water.</li>
+      <li>Add colour. Green is traditional (it&#39;s named after a Dr. Seuss story!) but any colour works. &#127752;</li>
+      <li><b>Pick it up and squeeze!</b> It goes hard. Open your hand and it drips away. &#129321;</li>
+    </ul>
+    <div class="warn">
+      &#9888;&#65039; <b>Three oobleck rules</b><br>
+      1. <b>Never pour it down the sink</b> &mdash; it hardens in pipes and blocks them! Put it in the <b>bin</b>. &#128465;&#65039;<br>
+      2. Do it on a <b>tray</b> or outside &mdash; it gets everywhere. &#127808;<br>
+      3. Ask a grown-up first. &#128587;&#8205;&#9792;&#65039;
+    </div>
+  </div>
+</div>
+
+<!-- TEST -->
+<div class="panel" id="test">
+  <div class="card">
+    <h2>&#128170; Try it yourself</h2>
+    <p>Tap a button and see what oobleck does. This is the <b>real</b> behaviour &mdash; then go and do it for real! &#128071;</p>
+    <div class="stage"><div class="blob" id="blob"></div></div>
+    <div class="btnrow">
+      <button data-t="punch">&#128170; PUNCH IT</button>
+      <button data-t="pour" class="alt">&#129367; POUR IT</button>
+    </div>
+    <div class="btnrow">
+      <button data-t="fast" class="alt">&#129348; STIR FAST</button>
+      <button data-t="slow" class="alt">&#129348; STIR SLOW</button>
+    </div>
+    <div class="status" id="status">What do you think will happen? Predict first! &#129300;</div>
+    <h2 style="margin-top:16px;">&#128203; The test list</h2>
+    <ul>
+      <li><b>Punch it</b> &rarr; your fist <b>bounces off</b>. It&#39;s a solid! &#128170;</li>
+      <li><b>Press your finger in slowly</b> &rarr; it sinks in like water. &#128167;</li>
+      <li><b>Scoop some up and squeeze</b> &rarr; it makes a <b>hard ball</b>&#8230; then melts back into goo in your hand. &#9899;</li>
+      <li><b>Try to stir it fast</b> &rarr; the spoon gets <b>stuck</b>. Slow &rarr; it swirls happily.</li>
+      <li><b>Pour it from a height</b> &rarr; it <b>splats and cracks</b> like a solid.</li>
+      <li><b>Drag a fork through it quickly</b> &rarr; it <b>tears</b> into chunks.</li>
+      <li><b>Leave it alone for a minute</b> &rarr; it slowly <b>flattens out</b> like a puddle. &#128034;</li>
+    </ul>
+    <div class="note">&#127942; <b>The famous one:</b> people have actually <b>run across a swimming-pool full of oobleck</b>! If you keep moving fast, it&#39;s a solid floor. If you <b>stop</b>&#8230; you sink straight in. &#128561; (Ask a grown-up to look up the video!)</div>
+  </div>
+</div>
+
+<!-- SCIENCE -->
+<div class="panel" id="sci">
+  <div class="card">
+    <h2>&#129514; Why does it do that?!</h2>
+    <p>Cornflour is made of <b>millions of tiny grains</b>, far too small to see. When you add water, the grains <b>slide over each other</b> easily &mdash; so it pours like a liquid. &#128167;</p>
+    <p>But when you push <b>fast</b>, the grains get <b>jammed together</b>. There&#39;s no time for them to slide out of the way! They lock into a solid wall. &#129521;</p>
+    <div class="note">
+      <b>&#9201;&#65039; It&#39;s all about SPEED.</b><br>
+      Slow &rarr; the grains have time to move = <b>liquid</b>.<br>
+      Fast &rarr; the grains jam = <b>solid</b>.<br>
+      Same oobleck. Same you. Just different speed! &#9889;
+    </div>
+    <h2 style="margin-top:16px;">&#127757; Where it shows up in real life</h2>
+    <ul>
+      <li><b>Quicksand</b> &mdash; the classic! Struggling fast makes it grip you harder. Move <b>slowly</b> and you float. &#127958;&#65039;</li>
+      <li><b>Ketchup</b> &mdash; shake it hard and it suddenly flows. (That one&#39;s the <i>opposite</i> way round!) &#127798;&#65039;</li>
+      <li><b>Your blood</b> &mdash; it gets thicker when it flows fast. &#129656;</li>
+      <li><b>Body armour</b> &mdash; engineers soak fabric in shear-thickening fluid. Normally soft &mdash; but it <b>hardens instantly</b> when a bullet hits. &#128737;&#65039;</li>
+    </ul>
+    <h2 style="margin-top:16px;">&#128214; The story it&#39;s named after</h2>
+    <p>In <b>1949</b>, Dr. Seuss wrote <i>&ldquo;Bartholomew and the Oobleck&rdquo;</i> &mdash; a king wishes for something new to fall from the sky, and the kingdom gets buried in sticky green goo. &#127808; A goo that turns hard when you hit it, and drips when you don&#39;t? It needed a name. So the gloop got the king&#39;s name. &#128514;</p>
+  </div>
+</div>
+
+<div class="foot">
+  The Oobleck Lab &middot; made for Charlotte by Alice the fairy &#129498;&#65039;&#10024;<br>
+  Go make a mess. Tell me what happened! &#128155;
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+
+  var tabs=document.querySelectorAll('.tab'), panels=document.querySelectorAll('.panel');
+  Array.prototype.forEach.call(tabs,function(t){
+    t.addEventListener('click',function(){
+      Array.prototype.forEach.call(tabs,function(x){x.classList.remove('active');});
+      Array.prototype.forEach.call(panels,function(x){x.classList.remove('active');});
+      t.classList.add('active');
+      $(t.getAttribute('data-p')).classList.add('active');
+    });
+  });
+
+  /* ---------- RECIPE SCALER ---------- */
+  var AMT=[['1 cup','\u00BD cup'],['2 cups','1 cup'],['3 cups','1\u00BD cups'],['4 cups','2 cups']];
+  $('scale').addEventListener('input',function(){
+    var n=parseInt(this.value,10);
+    $('scaleOut').textContent=n;
+    $('cf').textContent=AMT[n-1][0];
+    $('wt').textContent=AMT[n-1][1];
+    $('fc').textContent = n===1? 'a few drops' : (n*3)+' drops';
+  });
+
+  /* ---------- TEST ---------- */
+  var blob=$('blob'), st=$('status'), timer=null;
+  var MSG={
+    punch:'<b>SOLID!</b> \uD83D\uDCA5 Your fist bounced off a hard wall. For that instant, oobleck was a solid.',
+    pour:'<b>LIQUID!</b> \uD83D\uDCA7 It drips and flows like cream. Move slowly and it can\u2019t be bothered to be solid.',
+    fast:'<b>STUCK!</b> \uD83E\uDD44 The spoon jammed \u2014 the grains locked together. Oobleck fights back when you rush it.',
+    slow:'<b>SWIRL!</b> \uD83E\uDD44\uD83C\uDF00 Easy does it \u2014 the grains slide past each other and it flows like soup.'
+  };
+  function clearAll(){ blob.classList.remove('hard','drip','shake'); }
+  $('test').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    var t=b.getAttribute('data-t');
+    if(!t) return;
+    clearAll();
+    if(timer){ clearTimeout(timer); timer=null; }
+    if(t==='punch'){ blob.classList.add('hard','shake'); }
+    else if(t==='pour'){ blob.classList.add('drip'); }
+    else if(t==='fast'){ blob.classList.add('hard','shake'); }
+    else if(t==='slow'){ blob.classList.add('drip'); }
+    st.innerHTML=MSG[t];
+    timer=setTimeout(function(){ clearAll(); st.innerHTML+='<br><span style="color:#9fd6b8;font-size:.88rem;">(\u2026and it\u2019s already relaxing back into a liquid \uD83D\uDE34)</span>'; },2200);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Fraction Lab — pizza maths</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    background:linear-gradient(180deg,#fff7ed 0%,#ffedd5 55%,#fed7aa 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#5a2f0a;
+    min-height:100vh;padding:18px 12px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:1.35rem;color:#c2410c;text-align:center;letter-spacing:.5px;}
+  .sub{color:#8a5a2b;font-style:italic;font-size:.87rem;margin:6px 0 14px;text-align:center;}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;max-width:520px;}
+  .tab{
+    background:#fff;color:#7c3a12;border:2px solid #fbd7ac;padding:9px 13px;border-radius:20px;
+    font-family:inherit;font-size:.86rem;cursor:pointer;transition:.15s;
+  }
+  .tab.active{background:#ea580c;border-color:#9a3412;color:#fff;font-weight:bold;}
+  .panel{display:none;width:100%;max-width:470px;}
+  .panel.active{display:block;}
+  .card{background:#fff;border:1px solid #f7e0c4;border-radius:16px;padding:17px;margin-bottom:13px;box-shadow:0 2px 12px rgba(200,120,40,.09);}
+  .card h2{font-size:1.02rem;color:#c2410c;margin-bottom:10px;}
+  .card h3{font-size:.92rem;color:#9a3412;margin:14px 0 8px;}
+  p{line-height:1.7;font-size:.94rem;margin-bottom:9px;}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-family:ui-monospace,Menlo,monospace;line-height:1.05;margin:0 4px;}
+  .frac .t{padding:0 4px;}
+  .frac .b{border-top:2px solid currentColor;padding:0 4px;}
+  .bigfrac{font-size:2rem;color:#ea580c;}
+  .row{display:flex;gap:10px;align-items:center;margin-bottom:9px;}
+  .row label{font-size:.88rem;color:#8a5a2b;flex:0 0 74px;}
+  .row input[type=range]{flex:1;accent-color:#ea580c;}
+  .row input[type=number]{
+    width:64px;font-family:inherit;font-size:1rem;padding:7px;border-radius:9px;
+    border:2px solid #fbd7ac;background:#fffdf9;color:#5a2f0a;text-align:center;
+  }
+  .val{font-family:ui-monospace,Menlo,monospace;color:#c2410c;flex:0 0 34px;text-align:right;}
+  .btnrow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0;}
+  .btnrow button{
+    flex:1 1 auto;font-family:inherit;font-size:.95rem;padding:12px 9px;border-radius:11px;cursor:pointer;
+    background:#ea580c;color:#fff;border:1px solid #9a3412;font-weight:bold;
+  }
+  .btnrow button.alt{background:#fdf1e3;color:#7c3a12;border-color:#fbd7ac;}
+  .btnrow button:active{transform:scale(.96);}
+  .pie{width:170px;height:170px;border-radius:50%;margin:10px auto;border:3px solid #c2410c;box-shadow:0 3px 12px rgba(200,120,40,.2);}
+  .bars{display:flex;gap:3px;margin:8px 0;}
+  .bars .cell{flex:1;height:34px;background:#fdf1e3;border:2px solid #f0d3ab;border-radius:6px;}
+  .bars .cell.on{background:linear-gradient(160deg,#fb923c,#ea580c);border-color:#9a3412;}
+  .center{text-align:center;}
+  .say{font-family:ui-monospace,Menlo,monospace;font-size:1.02rem;color:#7c3a12;background:#fdf1e3;border-radius:10px;padding:11px;margin-top:9px;line-height:1.8;text-align:center;}
+  .steps{font-family:ui-monospace,Menlo,monospace;font-size:.9rem;color:#9a3412;background:#fffaf3;border-left:4px solid #fb923c;border-radius:0 10px 10px 0;padding:11px 13px;margin-top:10px;line-height:1.9;white-space:pre-wrap;}
+  .fb{margin-top:10px;font-size:.95rem;line-height:1.7;min-height:44px;font-family:ui-monospace,Menlo,monospace;}
+  .ok{color:#15803d;} .no{color:#dc2626;}
+  .note{background:#fffaf3;border-left:4px solid #fb923c;padding:11px 13px;border-radius:0 10px 10px 0;font-size:.91rem;line-height:1.7;margin:11px 0;}
+  .qtext{font-size:1.15rem;line-height:1.7;margin-bottom:10px;min-height:44px;}
+  .choices{display:grid;gap:8px;}
+  .choices button{
+    font-family:ui-monospace,Menlo,monospace;font-size:1.02rem;padding:12px;border-radius:12px;cursor:pointer;text-align:center;
+    background:#fffaf3;color:#7c3a12;border:2px solid #fbd7ac;
+  }
+  .choices button:active{transform:scale(.97);}
+  .score{font-family:ui-monospace,Menlo,monospace;color:#c2410c;text-align:center;font-size:1rem;}
+  .foot{margin-top:22px;color:#a4774a;font-size:.81rem;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<h1>&#127829; THE FRACTION LAB</h1>
+<div class="sub">Fractions are just pizza maths &middot; for Charlotte &#129497;&#8205;&#9792;&#65039;</div>
+
+<div class="tabs">
+  <button class="tab active" data-p="build">&#127829; Build one</button>
+  <button class="tab" data-p="cmp">&#9878;&#65039; Which is bigger?</button>
+  <button class="tab" data-p="add">&#10133; Add &amp; subtract</button>
+  <button class="tab" data-p="miss">&#127919; Mission</button>
+</div>
+
+<!-- BUILD -->
+<div class="panel active" id="build">
+  <div class="card">
+    <h2>&#127829; What IS a fraction?</h2>
+    <p>A fraction is just <b>a piece of a whole thing</b> &mdash; like slices of a pizza. &#127829;</p>
+    <div class="note">
+      <b>The bottom number</b> = how many <b>equal pieces</b> we cut the whole into. &#128298;<br>
+      <b>The top number</b> = how many pieces <b>we take</b>. &#128072;
+    </div>
+    <div class="row"><label>top</label><input type="range" id="bN" min="1" max="12" value="3"><span class="val" id="bNv">3</span></div>
+    <div class="row"><label>bottom</label><input type="range" id="bD" min="1" max="12" value="4"><span class="val" id="bDv">4</span></div>
+    <div class="pie" id="bPie"></div>
+    <div class="center"><span class="frac bigfrac"><span class="t" id="bTop">3</span><span class="b" id="bBot">4</span></span></div>
+    <div class="say" id="bSay">&ndash;</div>
+    <h3>&#128202; The same fraction as a bar</h3>
+    <div class="bars" id="bBars"></div>
+    <p style="font-size:.88rem;color:#8a5a2b;">See? <b>Same thing, drawn differently.</b> A pie, a bar, a number &mdash; all the same fraction. &#128200;</p>
+  </div>
+</div>
+
+<!-- COMPARE -->
+<div class="panel" id="cmp">
+  <div class="card">
+    <h2>&#9878;&#65039; Which one is bigger?</h2>
+    <p>Careful &mdash; <b>a bigger bottom number makes the pieces SMALLER!</b> &#128561;<br>
+       (Would you rather have 1 slice of a pizza cut into 4, or 1 slice of a pizza cut into 12?)</p>
+    <div class="center" style="font-size:1.6rem;">
+      <span class="frac"><span class="t" id="cA1">1</span><span class="b" id="cA2">2</span></span>
+      <b id="cVs">?</b>
+      <span class="frac"><span class="t" id="cB1">1</span><span class="b" id="cB2">3</span></span>
+    </div>
+    <div class="bars" id="cBarsA"></div>
+    <div class="bars" id="cBarsB"></div>
+    <div class="btnrow">
+      <button data-c="A">&#11013;&#65039; the left one</button>
+      <button data-c="B">the right one &#10145;&#65039;</button>
+      <button class="alt" data-c="E">they're equal</button>
+    </div>
+    <div class="fb" id="cFb">Pick one! &#128071;</div>
+    <div class="btnrow"><button class="alt" id="cNew">&#127922; new question</button><button class="alt" disabled style="opacity:.75;">score: <span id="cScore">0</span> / <span id="cTot">0</span></button></div>
+    <div class="note">&#128161; <b>Trick:</b> the same <b>top</b> number means the <b>smaller bottom</b> wins. <code>1/2 &gt; 1/3 &gt; 1/4 &gt; 1/5</code> &mdash; the more pieces you cut, the tinier each one is! &#127829;</div>
+  </div>
+</div>
+
+<!-- ADD -->
+<div class="panel" id="add">
+  <div class="card">
+    <h2>&#10133; Adding and taking away</h2>
+    <p><b>Same bottom number?</b> Easy &mdash; just add the tops. &#128077;</p>
+    <p><b>Different bottoms?</b> You must <b>make them match first</b> &mdash; like cutting both pizzas into the same size slices. &#128298;</p>
+    <div class="row" style="justify-content:center;">
+      <input type="number" id="aN1" value="1" min="0" max="30"><span style="color:#ea580c;font-size:1.3rem;">/</span>
+      <input type="number" id="aD1" value="2" min="1" max="30">
+      <select id="aOp" style="font-family:inherit;font-size:1.2rem;padding:7px 9px;border-radius:9px;border:2px solid #fbd7ac;background:#fffdf9;color:#c2410c;">
+        <option value="+">+</option><option value="-">&minus;</option>
+      </select>
+      <input type="number" id="aN2" value="1" min="0" max="30"><span style="color:#ea580c;font-size:1.3rem;">/</span>
+      <input type="number" id="aD2" value="4" min="1" max="30">
+    </div>
+    <div class="btnrow"><button id="aGo">&#10133; work it out</button></div>
+    <div class="say" id="aAns">&ndash;</div>
+    <div class="steps" id="aSteps" style="display:none;"></div>
+    <div class="bars" id="aBars" style="display:none;"></div>
+    <div class="note">&#128161; <b>The magic move:</b> multiply the two bottom numbers to get a <b>common denominator</b>. Then both fractions have the same slice size and you can just add the tops! &#10024;</div>
+  </div>
+</div>
+
+<!-- MISSION -->
+<div class="panel" id="miss">
+  <div class="card">
+    <h2>&#127919; Fraction Mission</h2>
+    <p>10 questions. Mixed difficulty &mdash; they get harder as you go. &#128170;</p>
+    <div class="qtext" id="mQ">Press start!</div>
+    <div id="mVis"></div>
+    <div class="choices" id="mChoices"></div>
+    <div class="fb" id="mFb"></div>
+    <div class="btnrow">
+      <button class="alt" id="mNext">next &#8594;</button>
+      <button class="alt" disabled style="opacity:.75;">score: <span id="mScore">0</span>/10</button>
+    </div>
+  </div>
+</div>
+
+<div class="foot">
+  The Fraction Lab &middot; made for Charlotte by Alice the fairy &#129498;&#65039;&#10024;<br>
+  Fractions are friendly. They&#39;re just pizza that got cut up. &#127829;
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+  function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ var t=b; b=a%b; a=t; } return a||1; }
+  function lcm(a,b){ return Math.abs(a*b)/gcd(a,b); }
+  function simp(n,d){
+    if(d<0){ n=-n; d=-d; }
+    var g=gcd(n,d);
+    return [n/g, d/g];
+  }
+  var NAMES={1:'whole',2:'half',3:'third',4:'quarter',5:'fifth',6:'sixth',7:'seventh',8:'eighth',9:'ninth',10:'tenth',11:'eleventh',12:'twelfth'};
+  function fracHTML(n,d,cls){
+    return '<span class="frac '+(cls||'')+'"><span class="t">'+n+'</span><span class="b">'+d+'</span></span>';
+  }
+  function barsHTML(n,d){
+    var h='', i, fill = Math.round(n/d*12);
+    var cells = Math.min(d, 12);
+    for(i=0;i<cells;i++){
+      var on = i < Math.round(n/d*cells);
+      h+='<div class="cell'+(on?' on':'')+'"></div>';
+    }
+    return '<div class="bars">'+h+'</div>';
+  }
+
+  /* tabs */
+  var tabs=document.querySelectorAll('.tab'), panels=document.querySelectorAll('.panel');
+  Array.prototype.forEach.call(tabs,function(t){
+    t.addEventListener('click',function(){
+      Array.prototype.forEach.call(tabs,function(x){x.classList.remove('active');});
+      Array.prototype.forEach.call(panels,function(x){x.classList.remove('active');});
+      t.classList.add('active');
+      $(t.getAttribute('data-p')).classList.add('active');
+    });
+  });
+
+  /* ---------- BUILD ---------- */
+  function paintBuild(){
+    var n=parseInt($('bN').value,10), d=parseInt($('bD').value,10);
+    $('bNv').textContent=n; $('bDv').textContent=d;
+    $('bTop').textContent=n; $('bBot').textContent=d;
+    var pct=(n/d)*100;
+    $('bPie').style.background='conic-gradient(#ea580c 0 '+pct.toFixed(2)+'%, #fdf1e3 '+pct.toFixed(2)+'% 100%)';
+    $('bBars').innerHTML='';
+    var cells=Math.min(d,12), i, h='';
+    for(i=0;i<cells;i++){ h+='<div class="cell'+(i<Math.round(n/d*cells)?' on':'')+'"></div>'; }
+    $('bBars').innerHTML=h;
+    var word = n===1? ('one '+NAMES[d]) : (n+' '+NAMES[d]+'s');
+    var extra='';
+    if(n===d) extra=' = the WHOLE thing! \uD83C\uDF55';
+    else if(n>d) extra=' \u2014 that\u2019s MORE than a whole (an improper fraction!)';
+    else if(n===1) extra=' \u2014 one slice of '+d+'.';
+    $('bSay').innerHTML='<b>'+n+'</b> out of <b>'+d+'</b> equal pieces &nbsp;=&nbsp; '+word+extra;
+  }
+  $('bN').addEventListener('input',paintBuild);
+  $('bD').addEventListener('input',paintBuild);
+  paintBuild();
+
+  /* ---------- COMPARE ---------- */
+  var cA=[1,2], cB=[1,3], cScore=0, cTot=0, cLocked=false;
+  function newCompare(){
+    cLocked=false;
+    function rnd(){
+      var d=[2,3,4,5,6,8,10,12][Math.floor(Math.random()*8)];
+      var n=1+Math.floor(Math.random()*(d-1));
+      return [n,d];
+    }
+    cA=rnd(); cB=rnd();
+    while(cA[0]/cA[1]===cB[0]/cB[1]){ cB=rnd(); }
+    $('cA1').textContent=cA[0]; $('cA2').textContent=cA[1];
+    $('cB1').textContent=cB[0]; $('cB2').textContent=cB[1];
+    $('cVs').textContent='?';
+    $('cBarsA').innerHTML=barsHTML(cA[0],cA[1]).replace('<div class="bars">','').replace('</div>','');
+    $('cBarsB').innerHTML=barsHTML(cB[0],cB[1]).replace('<div class="bars">','').replace('</div>','');
+    $('cFb').className='fb'; $('cFb').textContent='Pick one! \uD83D\uDC47';
+  }
+  document.getElementById('cmp').addEventListener('click',function(e){
+    var b=e.target.closest('button[data-c]');
+    if(!b) return;
+    if(cLocked) return;
+    cLocked=true; cTot++;
+    var pick=b.getAttribute('data-c');
+    var va=cA[0]/cA[1], vb=cB[0]/cB[1];
+    var right = Math.abs(va-vb)<1e-9 ? 'E' : (va>vb? 'A':'B');
+    var L=lcm(cA[1],cB[1]);
+    var expl='same slices (denominator '+L+'): '+fracHTML(cA[0]*(L/cA[1]),L)+' vs '+fracHTML(cB[0]*(L/cB[1]),L);
+    if(pick===right){
+      cScore++;
+      $('cFb').className='fb ok';
+      $('cFb').innerHTML='\u2705 <b>Yes!</b><br>'+expl;
+    } else {
+      $('cFb').className='fb no';
+      $('cFb').innerHTML='\u274C Not quite. The answer: <b>'+(right==='A'?'the left one':right==='B'?'the right one':'they\u2019re equal')+'</b><br>'+expl;
+    }
+    $('cVs').textContent = right==='E'? '=' : (right==='A'? '>' : '<');
+    $('cScore').textContent=cScore; $('cTot').textContent=cTot;
+  });
+  $('cNew').addEventListener('click',newCompare);
+  newCompare();
+
+  /* ---------- ADD ---------- */
+  function doAdd(){
+    var n1=parseInt($('aN1').value,10)||0, d1=parseInt($('aD1').value,10)||1;
+    var n2=parseInt($('aN2').value,10)||0, d2=parseInt($('aD2').value,10)||1;
+    var op=$('aOp').value;
+    if(d1<1||d2<1){ $('aAns').textContent='Bottom numbers must be 1 or more!'; return; }
+    var L=lcm(d1,d2);
+    var k1=L/d1, k2=L/d2;
+    var top = op==='+' ? (n1*k1 + n2*k2) : (n1*k1 - n2*k2);
+    var s=simp(top,L);
+    $('aAns').innerHTML=fracHTML(n1,d1)+' '+op+' '+fracHTML(n2,d2)+' = '+fracHTML(s[0],s[1]);
+    var steps='';
+    if(d1===d2){
+      steps='Same bottom number \u2014 easy!\n'+n1+'/'+d1+' '+op+' '+n2+'/'+d2+'  \u2192  just do the tops: '+n1+' '+op+' '+n2+' = '+top+'\nAnswer: '+top+'/'+d1;
+    } else {
+      steps='The bottoms are different, so make them match.\n\n'
+          +'1) Smallest number both '+d1+' and '+d2+' divide into  =  '+L+'\n'
+          +'2) Change the first:  '+n1+'/'+d1+' = ('+n1+'\u00D7'+k1+')/('+d1+'\u00D7'+k1+') = '+(n1*k1)+'/'+L+'\n'
+          +'3) Change the second: '+n2+'/'+d2+' = ('+n2+'\u00D7'+k2+')/('+d2+'\u00D7'+k2+') = '+(n2*k2)+'/'+L+'\n'
+          +'4) Now do the tops: '+(n1*k1)+' '+op+' '+(n2*k2)+' = '+top+'\n'
+          +'5) Answer: '+top+'/'+L;
+    }
+    if(s[0]!==top || s[1]!==L){
+      steps+='\n6) Simplify: divide both by '+gcd(top,L)+' \u2192 '+s[0]+'/'+s[1];
+    }
+    $('aSteps').textContent=steps;
+    $('aSteps').style.display='block';
+    $('aBars').innerHTML=barsHTML(s[0],s[1]);
+    $('aBars').style.display='flex';
+  }
+  $('aGo').addEventListener('click',doAdd);
+  doAdd();
+
+  /* ---------- MISSION ---------- */
+  var Q=[], qi=0, mScore=0, mLocked=false;
+  function makeQ(i){
+    var d=[2,3,4,5,6,8][Math.floor(Math.random()*6)];
+    var n=1+Math.floor(Math.random()*(d-1));
+    if(i<3){
+      /* what fraction is shaded? */
+      var dd=[2,3,4,5][Math.floor(Math.random()*4)];
+      var nn=1+Math.floor(Math.random()*(dd-1));
+      var opts=[], base=nn+'/'+dd;
+      opts.push(base);
+      while(opts.length<4){
+        var on=1+Math.floor(Math.random()*dd), od=dd;
+        var s=on+'/'+od;
+        if(opts.indexOf(s)<0 && !(on===nn)) opts.push(s);
+        if(opts.length>20) break;
+      }
+      return {q:'What fraction of the pizza is shaded? \uD83C\uDF55', vis:{n:nn,d:dd}, opts:shuffle(opts), a:base};
+    }
+    if(i<6){
+      /* which is bigger */
+      function rf(){ var dd2=[2,3,4,5,6,8][Math.floor(Math.random()*6)]; var nn2=1+Math.floor(Math.random()*(dd2-1)); return [nn2,dd2]; }
+      var a=rf(), b=rf();
+      while(Math.abs(a[0]/a[1]-b[0]/b[1])<1e-9){ b=rf(); }
+      var A=a[0]+'/'+a[1], B=b[0]+'/'+b[1];
+      var ans = a[0]/a[1]>b[0]/b[1] ? A : B;
+      return {q:'Which fraction is bigger?', vis:{two:[a,b]}, opts:shuffle([A,B,'they are equal']).slice(0,3), a:ans};
+    }
+    if(i<8){
+      /* add with same denominator */
+      var d1=2+Math.floor(Math.random()*6), n1=1+Math.floor(Math.random()*(d1-1)), n2=1+Math.floor(Math.random()*(d1-n1));
+      var tot=n1+n2;
+      var s=simp(tot,d1);
+      var ansA=s[0]+'/'+s[1];
+      var wrongs=[(tot)+'/'+(d1*2), (n1+n2)+'/'+d1+'0', (n1*n2)+'/'+d1];
+      return {q:'Add them: '+n1+'/'+d1+' + '+n2+'/'+d1+' = ?', vis:null, opts:shuffle([ansA, String(n1+n2)+'/'+(d1+d1), String(n1+n2+1)+'/'+d1, String(n1+n2)+'/'+(d1)].filter(function(v,k,arr){return arr.indexOf(v)===k;})).slice(0,4), a:ansA};
+    }
+    /* fractions of a number */
+    var den=[2,3,4,5][Math.floor(Math.random()*4)];
+    var num=1+Math.floor(Math.random()*(den-1));
+    var whole=den*(2+Math.floor(Math.random()*6));
+    var ans=num*(whole/den);
+    return {q:'What is '+num+'/'+den+' of '+whole+'?', vis:null, opts:shuffle([String(ans), String(ans+den), String(ans-num), String(whole/den)]).slice(0,4), a:String(ans)};
+  }
+  function shuffle(a){
+    a=a.slice();
+    for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+  function showQ(){
+    mLocked=false;
+    var q=Q[qi];
+    $('mQ').innerHTML='<b>Q'+(qi+1)+'.</b> '+q.q;
+    $('mFb').textContent='';
+    $('mVis').innerHTML='';
+    if(q.vis && q.vis.n){
+      var pct=q.vis.n/q.vis.d*100;
+      $('mVis').innerHTML='<div class="pie" style="background:conic-gradient(#ea580c 0 '+pct+'%, #fdf1e3 '+pct+'% 100%)"></div>';
+    }
+    if(q.vis && q.vis.two){
+      var h='';
+      for(var k=0;k<2;k++){
+        var f=q.vis.two[k];
+        h+=barsHTML(f[0],f[1]);
+      }
+      $('mVis').innerHTML=h;
+    }
+    $('mChoices').innerHTML='';
+    q.opts.forEach(function(o){
+      var b=document.createElement('button');
+      b.textContent=o;
+      b.addEventListener('click',function(){ answer(o); });
+      $('mChoices').appendChild(b);
+    });
+  }
+  function answer(o){
+    if(mLocked) return;
+    mLocked=true;
+    var q=Q[qi];
+    if(o===q.a){ mScore++; $('mFb').className='fb ok'; $('mFb').innerHTML='\u2705 <b>Yes!</b> Nice work.'; }
+    else { $('mFb').className='fb no'; $('mFb').innerHTML='\u274C Not that one. The answer is <b>'+q.a+'</b>.'; }
+    $('mScore').textContent=mScore;
+  }
+  $('mNext').addEventListener('click',function(){
+    if(qi<9){ qi++; showQ(); }
+    else {
+      $('mQ').innerHTML='<b>Mission complete!</b> \uD83C\uDFC6';
+      $('mVis').innerHTML='';
+      $('mChoices').innerHTML='';
+      var msg = mScore>=9? 'WOW \u2014 fraction master! \uD83C\uDF1F' : mScore>=7? 'Really strong! \uD83D\uDCAA' : mScore>=5? 'Good \u2014 keep going! \uD83D\uDE0A' : 'Fractions take practice. Try again! \uD83C\uDF31';
+      $('mFb').className='fb ok';
+      $('mFb').innerHTML='You got <b>'+mScore+' / 10</b>. '+msg;
+    }
+  });
+  Q=[]; for(var z=0;z<10;z++) Q.push(makeQ(z));
+  qi=0; showQ();
+})();
+</script>
+</body>
+</html>

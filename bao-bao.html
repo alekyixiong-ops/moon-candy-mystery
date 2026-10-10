@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bao Bao's Cantonese Quest</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    background:
+      radial-gradient(circle at 20% 0%,rgba(255,196,120,.35) 0%,transparent 45%),
+      radial-gradient(circle at 85% 100%,rgba(255,120,160,.28) 0%,transparent 45%),
+      linear-gradient(170deg,#3b1d2e 0%,#2a1533 55%,#180d20 100%);
+    font-family:Georgia,'Times New Roman',serif;color:#fff4e6;
+    min-height:100vh;padding:16px 12px 50px;display:flex;flex-direction:column;align-items:center;
+  }
+  .wrap{width:100%;max-width:470px;}
+  .screen{display:none;}
+  .screen.on{display:block;}
+
+  /* ---------- mascot ---------- */
+  .mascot{display:block;margin:0 auto;width:180px;height:180px;filter:drop-shadow(0 10px 20px rgba(0,0,0,.35));}
+  .mascot.small{width:96px;height:96px;}
+  .mascot.bounce{animation:bounce .5s ease;}
+  .mascot.shake{animation:shake .45s ease;}
+  @keyframes bounce{0%,100%{transform:translateY(0) scale(1)}35%{transform:translateY(-16px) scale(1.06)}70%{transform:translateY(0) scale(.97)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px) rotate(-4deg)}50%{transform:translateX(9px) rotate(4deg)}80%{transform:translateX(-5px)}}
+
+  h1{font-size:1.5rem;text-align:center;color:#ffd479;letter-spacing:1px;line-height:1.35;margin-top:6px;}
+  h1 small{display:block;font-size:.85rem;color:#ffb3c9;font-style:italic;letter-spacing:0;margin-top:6px;}
+  .card{background:rgba(255,255,255,.07);border:1px solid rgba(255,212,121,.28);border-radius:18px;padding:17px;margin-bottom:13px;}
+  p{line-height:1.7;font-size:.94rem;margin-bottom:9px;color:#ffe9d0;}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:11px 0;}
+  .btnrow button{
+    flex:1 1 auto;font-family:inherit;font-size:1.02rem;padding:15px 10px;border-radius:14px;cursor:pointer;
+    background:linear-gradient(160deg,#f59e0b,#d97706);color:#3a1d00;border:none;font-weight:bold;
+    box-shadow:0 4px 0 #92400e;
+  }
+  .btnrow button.alt{background:linear-gradient(160deg,#fdf1e3,#f6ddc0);color:#7c3a12;box-shadow:0 4px 0 #c9a074;}
+  .btnrow button:active{transform:translateY(3px);box-shadow:0 1px 0 #92400e;}
+  .btnrow button.alt:active{box-shadow:0 1px 0 #c9a074;}
+
+  /* ---------- hud ---------- */
+  .hud{display:flex;justify-content:space-between;align-items:center;font-family:ui-monospace,Menlo,monospace;font-size:.9rem;color:#ffd479;margin-bottom:8px;}
+  .pbar{height:11px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden;margin-bottom:14px;}
+  .pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#fbbf24,#f97316);transition:width .3s;}
+
+  /* ---------- question ---------- */
+  .qcard{background:rgba(255,255,255,.09);border:2px solid rgba(255,212,121,.4);border-radius:18px;padding:20px 16px;text-align:center;margin-bottom:14px;}
+  .qprompt{font-size:.82rem;color:#ffb3c9;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+  .qbig{font-size:2.3rem;color:#fff;line-height:1.25;word-break:break-word;}
+  .qbig.en{font-size:1.7rem;}
+  .qjyu{font-family:ui-monospace,Menlo,monospace;font-size:.9rem;color:#86efac;margin-top:8px;min-height:20px;}
+  .spk{margin-top:10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,212,121,.45);color:#ffd479;font-family:inherit;font-size:.9rem;padding:9px 16px;border-radius:20px;cursor:pointer;}
+  .choices{display:grid;gap:9px;}
+  .choices button{
+    font-family:inherit;font-size:1.12rem;padding:15px 12px;border-radius:14px;cursor:pointer;text-align:center;
+    background:rgba(255,255,255,.10);color:#fff4e6;border:2px solid rgba(255,212,121,.3);
+    transition:.15s;line-height:1.4;
+  }
+  .choices button:active{transform:scale(.98);}
+  .choices button.right{background:rgba(34,197,94,.35);border-color:#4ade80;}
+  .choices button.wrong{background:rgba(239,68,68,.35);border-color:#f87171;}
+  .say{font-family:ui-monospace,Menlo,monospace;font-size:.95rem;line-height:1.7;color:#ffd479;background:rgba(0,0,0,.28);border-radius:12px;padding:12px;margin-top:12px;min-height:52px;text-align:center;}
+
+  /* ---------- results ---------- */
+  .stars{font-size:2.4rem;text-align:center;letter-spacing:6px;margin:6px 0 10px;}
+  .big{font-family:ui-monospace,Menlo,monospace;font-size:2rem;text-align:center;color:#ffd479;}
+
+  /* ---------- word list ---------- */
+  .cat{font-size:.85rem;color:#ffb3c9;letter-spacing:1.5px;text-transform:uppercase;margin:16px 0 8px;}
+  .w{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed rgba(255,212,121,.22);}
+  .w .zh{font-size:1.35rem;color:#fff;min-width:74px;}
+  .w .info{flex:1;line-height:1.4;}
+  .w .en{font-size:.95rem;color:#ffe9d0;}
+  .w .jy{font-family:ui-monospace,Menlo,monospace;font-size:.78rem;color:#86efac;}
+  .w button{background:rgba(255,255,255,.12);border:1px solid rgba(255,212,121,.4);color:#ffd479;border-radius:50%;width:38px;height:38px;font-size:1.05rem;cursor:pointer;flex:0 0 auto;}
+  .foot{margin-top:20px;color:#c9a0b8;font-size:.79rem;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ MASCOT (reused) ============ -->
+<svg id="bao" class="mascot" viewBox="0 0 200 200" aria-hidden="true">
+  <!-- shadow -->
+  <ellipse cx="100" cy="182" rx="58" ry="9" fill="rgba(0,0,0,.28)"/>
+  <!-- arms -->
+  <ellipse id="armL" cx="34" cy="126" rx="14" ry="10" fill="#fff3df" stroke="#e6c49b" stroke-width="3"/>
+  <ellipse id="armR" cx="166" cy="126" rx="14" ry="10" fill="#fff3df" stroke="#e6c49b" stroke-width="3"/>
+  <!-- body -->
+  <ellipse cx="100" cy="122" rx="63" ry="57" fill="#fff8ec" stroke="#e6c49b" stroke-width="3.5"/>
+  <!-- top twist -->
+  <path d="M100 68 q-22 -6 -26 -22 q14 4 26 12 q12 -8 26 -12 q-4 16 -26 22 z" fill="#fff8ec" stroke="#e6c49b" stroke-width="3"/>
+  <circle cx="100" cy="64" r="7" fill="#ffd479" stroke="#e6c49b" stroke-width="2.5"/>
+  <!-- pleat lines -->
+  <path d="M74 84 q26 16 52 0" fill="none" stroke="#eecfa6" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M60 96 q40 20 80 0" fill="none" stroke="#eecfa6" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- blush -->
+  <ellipse cx="62" cy="134" rx="11" ry="7" fill="#ff9ec0" opacity=".75"/>
+  <ellipse cx="138" cy="134" rx="11" ry="7" fill="#ff9ec0" opacity=".75"/>
+  <!-- eyes -->
+  <circle id="eyeL" cx="78" cy="116" r="8.5" fill="#3a2418"/>
+  <circle id="eyeR" cx="122" cy="116" r="8.5" fill="#3a2418"/>
+  <circle id="shL" cx="75" cy="113" r="3" fill="#fff"/>
+  <circle id="shR" cx="119" cy="113" r="3" fill="#fff"/>
+  <!-- mouth -->
+  <path id="mouth" d="M86 136 q14 14 28 0" fill="none" stroke="#3a2418" stroke-width="3.5" stroke-linecap="round"/>
+</svg>
+
+<!-- ============ START ============ -->
+<div class="screen on" id="s-start">
+  <h1>&#127858; BAO BAO&#39;S<br>CANTONESE QUEST<small>Learn Cantonese with a very fluffy bun &#128155;</small></h1>
+  <div class="card" style="margin-top:14px;">
+    <p><b>Bao Bao</b> is a steamed bun who lives in Hong Kong and wants to teach you his language. &#127467;&#127469;</p>
+    <p>Answer 10 questions. Get them right and he does a happy dance. &#128131;</p>
+    <p style="font-size:.88rem;color:#ffb3c9;">&#128266; Tap the <b>sound button</b> to hear the words out loud (works best on a phone with a Cantonese voice).</p>
+    <div class="btnrow">
+      <button id="btnPlay">&#9654;&#65039; START GAME</button>
+      <button class="alt" id="btnList">&#128214; WORD LIST</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ GAME ============ -->
+<div class="screen" id="s-game">
+  <div class="hud"><span id="hudQ">Question 1 / 10</span><span id="hudS">&#11088; 0</span></div>
+  <div class="pbar"><i id="hudBar"></i></div>
+  <div class="qcard">
+    <div class="qprompt" id="qPrompt">WHAT DOES THIS MEAN?</div>
+    <div class="qbig" id="qBig">&#20320;&#22909;</div>
+    <div class="qjyu" id="qJyu"></div>
+    <button class="spk" id="qSpeak">&#128266; hear it</button>
+  </div>
+  <div class="choices" id="choices"></div>
+  <div class="say" id="say">Good luck! &#128522;</div>
+</div>
+
+<!-- ============ RESULTS ============ -->
+<div class="screen" id="s-end">
+  <div class="card">
+    <div class="stars" id="stars">&#11088;&#11088;&#11088;</div>
+    <div class="big" id="finalScore">0 / 10</div>
+    <div class="say" id="endSay" style="margin-top:12px;">&ndash;</div>
+    <div class="btnrow">
+      <button id="btnAgain">&#128260; PLAY AGAIN</button>
+      <button class="alt" id="btnList2">&#128214; WORD LIST</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ WORD LIST ============ -->
+<div class="screen" id="s-list">
+  <h1 style="font-size:1.2rem;">&#128214; BAO BAO&#39;S WORDS</h1>
+  <div class="card" style="margin-top:12px;" id="listBody"></div>
+  <div class="btnrow"><button class="alt" id="btnBack">&#8592; back</button></div>
+</div>
+
+<div class="foot">
+  Bao Bao&#39;s Cantonese Quest &middot; made for Charlotte by Alice the fairy &#129498;&#65039;&#10024;<br>
+  Jyutping romanisation shown so you can read the sounds. &#127467;&#127469;
+</div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+
+  /* ============ WORDS ============ */
+  var CATS=[
+    {name:'Greetings \uD83D\uDC4B', words:[
+      ['\u4F60\u597D','nei5 hou2','Hello'],
+      ['\u65E9\u6668','zou2 san4','Good morning'],
+      ['\u518D\u898B','zoi3 gin3','Goodbye'],
+      ['\u5514\u8A72','m4 goi1','Thank you / please'],
+      ['\u591A\u8B1D','do1 ze6','Thank you (for a gift)'],
+      ['\u5C0D\u5514\u4F4F','deoi3 m4 zyu6','Sorry']
+    ]},
+    {name:'Food \uD83C\uDF5C', words:[
+      ['\u98EF','faan6','Rice'],
+      ['\u6C34','seoi2','Water'],
+      ['\u8336','caa4','Tea'],
+      ['\u96EA\u7CD5','syut3 gou1','Ice cream'],
+      ['\u860B\u679C','ping4 gwo2','Apple'],
+      ['\u9999\u8549','hoeng1 ziu1','Banana']
+    ]},
+    {name:'Numbers \uD83D\uDD22', words:[
+      ['\u4E00','jat1','One'],
+      ['\u4E8C','ji6','Two'],
+      ['\u4E09','saam1','Three'],
+      ['\u56DB','sei3','Four'],
+      ['\u4E94','ng5','Five'],
+      ['\u5341','sap6','Ten']
+    ]},
+    {name:'Animals \uD83D\uDC31', words:[
+      ['\u8C93','maau1','Cat'],
+      ['\u72D7','gau2','Dog'],
+      ['\u9B5A','jyu2','Fish'],
+      ['\u96C0\u4ED4','zoek3 zai2','Bird']
+    ]},
+    {name:'Family &amp; Home \uD83C\uDFE0', words:[
+      ['\u5ABD\u5ABD','maa4 maa1','Mum'],
+      ['\u7238\u7238','baa4 baa1','Dad'],
+      ['\u5C4B\u4F01','uk1 kei2','Home'],
+      ['\u670B\u53CB','pang4 jau5','Friend']
+    ]},
+    {name:'Colours \uD83C\uDF08', words:[
+      ['\u7D05\u8272','hung4 sik1','Red'],
+      ['\u85CD\u8272','laam4 sik1','Blue'],
+      ['\u7DA0\u8272','luk6 sik1','Green']
+    ]}
+  ];
+  var ALL=[];
+  CATS.forEach(function(c){
+    c.words.forEach(function(w){
+      ALL.push({zh:w[0], jy:w[1], en:w[2], cat:c.name});
+    });
+  });
+
+  /* ============ MASCOT FACES ============ */
+  function face(kind){
+    var m=$('mouth'), el=$('eyeL'), er=$('eyeR'), sl=$('shL'), sr=$('shR');
+    if(kind==='yay'){
+      m.setAttribute('d','M82 130 q18 24 36 0 z');
+      m.setAttribute('fill','#3a2418'); m.setAttribute('stroke','none');
+      el.setAttribute('r','0'); er.setAttribute('r','0');
+      sl.setAttribute('r','0'); sr.setAttribute('r','0');
+      el.setAttribute('d','M68 110 q10 -12 20 0'); el.setAttribute('fill','none'); el.setAttribute('stroke','#3a2418'); el.setAttribute('stroke-width','4');
+      er.setAttribute('d','M112 110 q10 -12 20 0'); er.setAttribute('fill','none'); er.setAttribute('stroke','#3a2418'); er.setAttribute('stroke-width','4');
+    } else if(kind==='sad'){
+      m.setAttribute('d','M86 146 q14 -13 28 0');
+      m.setAttribute('fill','none'); m.setAttribute('stroke','#3a2418'); m.setAttribute('stroke-width','3.5');
+      el.removeAttribute('d'); er.removeAttribute('d');
+      el.setAttribute('fill','#3a2418'); er.setAttribute('fill','#3a2418');
+      el.setAttribute('r','8.5'); er.setAttribute('r','8.5');
+      sl.setAttribute('r','3'); sr.setAttribute('r','3');
+    } else {
+      m.setAttribute('d','M86 136 q14 14 28 0');
+      m.setAttribute('fill','none'); m.setAttribute('stroke','#3a2418'); m.setAttribute('stroke-width','3.5');
+      el.removeAttribute('d'); er.removeAttribute('d');
+      el.setAttribute('fill','#3a2418'); er.setAttribute('fill','#3a2418');
+      el.setAttribute('r','8.5'); er.setAttribute('r','8.5');
+      sl.setAttribute('r','3'); sr.setAttribute('r','3');
+    }
+  }
+  function react(kind){
+    var b=$('bao');
+    b.classList.remove('bounce','shake');
+    void b.offsetWidth;
+    b.classList.add(kind==='sad'?'shake':'bounce');
+    face(kind);
+  }
+
+  /* ============ SPEECH ============ */
+  function speak(text, btn){
+    if(!('speechSynthesis' in window)){ if(btn) btn.textContent='\uD83D\uDD07 no sound'; return; }
+    try{
+      window.speechSynthesis.cancel();
+      var u=new SpeechSynthesisUtterance(text);
+      u.lang='zh-HK'; u.rate=0.8; u.pitch=1.1;
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+
+  /* ============ GAME ============ */
+  var Q=[], qi=0, score=0, streak=0, locked=false;
+
+  function shuffle(a){
+    a=a.slice();
+    for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+  function buildQuestions(){
+    var pool=shuffle(ALL).slice(0,10), out=[];
+    pool.forEach(function(w){
+      var dir = Math.random()<0.5 ? 'zh2en' : 'en2zh';
+      var others=shuffle(ALL.filter(function(x){ return x.en!==w.en; })).slice(0,3);
+      out.push({w:w, dir:dir, opts:shuffle([w].concat(others))});
+    });
+    return out;
+  }
+  function showScreen(id){
+    Array.prototype.forEach.call(document.querySelectorAll('.screen'),function(s){ s.classList.remove('on'); });
+    $(id).classList.add('on');
+    window.scrollTo(0,0);
+  }
+  function startGame(){
+    Q=buildQuestions(); qi=0; score=0; streak=0;
+    showScreen('s-game'); render();
+  }
+  function render(){
+    locked=false;
+    var q=Q[qi], w=q.w;
+    $('hudQ').textContent='Question '+(qi+1)+' / 10';
+    $('hudS').textContent='\u2B50 '+score;
+    $('hudBar').style.width=(qi/10*100)+'%';
+    $('say').innerHTML='What do you think? \uD83E\uDD14';
+    face('happy');
+
+    if(q.dir==='zh2en'){
+      $('qPrompt').textContent='WHAT DOES THIS MEAN?';
+      $('qBig').className='qbig';
+      $('qBig').textContent=w.zh;
+      $('qJyu').textContent=w.jy;
+    } else {
+      $('qPrompt').textContent='HOW DO YOU SAY THIS IN CANTONESE?';
+      $('qBig').className='qbig en';
+      $('qBig').textContent=w.en;
+      $('qJyu').textContent='';
+    }
+    var box=$('choices');
+    box.innerHTML='';
+    q.opts.forEach(function(o){
+      var b=document.createElement('button');
+      b.textContent = q.dir==='zh2en' ? o.en : o.zh;
+      b.addEventListener('click',function(){ answer(o, b); });
+      box.appendChild(b);
+    });
+  }
+  function answer(pick, btn){
+    if(locked) return;
+    locked=true;
+    var q=Q[qi], right=(pick.en===q.w.en);
+    var kids=$('choices').children, i;
+    for(i=0;i<kids.length;i++){
+      var t=kids[i].textContent;
+      var isRight = q.dir==='zh2en' ? (t===q.w.en) : (t===q.w.zh);
+      if(isRight) kids[i].classList.add('right');
+    }
+    if(!right) btn.classList.add('wrong');
+
+    if(right){
+      score++; streak++;
+      var cheer = streak>=3 ? ['\uD83D\uDD25 '+streak+' in a row! Amazing!','\uD83C\uDF89 You\u2019re on fire!','\uD83D\uDCAA Unstoppable!'] : ['\u2705 Yes! Well done.','\uD83C\uDF1F Correct!','\uD83D\uDC4F Nice one!','\uD83E\uDD73 \u5497\u5F97! (hou2 dek1 = great!)'];
+      $('say').innerHTML=cheer[Math.floor(Math.random()*cheer.length)]+'<br><span style="color:#86efac">'+q.w.zh+' = '+q.w.en+'  ('+q.w.jy+')</span>';
+      react('yay');
+    } else {
+      streak=0;
+      $('say').innerHTML='\uD83D\uDE22 Almost! It was <b>'+q.w.zh+'</b> = <b>'+q.w.en+'</b><br><span style="color:#86efac">'+q.w.jy+'</span>';
+      react('sad');
+    }
+    $('hudS').textContent='\u2B50 '+score;
+    $('hudBar').style.width=((qi+1)/10*100)+'%';
+    setTimeout(function(){
+      qi++;
+      if(qi<10) render();
+      else endGame();
+    }, right?1200:2100);
+  }
+  function endGame(){
+    showScreen('s-end');
+    var stars = score>=10? '\u2B50\u2B50\u2B50' : score>=7? '\u2B50\u2B50' : score>=4? '\u2B50' : '\uD83D\uDCAB';
+    $('stars').textContent=stars;
+    $('finalScore').textContent=score+' / 10';
+    var msg = score>=10? '\uD83C\uDFC6 PERFECT! Bao Bao is doing a happy dance! \u5497\u5F97!'
+            : score>=7? '\uD83D\uDCAA Really good! Bao Bao is impressed.'
+            : score>=4? '\uD83D\uDE0A Good start! Try again and watch your score climb.'
+            : '\uD83C\uDF31 Everyone starts somewhere. Have another go \u2014 you\u2019ll surprise yourself.';
+    $('endSay').innerHTML=msg+'<br><span style="color:#86efac">\uD83C\uDF58 Bao Bao says: \u5C0D\u5514\u4F4F? \u5514\u8A72! (Try saying that!)</span>';
+    face(score>=7?'yay':'happy');
+    react(score>=7?'yay':'happy');
+  }
+
+  /* ============ WORD LIST ============ */
+  function buildList(){
+    var h='';
+    CATS.forEach(function(c){
+      h+='<div class="cat">'+c.name+'</div>';
+      c.words.forEach(function(w){
+        h+='<div class="w"><span class="zh">'+w[0]+'</span><span class="info"><span class="en">'+w[2]+
+           '</span><br><span class="jy">'+w[1]+'</span></span>'+
+           '<button data-sp="'+w[0]+'" title="hear it">&#128266;</button></div>';
+      });
+    });
+    $('listBody').innerHTML=h;
+  }
+  $('listBody').addEventListener('click',function(e){
+    var b=e.target.closest('button[data-sp]');
+    if(b) speak(b.getAttribute('data-sp'), b);
+  });
+
+  /* ============ WIRE UP ============ */
+  $('btnPlay').addEventListener('click',startGame);
+  $('btnAgain').addEventListener('click',startGame);
+  $('btnList').addEventListener('click',function(){ showScreen('s-list'); });
+  $('btnList2').addEventListener('click',function(){ showScreen('s-list'); });
+  $('btnBack').addEventListener('click',function(){ showScreen('s-start'); });
+  $('qSpeak').addEventListener('click',function(){
+    var q=Q[qi];
+    if(q) speak(q.w.zh, this);
+  });
+
+  buildList();
+  face('happy');
+})();
+</script>
+</body>
+</html>

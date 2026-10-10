@@ -7,14 +7,13 @@
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   body{
-    background:linear-gradient(180deg,#1d1235 0%,#2a1a45 55%,#150c26 100%);
-    font-family:Georgia,'Times New Roman',serif;color:#fff6ea;
-    min-height:100vh;padding:16px 12px 50px;display:flex;flex-direction:column;align-items:center;
+    background:#150c26;font-family:Georgia,'Times New Roman',serif;color:#fff6ea;
+    min-height:100vh;padding:10px 10px 30px;display:flex;flex-direction:column;align-items:center;
   }
-  .wrap{width:100%;max-width:480px;}
+  .wrap{width:100%;max-width:520px;}
   .screen{display:none;} .screen.on{display:block;}
-  h1{font-size:1.35rem;text-align:center;color:#ffd479;letter-spacing:1px;line-height:1.4;}
-  h1 small{display:block;font-size:.83rem;color:#ffb3c9;font-style:italic;letter-spacing:0;margin-top:5px;}
+  h1{font-size:1.3rem;text-align:center;color:#ffd479;letter-spacing:1px;line-height:1.4;}
+  h1 small{display:block;font-size:.82rem;color:#ffb3c9;font-style:italic;letter-spacing:0;margin-top:5px;}
   .card{background:rgba(255,255,255,.07);border:1px solid rgba(255,212,121,.26);border-radius:18px;padding:16px;margin-bottom:12px;}
   p{line-height:1.7;font-size:.94rem;margin-bottom:8px;color:#ffe9d0;}
   .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
@@ -25,7 +24,6 @@
   .btnrow button.alt{background:linear-gradient(160deg,#fdf1e3,#f6ddc0);color:#7c3a12;box-shadow:0 4px 0 #c9a074;}
   .btnrow button:active{transform:translateY(3px);box-shadow:0 1px 0 #92400e;}
   .btnrow button.alt:active{box-shadow:0 1px 0 #c9a074;}
-  .btnrow button:disabled{opacity:.5;}
 
   /* accounts */
   .acct{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,212,121,.28);border-radius:16px;padding:12px;margin-bottom:10px;cursor:pointer;}
@@ -47,20 +45,26 @@
   .chars button.pick{background:rgba(245,158,11,.35);border-color:#ffd479;transform:scale(1.05);}
   .chars button span{display:block;font-size:.7rem;color:#ffe9d0;margin-top:6px;font-family:Georgia,serif;}
 
-  /* village */
-  .levelbar{display:flex;justify-content:space-between;align-items:center;font-family:ui-monospace,Menlo,monospace;font-size:.84rem;color:#ffd479;margin-bottom:8px;}
-  .village{position:relative;height:420px;border-radius:18px;overflow:hidden;
-    background:linear-gradient(180deg,#4a2f6b 0%,#6b4a86 40%,#8a6aa0 55%,#3f6b4a 56%,#2f5a3a 100%);
-    border:2px solid rgba(255,212,121,.3);}
-  .village .star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;opacity:.7;}
-  .bld{position:absolute;text-align:center;cursor:pointer;transition:.15s;}
-  .bld:active{transform:scale(.94);}
-  .bld .em{font-size:2.5rem;line-height:1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));}
-  .bld .lb{font-size:.66rem;color:#fff;background:rgba(0,0,0,.42);border-radius:8px;padding:2px 6px;margin-top:3px;display:inline-block;line-height:1.3;}
-  .bld .badge{position:absolute;top:-6px;right:-6px;font-size:1rem;}
-  .hero{position:absolute;font-size:1.9rem;transition:left .65s ease,top .65s ease;filter:drop-shadow(0 5px 8px rgba(0,0,0,.5));z-index:5;}
-  .hero.walk{animation:walk .35s infinite alternate;}
-  @keyframes walk{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-4px) rotate(4deg)}}
+  /* ============ VILLAGE (full screen) ============ */
+  .village{position:relative;width:100%;height:calc(100vh - 60px);min-height:540px;border-radius:20px;overflow:hidden;
+    background:linear-gradient(180deg,#2b1b4d 0%,#4a2f6b 32%,#6b4a86 48%,#7d5c96 52%,#3f6b4a 53%,#2f5a3a 100%);
+    border:2px solid rgba(255,212,121,.3);box-shadow:0 8px 30px rgba(0,0,0,.4);}
+  #vMap{position:absolute;inset:0;}
+  .star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;opacity:.75;}
+  .moon{position:absolute;left:8%;top:5%;font-size:1.6rem;opacity:.9;}
+  .bld{position:absolute;text-align:center;cursor:pointer;transition:.15s;z-index:3;}
+  .bld:active{transform:scale(.93);}
+  .bld .em{font-size:2.7rem;line-height:1;filter:drop-shadow(0 5px 8px rgba(0,0,0,.45));}
+  .bld .lb{font-size:.66rem;color:#fff;background:rgba(0,0,0,.45);border-radius:8px;padding:2px 6px;margin-top:3px;display:inline-block;line-height:1.3;}
+  .bld .badge{position:absolute;top:-8px;right:-8px;font-size:1.05rem;}
+  .hero{position:absolute;font-size:2.1rem;transition:left .7s ease,top .7s ease;filter:drop-shadow(0 6px 9px rgba(0,0,0,.55));z-index:6;}
+  .hero.walk{animation:walk .34s infinite alternate;}
+  @keyframes walk{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-5px) rotate(5deg)}}
+  .chip{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.5);border:1px solid rgba(255,212,121,.4);
+    border-radius:20px;padding:6px 13px;font-family:ui-monospace,Menlo,monospace;font-size:.8rem;color:#ffd479;z-index:8;}
+  .chipbtn{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.5);border:1px solid rgba(255,212,121,.4);
+    border-radius:50%;width:42px;height:42px;font-size:1.15rem;cursor:pointer;z-index:8;}
+  .chipbtn:active{transform:scale(.93);}
 
   /* challenge */
   .story{background:rgba(255,255,255,.08);border:2px solid rgba(255,212,121,.35);border-radius:18px;padding:18px 15px;margin-bottom:14px;}
@@ -84,7 +88,6 @@
   .teach .av{font-size:3rem;flex:0 0 auto;}
   .bubble{background:rgba(255,255,255,.12);border:2px solid rgba(255,212,121,.4);border-radius:16px;padding:14px;flex:1;}
   .bubble b{color:#ffd479;}
-  .bubble .zh{font-size:1.3rem;color:#fff;}
   .spk{margin-top:9px;background:rgba(255,255,255,.12);border:1px solid rgba(255,212,121,.45);color:#ffd479;font-family:inherit;font-size:.85rem;padding:8px 14px;border-radius:18px;cursor:pointer;}
 
   /* exam */
@@ -94,14 +97,14 @@
   .examq .opts button{padding:12px;font-size:1rem;}
   .examq .opts button.picked{background:rgba(245,158,11,.4);border-color:#ffd479;}
   .result{text-align:center;font-size:1.1rem;line-height:1.7;}
-  .foot{margin-top:18px;color:#c9a0b8;font-size:.78rem;text-align:center;line-height:1.7;}
   .stars{font-size:1.9rem;letter-spacing:4px;text-align:center;margin:6px 0;}
+  .foot{margin-top:16px;color:#c9a0b8;font-size:.76rem;text-align:center;line-height:1.7;}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<!-- ================= ACCOUNTS ================= -->
+<!-- ACCOUNTS -->
 <div class="screen on" id="s-accounts">
   <h1>🏘️ CANTONESE VILLAGE<small>Choose your account to play</small></h1>
   <div class="card" style="margin-top:14px;">
@@ -110,7 +113,7 @@
   </div>
 </div>
 
-<!-- ================= NEW ACCOUNT ================= -->
+<!-- NEW ACCOUNT -->
 <div class="screen" id="s-new">
   <h1>➕ NEW PLAYER</h1>
   <div class="card" style="margin-top:14px;">
@@ -125,22 +128,16 @@
   </div>
 </div>
 
-<!-- ================= VILLAGE ================= -->
+<!-- VILLAGE -->
 <div class="screen" id="s-village">
-  <div class="levelbar">
-    <span id="vWho">—</span>
-    <span id="vLvl">Level 1</span>
-  </div>
-  <div class="village" id="village"></div>
-  <div class="card" style="margin-top:12px;">
-    <p id="vHint" style="font-size:.9rem;">Tap a house to start its challenge. 🏠</p>
-    <div class="btnrow">
-      <button class="alt" id="btnSwitch">👥 switch account</button>
-    </div>
+  <div class="village">
+    <div id="vMap"></div>
+    <div class="chip" id="vChip">—</div>
+    <button class="chipbtn" id="vSwitchBtn" title="switch account">👥</button>
   </div>
 </div>
 
-<!-- ================= CHALLENGE ================= -->
+<!-- CHALLENGE -->
 <div class="screen" id="s-challenge">
   <div class="story">
     <div class="who" id="cWho">HOUSE</div>
@@ -151,7 +148,7 @@
   <div id="cAfter"></div>
 </div>
 
-<!-- ================= DONE ================= -->
+<!-- DONE -->
 <div class="screen" id="s-done">
   <div class="card">
     <div class="done">
@@ -160,20 +157,18 @@
       <p id="dText">Challenge finished.</p>
     </div>
     <div id="dInvite"></div>
-    <div class="btnrow">
-      <button id="btnBackVillage">🏘️ back to the village</button>
-    </div>
+    <div class="btnrow"><button id="btnBackVillage">🏘️ back to the village</button></div>
   </div>
 </div>
 
-<!-- ================= SCHOOL ================= -->
+<!-- SCHOOL -->
 <div class="screen" id="s-school">
   <h1>🏫 THE SCHOOL</h1>
   <div class="card" style="margin-top:12px;" id="schoolBody"></div>
   <div class="btnrow"><button class="alt" id="btnSchoolBack">🏘️ back to the village</button></div>
 </div>
 
-<!-- ================= EXAM ================= -->
+<!-- EXAM -->
 <div class="screen" id="s-exam">
   <h1>📝 THE EXAM</h1>
   <div class="card" style="margin-top:12px;">
@@ -185,17 +180,17 @@
   <div class="btnrow"><button class="alt" id="btnExamBack">🏘️ back to the village</button></div>
 </div>
 
-<!-- ================= LEVEL UP ================= -->
+<!-- LEVEL UP / FINISH -->
 <div class="screen" id="s-up">
   <div class="card">
-    <div class="stars">🎉🎉🎉</div>
+    <div class="stars" id="upStars">🎉🎉🎉</div>
     <div class="result" id="upText"></div>
-    <div class="btnrow"><button id="btnUpGo">▶️ CONTINUE</button></div>
+    <div class="btnrow" id="upBtns"><button id="btnUpGo">▶️ CONTINUE</button></div>
   </div>
 </div>
 
 <div class="foot">
-  Cantonese Village &middot; a game designed by <b>Charlotte</b> &middot; built by Alice the fairy 🧚<br>
+  Cantonese Village &middot; designed by <b>Charlotte</b> &middot; built by Alice the fairy 🧚<br>
   Teacher: Miss Mei 美老師 👩‍🏫
 </div>
 </div>
@@ -204,42 +199,81 @@
 (function(){
 'use strict';
 function $(id){return document.getElementById(id);}
-var KEY='canto_village_v1';
+var KEY='***';
 
 /* ============================================================
-   THE GAME DATA — 3 levels, each teaching one concept
+   LEVELS — each teaches a DIFFERENT KIND of thing
    ============================================================ */
 var LEVELS=[
 {
- n:1, name:'Greetings', emoji:'👋', concept:'How to say hello, thank you and goodbye',
+ n:1, name:'Jyutping', emoji:'🔤', concept:'how to read Cantonese sounds written in letters',
+ houses:[
+  {name:'Sound House', emoji:'🔤',
+   story:'Your friend writes 你好 as “nei5 hou2” and reads it out loud: “nay how”.',
+   ask:'In Jyutping, what sound does the letter J make?',
+   opts:['y — like “yes”','j — like “jam”','h — like “hat”'],
+   correct:'y — like “yes”',
+   lesson:'In Jyutping, <b>J</b> = the English “y” sound. So 一 jat1 sounds like “yut”, and 日 jat6 is “yut” with a low tone. Never say “jam”!',
+   say:'一'},
+  {name:'Street Sign', emoji:'🪧',
+   story:'You see a tea shop sign: 茶 is written as “caa4”.',
+   ask:'What does the letter C sound like in Jyutping?',
+   opts:['ts — like the end of “cats”','k — like “cat”','s — like “sun”'],
+   correct:'ts — like the end of “cats”',
+   lesson:'<b>C</b> in Jyutping = “ts”. 茶 caa4 sounds like “tsaa”. Cantonese never says a hard “k” for C.',
+   say:'茶'},
+  {name:'Name House', emoji:'🏠',
+   story:'The morning greeting 早晨 is written “zou2 san4”.',
+   ask:'What does the letter Z sound like in Jyutping?',
+   opts:['j — like “jump”','z — like “zebra”','sh — like “shoe”'],
+   correct:'j — like “jump”',
+   lesson:'<b>Z</b> in Jyutping = the English “j” sound. 早晨 zou2 san4 = “jou sun”, and 再見 zoi3 gin3 = “joy gin”.',
+   say:'早晨'},
+  {name:'Number House', emoji:'🔢',
+   story:'Every Jyutping word ends with a little number: nei5, hou2, m4, goi1…',
+   ask:'What is that little number for?',
+   opts:['It tells you the TONE','It tells you how many of something','It is a spelling mistake'],
+   correct:'It tells you the TONE',
+   lesson:'That number is the <b>TONE</b>. Cantonese has SIX tones — same letters, different tone, different word! You will learn them in Level 3. 🎵',
+   say:'你好'}
+ ],
+ exam:[
+  {q:'In Jyutping, J sounds like…', opts:['y (yes)','j (jam)','k (cat)'], correct:'y (yes)'},
+  {q:'In Jyutping, C sounds like…', opts:['ts (cats)','s (sun)','ch (chair)'], correct:'ts (cats)'},
+  {q:'In Jyutping, Z sounds like…', opts:['j (jump)','z (zebra)','sh (shoe)'], correct:'j (jump)'},
+  {q:'The number after a word tells you the…', opts:['tone','amount','letter'], correct:'tone'}
+ ]
+},
+{
+ n:2, name:'Words', emoji:'📚', concept:'the most useful words in Hong Kong',
  houses:[
   {name:'Sunrise House', emoji:'🏠',
-   story:'It is 8 o\u2019clock in the morning. Mrs Chan opens her window, sees you, and smiles: 「早晨!」',
+   story:'It is 8 in the morning. Mrs Chan opens her window, sees you and smiles: 「早晨!」',
    ask:'What do you say back?',
    opts:['早晨 (zou2 san4)','再見 (zoi3 gin3)','多謝 (do1 ze6)'],
    correct:'早晨 (zou2 san4)',
-   lesson:'早晨 (zou2 san4) means GOOD MORNING. You say it to someone you meet before noon. Mrs Chan greeted you first — so you greet her right back. That is the greeting dance! 👋',
+   lesson:'早晨 (zou2 san4) means GOOD MORNING — for any time before noon. Mrs Chan greeted you first, so you greet her back. That is the greeting dance! 👋',
    say:'早晨'},
-  {name:'Gift House', emoji:'🎁',
-   story:'Your friend hands you a wrapped present. It is your birthday today!',
-   ask:'What do you say?',
-   opts:['多謝 (do1 ze6)','早晨 (zou2 san4)','再見 (zoi3 gin3)'],
-   correct:'多謝 (do1 ze6)',
-   lesson:'多謝 (do1 ze6) means THANK YOU. Use it for presents and real favours — when someone gives you something.',
-   say:'多謝'},
   {name:'Tea Shop', emoji:'🍵',
    story:'You sit down at a restaurant. A waiter puts a cup of tea in front of you.',
    ask:'What do you say?',
    opts:['唔該 (m4 goi1)','多謝 (do1 ze6)','早晨 (zou2 san4)'],
    correct:'唔該 (m4 goi1)',
-   lesson:'唔該 (m4 goi1) is the Hong Kong magic word! It means PLEASE, THANK YOU for a service, and EXCUSE ME. When someone does something for you, say 唔該.',
+   lesson:'唔該 (m4 goi1) is the Hong Kong magic word — PLEASE, THANK YOU for a service, and EXCUSE ME. When someone does something for you, say 唔該.',
    say:'唔該'},
+  {name:'Gift House', emoji:'🎁',
+   story:'Your friend hands you a wrapped present. It is your birthday!',
+   ask:'What do you say?',
+   opts:['多謝 (do1 ze6)','早晨 (zou2 san4)','再見 (zoi3 gin3)'],
+   correct:'多謝 (do1 ze6)',
+   lesson:'多謝 (do1 ze6) means THANK YOU — for a present or a real favour, when someone GIVES you something.',
+   say:'多謝'},
   {name:'Doorway House', emoji:'🚪',
-   story:'You are leaving your friend\u2019s flat. You wave from the door.',
+   story:'You are leaving your friend’s flat and you wave from the door.',
    ask:'What do you say?',
    opts:['再見 (zoi3 gin3)','你好 (nei5 hou2)','唔該 (m4 goi1)'],
    correct:'再見 (zoi3 gin3)',
-   lesson:'再見 (zoi3 gin3) means GOODBYE — literally \u201csee you again\u201d. And 你好 (nei5 hou2) is HELLO, for when you meet someone.',
+   lesson:'再見 (zoi3 gin3) means GOODBYE — literally “see you again”. And 你好 (nei5 hou2) is HELLO, for when you meet someone.',
    say:'再見'}
  ],
  exam:[
@@ -250,35 +284,113 @@ var LEVELS=[
  ]
 },
 {
- n:2, name:'Numbers', emoji:'🔢', concept:'Counting from one to ten',
+ n:3, name:'Tones', emoji:'🎵', concept:'the six tones of Cantonese',
+ houses:[
+  {name:'High House', emoji:'🎵',
+   story:'Miss Mei sings one long, high, flat note: 「si1 ———」',
+   ask:'Which tone number is the HIGH FLAT tone?',
+   opts:['1','4','6'],
+   correct:'1',
+   lesson:'Tone <b>1</b> is HIGH and FLAT — like holding one high note. 詩 si1 means “poem”. 🎵',
+   say:'詩'},
+  {name:'Rising House', emoji:'📈',
+   story:'Miss Mei says 「si2」 and her voice rises up at the end, like asking a question.',
+   ask:'Which tone RISES up?',
+   opts:['2','3','6'],
+   correct:'2',
+   lesson:'Tone <b>2</b> RISES ↗. 史 si2 means “history”. Your voice goes up, like the end of “really?”',
+   say:'史'},
+  {name:'Falling House', emoji:'📉',
+   story:'Miss Mei says 「si4」 and her voice drops down low and heavy.',
+   ask:'Which tone FALLS down low?',
+   opts:['4','1','2'],
+   correct:'4',
+   lesson:'Tone <b>4</b> FALLS ↘ and is low. 時 si4 means “time”. It sounds like a tired sigh.',
+   say:'時'},
+  {name:'Flat House', emoji:'➡️',
+   story:'Miss Mei says 「si6」 and her voice stays low and flat, like a calm hum.',
+   ask:'Which tone is LOW and FLAT?',
+   opts:['6','1','2'],
+   correct:'6',
+   lesson:'Tone <b>6</b> is LOW and FLAT ➡. 是 si6 means “is”. Cantonese has six tones: 1 2 3 4 5 6 — and the same letters with a different tone are a different word! 😱',
+   say:'是'}
+ ],
+ exam:[
+  {q:'Which tone is HIGH and FLAT? 🎵', opts:['1','2','4'], correct:'1'},
+  {q:'Which tone RISES up? 📈', opts:['2','6','1'], correct:'2'},
+  {q:'Which tone FALLS down low? 📉', opts:['4','3','6'], correct:'4'},
+  {q:'How many tones does Cantonese have? 🔢', opts:['6','4','3'], correct:'6'}
+ ]
+},
+{
+ n:4, name:'Phrases', emoji:'💬', concept:'whole sentences you can really use',
+ houses:[
+  {name:'Restaurant', emoji:'🍽️',
+   story:'You are at a restaurant and you are thirsty. You want to ask for a glass of water.',
+   ask:'Which sentence asks for water?',
+   opts:['唔該，要杯水','早晨，你好','多謝，再見'],
+   correct:'唔該，要杯水',
+   lesson:'<b>唔該，要杯水</b> (m4 goi1, jiu3 bui1 seoi2) = “A glass of water, please.” 唔該 starts it off politely, 要 means “want”, 杯 is “cup/glass”, 水 is water. 💧',
+   say:'唔該要杯水'},
+  {name:'New Neighbour', emoji:'🤝',
+   story:'A new neighbour moves in next door. You want to say hello and tell her your name.',
+   ask:'What do you say?',
+   opts:['你好，我係…','再見，多謝','早晨，唔該'],
+   correct:'你好，我係…',
+   lesson:'<b>你好，我係…</b> (nei5 hou2, ngo5 hai6…) = “Hello, I am…” 你好 is hello, 我 is I, 係 is am. Then just say your name! 🤝',
+   say:'你好我係'},
+  {name:'Sorry House', emoji:'🙏',
+   story:'You accidentally step on someone’s foot on the MTR.',
+   ask:'What do you say?',
+   opts:['對唔住','早晨','多謝'],
+   correct:'對唔住',
+   lesson:'<b>對唔住</b> (deoi3 m4 zyu6) means SORRY — for something you did wrong. (Remember 唔該 is for “excuse me”, 對唔住 is for “I’m sorry”.) 🙏',
+   say:'對唔住'},
+  {name:'Market', emoji:'🛒',
+   story:'You are at the market and you like a toy, but there is no price on it.',
+   ask:'What do you ask the shopkeeper?',
+   opts:['幾多錢?','你好嗎?','你叫咩名?'],
+   correct:'幾多錢?',
+   lesson:'<b>幾多錢?</b> (gei2 do1 cin2) = “How much money?” 幾多 means “how many/how much”, 錢 means money. Perfect for the market! 🛒',
+   say:'幾多錢'}
+ ],
+ exam:[
+  {q:'You want a glass of water. 💧', opts:['唔該，要杯水','早晨，你好','多謝，再見'], correct:'唔該，要杯水'},
+  {q:'You step on someone’s foot. 🙏', opts:['對唔住','早晨','多謝'], correct:'對唔住'},
+  {q:'You want to know the price. 🛒', opts:['幾多錢?','你好嗎?','再見'], correct:'幾多錢?'},
+  {q:'You meet someone new and say your name. 🤝', opts:['你好，我係…','多謝，再見','早晨，唔該'], correct:'你好，我係…'}
+ ]
+},
+{
+ n:5, name:'Numbers', emoji:'🔢', concept:'counting from one to ten',
  houses:[
   {name:'Bakery', emoji:'🥖',
    story:'You want to buy THREE buns. The baker asks: 「幾多個?」 (how many?)',
    ask:'Which number is THREE?',
    opts:['三 (saam1)','十 (sap6)','一 (jat1)'],
    correct:'三 (saam1)',
-   lesson:'三 (saam1) is THREE. It sounds like \u201csaam\u201d — a long, flat sound. 一 (jat1) is one and 十 (sap6) is ten.',
+   lesson:'三 (saam1) is THREE. 一 (jat1) is one and 十 (sap6) is ten. Listen for the long “aa” sound in saam!',
    say:'三'},
   {name:'Fruit Stall', emoji:'🍎',
    story:'You want FIVE apples for your family.',
    ask:'Which number is FIVE?',
    opts:['五 (ng5)','四 (sei3)','二 (ji6)'],
    correct:'五 (ng5)',
-   lesson:'五 (ng5) is FIVE. This one is tricky — it is said with the back of your mouth, like a hum: \u201cmmm-ng\u201d. Practise it!',
+   lesson:'五 (ng5) is FIVE. This is the hardest one — it is said with the back of your mouth, like a hum: “mmm-ng”. Practise it! 😤',
    say:'五'},
   {name:'The Lift', emoji:'🛗',
    story:'You are visiting a friend who lives on the SECOND floor.',
    ask:'Which button do you press?',
    opts:['二 (ji6)','一 (jat1)','十 (sap6)'],
    correct:'二 (ji6)',
-   lesson:'二 (ji6) is TWO. In Hong Kong you will see 二 everywhere — floor numbers, prices, bus routes.',
+   lesson:'二 (ji6) is TWO. You will see 二 everywhere in Hong Kong — floor numbers, prices, bus routes.',
    say:'二'},
   {name:'Lucky Shop', emoji:'🧧',
-   story:'It is Lunar New Year. You want TEN red packets!',
+   story:'It is Lunar New Year and you want TEN red packets!',
    ask:'Which number is TEN?',
    opts:['十 (sap6)','四 (sei3)','五 (ng5)'],
    correct:'十 (sap6)',
-   lesson:'十 (sap6) is TEN. Once you know 1–10, you can build every number: 十一 is eleven (ten-one), 二十 is twenty (two-ten). Clever, right? 🧠',
+   lesson:'十 (sap6) is TEN. Once you know 1–10 you can build every number: 十一 = eleven (ten-one), 二十 = twenty (two-ten). Clever! 🧠',
    say:'十'}
  ],
  exam:[
@@ -287,99 +399,36 @@ var LEVELS=[
   {q:'Which is TEN? 🔟', opts:['十','一','二'], correct:'十'},
   {q:'Which is THREE? 3️⃣', opts:['三','五','四'], correct:'三'}
  ]
-},
-{
- n:3, name:'Food', emoji:'🍜', concept:'Food and drink words',
- houses:[
-  {name:'Noodle House', emoji:'🍜',
-   story:'You have been running around the village and you are VERY thirsty.',
-   ask:'What do you ask for?',
-   opts:['水 (seoi2)','飯 (faan6)','茶 (caa4)'],
-   correct:'水 (seoi2)',
-   lesson:'水 (seoi2) is WATER. When you are thirsty, ask for 水. In a restaurant you can say 唔該，要杯水 (m4 goi1, jiu3 bui1 seoi2) = \u201ca glass of water, please\u201d.',
-   say:'水'},
-  {name:'Rice House', emoji:'🍚',
-   story:'You are hungry and you want something filling.',
-   ask:'Which one means RICE?',
-   opts:['飯 (faan6)','茶 (caa4)','雪糕 (syut3 gou1)'],
-   correct:'飯 (faan6)',
-   lesson:'飯 (faan6) is cooked RICE — and it also means \u201ca meal\u201d. 食飯 (sik6 faan6) means \u201ceat a meal\u201d, the most important phrase in Hong Kong! 🍚',
-   say:'飯'},
-  {name:'Dessert House', emoji:'🍦',
-   story:'It is a hot afternoon and you want something cold and sweet.',
-   ask:'What do you want?',
-   opts:['雪糕 (syut3 gou1)','水 (seoi2)','飯 (faan6)'],
-   correct:'雪糕 (syut3 gou1)',
-   lesson:'雪糕 (syut3 gou1) is ICE CREAM — literally \u201csnow cake\u201d! 雪 is snow, 糕 is cake. Hong Kong children love it. 🍦',
-   say:'雪糕'},
-  {name:'Fruit House', emoji:'🍏',
-   story:'You are at the market and you want an APPLE.',
-   ask:'Which one is APPLE?',
-   opts:['蘋果 (ping4 gwo2)','香蕉 (hoeng1 ziu1)','茶 (caa4)'],
-   correct:'蘋果 (ping4 gwo2)',
-   lesson:'蘋果 (ping4 gwo2) is APPLE, and 香蕉 (hoeng1 ziu1) is BANANA. 茶 (caa4) is TEA — you have met that one already!',
-   say:'蘋果'}
- ],
- exam:[
-  {q:'You are thirsty. What do you ask for? 💧', opts:['水','飯','茶'], correct:'水'},
-  {q:'Which one is RICE? 🍚', opts:['飯','雪糕','水'], correct:'飯'},
-  {q:'Which one is ICE CREAM? 🍦', opts:['雪糕','蘋果','茶'], correct:'雪糕'},
-  {q:'Which one is APPLE? 🍏', opts:['蘋果','香蕉','水'], correct:'蘋果'}
- ]
 }
 ];
 var TEACHER={name:'Miss Mei', zh:'美老師', emoji:'👩‍🏫'};
-var CHARS=[
- {e:'🐰',n:'Rabbit'},{e:'🐱',n:'Cat'},{e:'🐶',n:'Dog'},
- {e:'🐼',n:'Panda'},{e:'🦊',n:'Fox'},{e:'🥟',n:'Bao Bao'}
-];
+var CHARS=[{e:'🐰',n:'Rabbit'},{e:'🐱',n:'Cat'},{e:'🐶',n:'Dog'},{e:'🐼',n:'Panda'},{e:'🦊',n:'Fox'},{e:'🥟',n:'Bao Bao'}];
 
-/* ============================================================
-   STATE
-   ============================================================ */
+/* ============================================================ STATE */
 var state={accounts:[],current:null};
-function load(){
-  try{ var raw=localStorage.getItem(KEY); if(raw) state=JSON.parse(raw); }catch(e){}
-  if(!state.accounts) state.accounts=[];
-}
+function load(){ try{var raw=localStorage.getItem(KEY); if(raw) state=JSON.parse(raw);}catch(e){} if(!state.accounts) state.accounts=[]; }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
 function me(){ return state.accounts.filter(function(a){return a.id===state.current;})[0]||null; }
-function blankProg(){
-  var p={};
-  LEVELS.forEach(function(L){ p[L.n]={done:{},wrong:{},learned:{},exam:false}; });
-  return p;
-}
+function blankProg(){ var p={}; LEVELS.forEach(function(L){ p[L.n]={done:{},wrong:{},learned:{},exam:false}; }); return p; }
 function prog(a,L){ if(!a.prog[L]) a.prog[L]={done:{},wrong:{},learned:{},exam:false}; return a.prog[L]; }
 function levelOf(a){ return LEVELS.filter(function(L){return L.n===a.lvl;})[0]||null; }
-
-function show(id){
-  Array.prototype.forEach.call(document.querySelectorAll('.screen'),function(s){s.classList.remove('on');});
-  $(id).classList.add('on'); window.scrollTo(0,0);
-}
+function show(id){ Array.prototype.forEach.call(document.querySelectorAll('.screen'),function(s){s.classList.remove('on');}); $(id).classList.add('on'); window.scrollTo(0,0); }
 function speak(txt){
   if(!('speechSynthesis' in window)) return;
-  try{ window.speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(txt); u.lang='zh-HK'; u.rate=0.8; window.speechSynthesis.speak(u);
-  }catch(e){}
+  try{ window.speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(txt); u.lang='zh-HK'; u.rate=0.8; window.speechSynthesis.speak(u); }catch(e){}
 }
-function shuffle(a){
-  a=a.slice();
-  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
-  return a;
-}
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
 
-/* ============================================================
-   ACCOUNTS
-   ============================================================ */
+/* ============================================================ ACCOUNTS */
 var pickChar=CHARS[0].e;
 function renderAccounts(){
   var h='';
-  if(!state.accounts.length){
-    h='<p style="text-align:center;">No players yet! Tap <b>ADD ACCOUNT</b> to make one. ✨</p>';
-  } else {
+  if(!state.accounts.length){ h='<p style="text-align:center;">No players yet! Tap <b>ADD ACCOUNT</b> to make one. ✨</p>'; }
+  else {
     state.accounts.forEach(function(a){
+      var label = a.lvl>LEVELS.length ? 'ALL LEVELS COMPLETE 🏆' : ('Level '+a.lvl+' \u00B7 '+LEVELS[a.lvl-1].name);
       h+='<div class="acct" data-id="'+a.id+'"><div class="av">'+a.char+'</div>'+
-         '<div class="nm"><b>'+a.name+'</b><span>Level '+a.lvl+' \u00B7 '+LEVELS.length+' levels</span></div>'+
+         '<div class="nm"><b>'+a.name+'</b><span>'+label+'</span></div>'+
          '<button class="del" data-del="'+a.id+'" title="remove">\u2715</button></div>';
     });
   }
@@ -389,69 +438,53 @@ $('acctList').addEventListener('click',function(e){
   var d=e.target.closest('button[data-del]');
   if(d){
     var id=d.getAttribute('data-del');
-    if(confirm('Remove this player?')){
-      state.accounts=state.accounts.filter(function(a){return a.id!==id;});
-      if(state.current===id) state.current=null;
-      save(); renderAccounts();
-    }
+    if(confirm('Remove this player?')){ state.accounts=state.accounts.filter(function(a){return a.id!==id;}); if(state.current===id) state.current=null; save(); renderAccounts(); }
     return;
   }
   var c=e.target.closest('.acct');
   if(c){ state.current=c.getAttribute('data-id'); save(); enterVillage(); }
 });
-$('btnAddAcct').addEventListener('click',function(){
-  $('newName').value=''; pickChar=CHARS[0].e; renderChars(); show('s-new');
-});
-function renderChars(){
-  var h='';
-  CHARS.forEach(function(c){
-    h+='<button data-c="'+c.e+'" class="'+(c.e===pickChar?'pick':'')+'">'+c.e+'<span>'+c.n+'</span></button>';
-  });
-  $('charPick').innerHTML=h;
-}
-$('charPick').addEventListener('click',function(e){
-  var b=e.target.closest('button[data-c]'); if(!b) return;
-  pickChar=b.getAttribute('data-c'); renderChars();
-});
+$('btnAddAcct').addEventListener('click',function(){ $('newName').value=''; pickChar=CHARS[0].e; renderChars(); show('s-new'); });
+function renderChars(){ var h=''; CHARS.forEach(function(c){ h+='<button data-c="'+c.e+'" class="'+(c.e===pickChar?'pick':'')+'">'+c.e+'<span>'+c.n+'</span></button>'; }); $('charPick').innerHTML=h; }
+$('charPick').addEventListener('click',function(e){ var b=e.target.closest('button[data-c]'); if(!b) return; pickChar=b.getAttribute('data-c'); renderChars(); });
 $('btnCancel').addEventListener('click',function(){ show('s-accounts'); });
 $('btnFinish').addEventListener('click',function(){
   var name=($('newName').value||'').trim();
   if(!name){ alert('Please type your name first! 😊'); return; }
   var a={id:'a'+Date.now(), name:name, char:pickChar, lvl:1, prog:blankProg()};
-  state.accounts.push(a); state.current=a.id; save();
-  enterVillage();
+  state.accounts.push(a); state.current=a.id; save(); enterVillage();
 });
 
-/* ============================================================
-   THE VILLAGE MAP
-   ============================================================ */
+/* ============================================================ VILLAGE MAP */
 var SPOTS=[
-  {x:4,  y:8,  sx:11, sy:30},
-  {x:37, y:2,  sx:44, sy:24},
-  {x:69, y:9,  sx:76, sy:31},
-  {x:15, y:44, sx:22, sy:66},
-  {x:59, y:42, sx:66, sy:64}   /* index 4 = school */
+  {x:5,  y:10, sx:12, sy:33},
+  {x:38, y:4,  sx:45, sy:27},
+  {x:70, y:11, sx:77, sy:34},
+  {x:15, y:46, sx:22, sy:69},
+  {x:60, y:44, sx:67, sy:67}   /* 4 = school */
 ];
 function renderVillage(){
   var a=me(); if(!a) return show('s-accounts');
   var L=levelOf(a);
-  if(!L){ /* finished everything */
-    $('vWho').textContent=a.char+' '+a.name;
-    $('vLvl').textContent='All levels done!';
-    $('village').innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;text-align:center;padding:20px;">'+
-      '<div style="font-size:3rem;">🏆</div><div style="font-size:1.1rem;color:#ffd479;">You finished every level!</div>'+
-      '<div style="font-size:.9rem;color:#ffe9d0;">More levels are coming soon. \uD83C\uDF1F</div></div>';
-    $('vHint').innerHTML='Amazing work, '+a.name+'! \uD83C\uDFC6';
+  var map=$('vMap');
+  $('vChip').textContent=a.char+' '+a.name+(L? ' \u00B7 Lv'+L.n : ' \u00B7 \uD83C\uDFC6');
+
+  if(!L){
+    map.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:24px;">'+
+      '<div style="font-size:4rem;">🏆</div>'+
+      '<div style="font-size:1.25rem;color:#ffd479;font-weight:bold;">ALL LEVELS COMPLETE!</div>'+
+      '<div style="font-size:.95rem;color:#ffe9d0;line-height:1.7;">Well done, '+a.name+'! You finished all '+LEVELS.length+' levels.<br>Miss Mei is very proud of you. 🌟<br><br>More levels are coming soon!</div>'+
+      '<div class="btnrow" style="max-width:260px;"><button id="btnReplay">🔁 replay from Level 1</button></div>'+
+      '</div>';
+    $('btnReplay').addEventListener('click',function(){ a.lvl=1; save(); renderVillage(); });
     return;
   }
-  var P=prog(a,L.n);
-  var h='';
-  for(var i=0;i<8;i++){ h+='<div class="star" style="left:'+(Math.random()*96+2)+'%;top:'+(Math.random()*50+2)+'%"></div>'; }
+  var P=prog(a,L.n), h='';
+  h+='<div class="moon">🌙</div>';
+  for(var i=0;i<10;i++){ h+='<div class="star" style="left:'+(Math.random()*94+3)+'%;top:'+(Math.random()*48+2)+'%"></div>'; }
   var doneCount=0, invites=0;
   L.houses.forEach(function(H,i){
-    var sp=SPOTS[i];
-    var isDone=!!P.done[i];
-    var pending=P.wrong[i]&&!P.learned[i];
+    var sp=SPOTS[i], isDone=!!P.done[i], pending=P.wrong[i]&&!P.learned[i];
     if(isDone) doneCount++;
     if(pending) invites++;
     var badge = pending? '📩' : (isDone? '✅' : '');
@@ -463,38 +496,27 @@ function renderVillage(){
   h+='<div class="bld" data-b="4" style="left:'+SPOTS[4].x+'%;top:'+SPOTS[4].y+'%">'+
      '<div class="em">🏫</div><div class="lb">The School</div>'+
      (schoolBadge? '<div class="badge">'+schoolBadge+'</div>':'')+'</div>';
-  h+='<div class="hero" id="hero" style="left:44%;top:78%">'+a.char+'</div>';
-  $('village').innerHTML=h;
-
-  $('vWho').textContent=a.char+' '+a.name;
-  $('vLvl').textContent='Level '+L.n+' \u00B7 '+L.name+' '+L.emoji;
-  var msg='Level '+L.n+' teaches: <b>'+L.concept+'</b>';
-  if(invites) msg+='<br>📩 You have <b>'+invites+'</b> invitation'+(invites>1?'s':'')+' to the school!';
-  else if(doneCount===L.houses.length && !P.exam) msg+='<br>🎓 All challenges complete! Go to the <b>School</b> for your exam.';
-  else msg+='<br>Challenges complete: <b>'+doneCount+' / '+L.houses.length+'</b>';
-  $('vHint').innerHTML=msg;
+  h+='<div class="hero" id="hero" style="left:45%;top:80%">'+a.char+'</div>';
+  map.innerHTML=h;
 }
 function walkTo(i, then){
   var hero=$('hero'); if(!hero){ then(); return; }
   hero.classList.add('walk');
-  hero.style.left=SPOTS[i].sx+'%';
-  hero.style.top=SPOTS[i].sy+'%';
-  setTimeout(function(){ hero.classList.remove('walk'); then(); },700);
+  hero.style.left=SPOTS[i].sx+'%'; hero.style.top=SPOTS[i].sy+'%';
+  setTimeout(function(){ hero.classList.remove('walk'); then(); },720);
 }
-$('village').addEventListener('click',function(e){
+$('vMap').addEventListener('click',function(e){
   var b=e.target.closest('.bld'); if(!b) return;
   var i=parseInt(b.getAttribute('data-b'),10);
   walkTo(i,function(){ i===4? openSchool() : openChallenge(i); });
 });
 function enterVillage(){ renderVillage(); show('s-village'); }
-$('btnSwitch').addEventListener('click',function(){ renderAccounts(); show('s-accounts'); });
+$('vSwitchBtn').addEventListener('click',function(){ renderAccounts(); show('s-accounts'); });
 $('btnBackVillage').addEventListener('click',enterVillage);
 $('btnSchoolBack').addEventListener('click',enterVillage);
 $('btnExamBack').addEventListener('click',enterVillage);
 
-/* ============================================================
-   CHALLENGES  (no right/wrong is ever shown!)
-   ============================================================ */
+/* ============================================================ CHALLENGE */
 var curHouse=0;
 function openChallenge(i){
   var a=me(), L=levelOf(a); if(!L) return;
@@ -503,8 +525,8 @@ function openChallenge(i){
   $('cStory').textContent=H.story;
   $('cAsk').textContent=H.ask;
   $('cAfter').innerHTML='';
-  var opts=shuffle(H.opts), h='';
-  opts.forEach(function(o){ h+='<button data-o="'+o+'">'+o+'</button>'; });
+  var h='';
+  shuffle(H.opts).forEach(function(o){ h+='<button data-o="'+o+'">'+o+'</button>'; });
   $('cOpts').innerHTML=h;
   $('cOpts').style.display='grid';
   show('s-challenge');
@@ -513,16 +535,14 @@ $('cOpts').addEventListener('click',function(e){
   var b=e.target.closest('button[data-o]'); if(!b) return;
   var a=me(), L=levelOf(a); if(!L) return;
   var H=L.houses[curHouse], P=prog(a,L.n);
-  var picked=b.getAttribute('data-o');
-  var right=(picked===H.correct);
+  var right=(b.getAttribute('data-o')===H.correct);
   P.done[curHouse]=true;
   if(!right) P.wrong[curHouse]=true;
   save();
-  /* never say right or wrong — just complete */
   $('cOpts').style.display='none';
   $('cAfter').innerHTML='<div class="btnrow"><button id="btnSeen">✔️ I have finished this challenge</button></div>';
   $('btnSeen').addEventListener('click',function(){
-    $('dText').textContent = 'You finished the challenge at '+H.name+'.';
+    $('dText').textContent='You finished the challenge at '+H.name+'.';
     $('dInvite').innerHTML = right? '' :
       '<div class="invite"><div class="t">📩 An invitation to the school!</div>'+
       '<div class="s">'+TEACHER.name+' '+TEACHER.zh+' would like to see you.<br>Go to the 🏫 School in the village to find out more.</div></div>';
@@ -530,66 +550,45 @@ $('cOpts').addEventListener('click',function(e){
   });
 });
 
-/* ============================================================
-   SCHOOL — teacher + exam
-   ============================================================ */
+/* ============================================================ SCHOOL */
 function openSchool(){
   var a=me(), L=levelOf(a); if(!L) return;
-  var P=prog(a,L.n);
-  var pending=[];
-  L.houses.forEach(function(H,i){ if(P.wrong[i]&&!P.learned[i]) pending.push(i); });
-  var doneCount=0; L.houses.forEach(function(H,i){ if(P.done[i]) doneCount++; });
-
-  var h='';
-  h+='<div class="teach"><div class="av">'+TEACHER.emoji+'</div><div class="bubble">';
-
+  var P=prog(a,L.n), pending=[], doneCount=0;
+  L.houses.forEach(function(H,i){ if(P.wrong[i]&&!P.learned[i]) pending.push(i); if(P.done[i]) doneCount++; });
+  var h='<div class="teach"><div class="av">'+TEACHER.emoji+'</div><div class="bubble">';
   if(pending.length){
     var i=pending[0], H=L.houses[i];
-    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>\u201cWelcome, '+a.name+'! I heard you visited the '+H.name+'. Let me explain what that was all about.\u201d<br><br>'+H.lesson+
-       '<div><button class="spk" data-say="'+H.say+'">🔊 hear it</button></div>';
-    h+='</div></div>';
+    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>“Welcome, '+a.name+'! I heard you visited the '+H.name+'. Let me explain what that was all about.”<br><br>'+H.lesson+
+       '<div><button class="spk" data-say="'+H.say+'">🔊 hear it</button></div></div></div>';
     h+='<div class="btnrow"><button id="btnGot">😊 Got it, thank you '+TEACHER.name+'!</button></div>';
-    if(pending.length>1) h+='<p style="font-size:.85rem;color:#ffb3c9;text-align:center;">You still have '+(pending.length-1)+' more invitation'+(pending.length>2?'s':'')+'.</p>';
+    if(pending.length>1) h+='<p style="font-size:.85rem;color:#ffb3c9;text-align:center;">You still have '+(pending.length-1)+' more invitation'+((pending.length-1)>1?'s':'')+'.</p>';
     $('schoolBody').innerHTML=h;
-    $('btnGot').addEventListener('click',function(){
-      P.learned[i]=true; save(); openSchool();
-    });
+    $('btnGot').addEventListener('click',function(){ P.learned[i]=true; save(); openSchool(); });
   } else if(doneCount<L.houses.length){
-    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>\u201cWell done so far, '+a.name+'! You have finished <b>'+doneCount+' of '+L.houses.length+'</b> challenges in '+L.name+'.<br><br>Go back to the village and visit the houses that are still waiting for you. Then come back for your exam!\u201d';
-    h+='</div></div>';
+    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>“Well done so far, '+a.name+'! You have finished <b>'+doneCount+' of '+L.houses.length+'</b> challenges.<br><br>Go back to the village and visit the houses that are still waiting for you. Then come back for your exam!”</div></div>';
     $('schoolBody').innerHTML=h;
   } else if(!P.exam){
-    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>\u201cYou have finished every challenge in <b>'+L.name+'</b> '+L.emoji+'. Well done!<br><br>Today\u2019s topic was: <b>'+L.concept+'</b>.<br><br>Now it is time for your <b>exam</b>. Answer carefully \u2014 if you pass, you may go to the next level!\u201d';
-    h+='</div></div>';
+    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>“You have finished every challenge in <b>'+L.name+'</b> '+L.emoji+'. Well done!<br><br>Today you learned: <b>'+L.concept+'</b>.<br><br>Now it is time for your <b>exam</b>. If you pass, you may go to the next level!”</div></div>';
     h+='<div class="btnrow"><button id="btnExam">📝 START THE EXAM</button></div>';
     $('schoolBody').innerHTML=h;
-    $('btnExam').addEventListener('click',function(){ startExam(); });
+    $('btnExam').addEventListener('click',startExam);
   } else {
-    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>\u201cYou already passed this level\u2019s exam \u2014 wonderful! Move on to the next level, or stay and practise.\u201d \uD83C\uDF1F';
-    h+='</div></div>';
+    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>“You already passed this level’s exam — wonderful! Move on to the next level, or stay and practise.” 🌟</div></div>';
     $('schoolBody').innerHTML=h;
   }
-  $('schoolBody').addEventListener('click',function(e){
-    var b=e.target.closest('button[data-say]');
-    if(b) speak(b.getAttribute('data-say'));
-  });
+  $('schoolBody').addEventListener('click',function(e){ var b=e.target.closest('button[data-say]'); if(b) speak(b.getAttribute('data-say')); });
   show('s-school');
 }
 
-/* ============================================================
-   EXAM
-   ============================================================ */
+/* ============================================================ EXAM */
 var examPicks=[];
 function startExam(){
   var a=me(), L=levelOf(a); if(!L) return;
   examPicks=L.exam.map(function(){return null;});
   var h='';
   L.exam.forEach(function(Q,qi){
-    h+='<div class="examq"><div class="no">Question '+(qi+1)+' of '+L.exam.length+'</div>'+
-       '<div class="qbig">'+Q.q+'</div><div class="opts">';
-    shuffle(Q.opts).forEach(function(o){
-      h+='<button data-q="'+qi+'" data-o="'+o+'">'+o+'</button>';
-    });
+    h+='<div class="examq"><div class="no">Question '+(qi+1)+' of '+L.exam.length+'</div><div class="qbig">'+Q.q+'</div><div class="opts">';
+    shuffle(Q.opts).forEach(function(o){ h+='<button data-q="'+qi+'" data-o="'+o+'">'+o+'</button>'; });
     h+='</div></div>';
   });
   $('examBody').innerHTML=h;
@@ -600,38 +599,36 @@ $('examBody').addEventListener('click',function(e){
   var b=e.target.closest('button[data-q]'); if(!b) return;
   var qi=parseInt(b.getAttribute('data-q'),10);
   examPicks[qi]=b.getAttribute('data-o');
-  var box=b.parentNode;
-  Array.prototype.forEach.call(box.children,function(c){ c.classList.remove('picked'); });
+  Array.prototype.forEach.call(b.parentNode.children,function(c){ c.classList.remove('picked'); });
   b.classList.add('picked');
 });
 $('btnHand').addEventListener('click',function(){
   var a=me(), L=levelOf(a); if(!L) return;
-  var P=prog(a,L.n);
-  var got=0;
+  var P=prog(a,L.n), got=0;
   L.exam.forEach(function(Q,i){ if(examPicks[i]===Q.correct) got++; });
   var need=Math.ceil(L.exam.length*0.75);
   if(got>=need){
     P.exam=true;
-    if(a.lvl===L.n && a.lvl<LEVELS.length) a.lvl++;
+    if(a.lvl===L.n) a.lvl=a.lvl+1;        /* always advance, even past the last level */
     save();
     $('examResult').innerHTML='<div class="stars">🎉🎉🎉</div><b>You passed!</b> '+got+' / '+L.exam.length+' correct.';
     setTimeout(function(){
       var next=levelOf(a);
+      $('upStars').textContent = next? '🎉🎉🎉' : '🏆🏆🏆';
       $('upText').innerHTML = next?
-        ('<div style="font-size:2.4rem;">🏆</div><b>LEVEL '+L.n+' COMPLETE!</b><br><br>You may now go to <b>Level '+next.n+' \u2014 '+next.name+' '+next.emoji+'</b><br><span style="font-size:.9rem;color:#ffe9d0;">New topic: '+next.concept+'</span>') :
-        ('<div style="font-size:2.4rem;">🏆</div><b>YOU FINISHED EVERY LEVEL!</b><br><br>Miss Mei is very proud of you. \uD83C\uDF1F');
+        ('<div style="font-size:2.4rem;">🏆</div><b>LEVEL '+L.n+' COMPLETE!</b><br><br>You may now go to <b>Level '+next.n+' — '+next.name+' '+next.emoji+'</b><br><span style="font-size:.9rem;color:#ffe9d0;">New topic: '+next.concept+'</span>') :
+        ('<div style="font-size:3rem;">🏆</div><b>ALL LEVELS COMPLETE!</b><br><br>You finished every level of Cantonese Village, '+a.name+'.<br><span style="font-size:.95rem;color:#ffe9d0;">Miss Mei 美老師 is VERY proud of you. 🌟<br>More levels are coming soon!</span>');
+      $('upBtns').innerHTML='<button id="btnUpGo">▶️ CONTINUE</button>';
+      $('btnUpGo').addEventListener('click',enterVillage);
       show('s-up');
-    },1400);
+    },1500);
   } else {
-    $('examResult').innerHTML='<b>Not yet!</b> '+got+' / '+L.exam.length+' correct. '+
-      'Miss Mei says: \u201cCome back to the school, have another look at the lessons, and try again. You will get it!\u201d \uD83D\uDCAA';
+    $('examResult').innerHTML='<b>Not yet!</b> '+got+' / '+L.exam.length+' correct. Miss Mei says: “Come back to the school, look at the lessons again, and try once more. You will get it!” 💪';
   }
 });
 $('btnUpGo').addEventListener('click',enterVillage);
 
-/* ============================================================
-   BOOT
-   ============================================================ */
+/* ============================================================ BOOT */
 load(); renderChars(); renderAccounts();
 if(state.current && me()) enterVillage(); else show('s-accounts');
 })();

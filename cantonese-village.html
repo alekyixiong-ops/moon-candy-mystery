@@ -66,6 +66,10 @@
     border-radius:50%;width:42px;height:42px;font-size:1.15rem;cursor:pointer;z-index:8;}
   .chipbtn:active{transform:scale(.93);}
 
+  .listenbtn{width:100%;margin-top:6px;font-family:inherit;font-size:1.15rem;padding:16px 20px;border-radius:16px;background:linear-gradient(160deg,#38bdf8,#0284c7);color:#fff;border:none;font-weight:bold;cursor:pointer;box-shadow:0 4px 0 #075985;}
+  .listenbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #075985;}
+  .novoice{font-size:.85rem;color:#ffb3c9;margin-top:9px;line-height:1.6;}
+
   /* challenge */
   .story{background:rgba(255,255,255,.08);border:2px solid rgba(255,212,121,.35);border-radius:18px;padding:18px 15px;margin-bottom:14px;}
   .story .who{font-size:.8rem;color:#ffb3c9;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:9px;}
@@ -143,6 +147,7 @@
     <div class="who" id="cWho">HOUSE</div>
     <div class="txt" id="cStory"></div>
     <div class="ask" id="cAsk"></div>
+    <div id="cListen"></div>
   </div>
   <div class="opts" id="cOpts"></div>
   <div id="cAfter"></div>
@@ -248,11 +253,13 @@ var LEVELS=[
  n:2, name:'Words', emoji:'📚', concept:'the most useful words in Hong Kong',
  houses:[
   {name:'Sunrise House', emoji:'🏠',
-   story:'It is 8 in the morning. Mrs Chan opens her window, sees you and smiles: 「早晨!」',
-   ask:'What do you say back?',
-   opts:['早晨 (zou2 san4)','再見 (zoi3 gin3)','多謝 (do1 ze6)'],
-   correct:'早晨 (zou2 san4)',
-   lesson:'早晨 (zou2 san4) means GOOD MORNING — for any time before noon. Mrs Chan greeted you first, so you greet her back. That is the greeting dance! 👋',
+   listen:'早晨',
+   story:'It is 8 in the morning. You walk past Mrs Chan, who is watering her plants. She looks up, smiles, and says something to you. 👂',
+   ask:'Listen carefully — what did she say?',
+   jy:'zou2 san4',
+   opts:['Good morning','Goodbye','Thank you for the gift'],
+   correct:'Good morning',
+   lesson:'She said 早晨 (zou2 san4) — GOOD MORNING. You say it to anyone you meet before noon. Mrs Chan greeted you first, so you greet her back. That is the greeting dance! 👋',
    say:'早晨'},
   {name:'Tea Shop', emoji:'🍵',
    story:'You sit down at a restaurant. A waiter puts a cup of tea in front of you.',
@@ -262,11 +269,13 @@ var LEVELS=[
    lesson:'唔該 (m4 goi1) is the Hong Kong magic word — PLEASE, THANK YOU for a service, and EXCUSE ME. When someone does something for you, say 唔該.',
    say:'唔該'},
   {name:'Gift House', emoji:'🎁',
-   story:'Your friend hands you a wrapped present. It is your birthday!',
-   ask:'What do you say?',
-   opts:['多謝 (do1 ze6)','早晨 (zou2 san4)','再見 (zoi3 gin3)'],
-   correct:'多謝 (do1 ze6)',
-   lesson:'多謝 (do1 ze6) means THANK YOU — for a present or a real favour, when someone GIVES you something.',
+   listen:'多謝',
+   story:'Your friend hands you a wrapped birthday present and says something as she gives it to you. 👂',
+   ask:'Listen carefully — what did she say?',
+   jy:'do1 ze6',
+   opts:['Thank you','Good morning','See you again'],
+   correct:'Thank you',
+   lesson:'She said 多謝 (do1 ze6) — THANK YOU. Use it for presents and real favours, when someone GIVES you something. (唔該 is for services — 多謝 is for gifts!)',
    say:'多謝'},
   {name:'Doorway House', emoji:'🚪',
    story:'You are leaving your friend’s flat and you wave from the door.',
@@ -413,9 +422,26 @@ function blankProg(){ var p={}; LEVELS.forEach(function(L){ p[L.n]={done:{},wron
 function prog(a,L){ if(!a.prog[L]) a.prog[L]={done:{},wrong:{},learned:{},exam:false}; return a.prog[L]; }
 function levelOf(a){ return LEVELS.filter(function(L){return L.n===a.lvl;})[0]||null; }
 function show(id){ Array.prototype.forEach.call(document.querySelectorAll('.screen'),function(s){s.classList.remove('on');}); $(id).classList.add('on'); window.scrollTo(0,0); }
-function speak(txt){
-  if(!('speechSynthesis' in window)) return;
-  try{ window.speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(txt); u.lang='zh-HK'; u.rate=0.8; window.speechSynthesis.speak(u); }catch(e){}
+/* --- voice handling: only ever speak with a real Cantonese voice --- */
+var VOICES=[], yueOK=null;
+function loadVoices(){ try{ VOICES=window.speechSynthesis.getVoices()||[]; }catch(e){ VOICES=[]; } yueOK=null; }
+if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=loadVoices; }
+function yueVoices(){
+  return VOICES.filter(function(x){ var l=(x.lang||'').toLowerCase().replace('_','-'); return l.indexOf('zh-hk')===0||l.indexOf('yue')===0; });
+}
+function voiceOK(){
+  if(yueOK===null){ yueOK = yueVoices().length>0; }
+  return yueOK;
+}
+function speak(txt, btn){
+  if(!('speechSynthesis' in window)){ if(btn) btn.textContent='\uD83D\uDD07 no sound here'; return; }
+  if(!voiceOK()){ if(btn) btn.textContent='\uD83D\uDD07 no Cantonese voice'; return; }
+  try{
+    window.speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(txt); u.lang='zh-HK'; u.rate=0.8;
+    var v=yueVoices()[0]; if(v) u.voice=v;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
 }
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
 
@@ -525,6 +551,15 @@ function openChallenge(i){
   $('cStory').textContent=H.story;
   $('cAsk').textContent=H.ask;
   $('cAfter').innerHTML='';
+  $('cListen').innerHTML='';
+  if(H.listen){
+    var ok=voiceOK();
+    $('cListen').innerHTML='<button class="listenbtn" id="btnListen">\uD83D\uDD0A hear the word</button>'+
+      (ok? '<div class="novoice">\uD83D\uDC42 <b>Ears only!</b> No characters, no Jyutping \u2014 just listen.</div>'
+         : '<div class="novoice">\uD83D\uDD07 This device has no Cantonese voice, so here is the sound in letters instead: <b>'+H.jy+'</b></div>');
+    $('btnListen').addEventListener('click',function(){ speak(H.listen, this); });
+    setTimeout(function(){ speak(H.listen); },450);
+  }
   var h='';
   shuffle(H.opts).forEach(function(o){ h+='<button data-o="'+o+'">'+o+'</button>'; });
   $('cOpts').innerHTML=h;

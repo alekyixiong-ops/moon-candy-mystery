@@ -69,6 +69,7 @@
   .listenbtn{width:100%;margin-top:6px;font-family:inherit;font-size:1.15rem;padding:16px 20px;border-radius:16px;background:linear-gradient(160deg,#38bdf8,#0284c7);color:#fff;border:none;font-weight:bold;cursor:pointer;box-shadow:0 4px 0 #075985;}
   .listenbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #075985;}
   .novoice{font-size:.85rem;color:#ffb3c9;margin-top:9px;line-height:1.6;}
+  .revealbtn{margin-top:8px;font-family:inherit;font-size:.85rem;padding:9px 14px;border-radius:14px;cursor:pointer;background:rgba(255,255,255,.12);border:1px solid rgba(255,212,121,.45);color:#ffd479;}
 
   /* challenge */
   .story{background:rgba(255,255,255,.08);border:2px solid rgba(255,212,121,.35);border-radius:18px;padding:18px 15px;margin-bottom:14px;}
@@ -296,32 +297,40 @@ var LEVELS=[
  n:3, name:'Tones', emoji:'🎵', concept:'the six tones of Cantonese',
  houses:[
   {name:'High House', emoji:'🎵',
-   story:'Miss Mei sings one long, high, flat note: 「si1 ———」',
-   ask:'Which tone number is the HIGH FLAT tone?',
-   opts:['1','4','6'],
-   correct:'1',
-   lesson:'Tone <b>1</b> is HIGH and FLAT — like holding one high note. 詩 si1 means “poem”. 🎵',
+   listen:'詩',
+   story:'Miss Mei looks at you, takes a breath, and sings a single note. 👂 Listen very carefully.',
+   ask:'Which tone did she sing?',
+   jy:'si1',
+   opts:['High and flat','Falls down low','Rises up at the end'],
+   correct:'High and flat',
+   lesson:'She sang 詩 (si1) — tone <b>1</b>: HIGH and FLAT, like holding one high note. 🎵',
    say:'詩'},
   {name:'Rising House', emoji:'📈',
-   story:'Miss Mei says 「si2」 and her voice rises up at the end, like asking a question.',
-   ask:'Which tone RISES up?',
-   opts:['2','3','6'],
-   correct:'2',
-   lesson:'Tone <b>2</b> RISES ↗. 史 si2 means “history”. Your voice goes up, like the end of “really?”',
+   listen:'史',
+   story:'Miss Mei sings one note — and her voice moves while she sings it. 👂',
+   ask:'What did her voice do?',
+   jy:'si2',
+   opts:['It rose up at the end','It stayed high and flat','It fell down low'],
+   correct:'It rose up at the end',
+   lesson:'She sang 史 (si2) — tone <b>2</b>: it RISES ↗, like the end of a question. 史 means “history”.',
    say:'史'},
   {name:'Falling House', emoji:'📉',
-   story:'Miss Mei says 「si4」 and her voice drops down low and heavy.',
-   ask:'Which tone FALLS down low?',
-   opts:['4','1','2'],
-   correct:'4',
-   lesson:'Tone <b>4</b> FALLS ↘ and is low. 時 si4 means “time”. It sounds like a tired sigh.',
+   listen:'時',
+   story:'Miss Mei sings another single note. 👂',
+   ask:'What did her voice do?',
+   jy:'si4',
+   opts:['It fell down low','It rose up','It stayed low and flat'],
+   correct:'It fell down low',
+   lesson:'She sang 時 (si4) — tone <b>4</b>: it FALLS ↘ and is low, like a tired sigh. 時 means “time”.',
    say:'時'},
   {name:'Flat House', emoji:'➡️',
-   story:'Miss Mei says 「si6」 and her voice stays low and flat, like a calm hum.',
-   ask:'Which tone is LOW and FLAT?',
-   opts:['6','1','2'],
-   correct:'6',
-   lesson:'Tone <b>6</b> is LOW and FLAT ➡. 是 si6 means “is”. Cantonese has six tones: 1 2 3 4 5 6 — and the same letters with a different tone are a different word! 😱',
+   listen:'是',
+   story:'One more note from Miss Mei. 👂',
+   ask:'What did her voice do?',
+   jy:'si6',
+   opts:['It stayed low and flat','It stayed high and flat','It rose up'],
+   correct:'It stayed low and flat',
+   lesson:'She sang 是 (si6) — tone <b>6</b>: LOW and FLAT ➡, like a calm hum. 是 means “is”. Cantonese has six tones: 1 2 3 4 5 6 — and the same letters with a different tone are a different word! 😱',
    say:'是'}
  ],
  exam:[
@@ -554,10 +563,14 @@ function openChallenge(i){
   $('cListen').innerHTML='';
   if(H.listen){
     var ok=voiceOK();
-    $('cListen').innerHTML='<button class="listenbtn" id="btnListen">\uD83D\uDD0A hear the word</button>'+
+    $('cListen').innerHTML='<button class="listenbtn" id="btnListen">\uD83D\uDD0A hear it again</button>'+
       (ok? '<div class="novoice">\uD83D\uDC42 <b>Ears only!</b> No characters, no Jyutping \u2014 just listen.</div>'
-         : '<div class="novoice">\uD83D\uDD07 This device has no Cantonese voice, so here is the sound in letters instead: <b>'+H.jy+'</b></div>');
+         : '<div class="novoice">\uD83D\uDD07 This device has no Cantonese voice \u2014 ask a grown-up to add one!</div>'+
+           '<button class="revealbtn" id="btnReveal">\uD83D\uDD24 show me the sound in letters</button>'+
+           '<div class="novoice" id="revealBox" style="display:none;">the sound is <b>'+H.jy+'</b></div>');
     $('btnListen').addEventListener('click',function(){ speak(H.listen, this); });
+    var rb=$('btnReveal');
+    if(rb) rb.addEventListener('click',function(){ $('revealBox').style.display='block'; rb.style.display='none'; });
     setTimeout(function(){ speak(H.listen); },450);
   }
   var h='';

@@ -104,6 +104,9 @@
   .result{text-align:center;font-size:1.1rem;line-height:1.7;}
   .stars{font-size:1.9rem;letter-spacing:4px;text-align:center;margin:6px 0;}
   .foot{margin-top:16px;color:#c9a0b8;font-size:.76rem;text-align:center;line-height:1.7;}
+  .tierbar{text-align:center;font-size:.78rem;letter-spacing:1.6px;color:#ffd479;margin:2px 0 10px;line-height:1.5;}
+  .tierbar b{color:#ffd479;}
+  .tierbar .sub{color:#ffb3c9;letter-spacing:0;font-size:.74rem;}
 </style>
 </head>
 <body>
@@ -135,6 +138,7 @@
 
 <!-- VILLAGE -->
 <div class="screen" id="s-village">
+  <div class="tierbar" id="vTier">—</div>
   <div class="village">
     <div id="vMap"></div>
     <div class="chip" id="vChip">—</div>
@@ -210,9 +214,13 @@ var KEY='***';
 /* ============================================================
    LEVELS — each teaches a DIFFERENT KIND of thing
    ============================================================ */
-var LEVELS=[
-{
- n:1, name:'Simple Jyutping', emoji:'🔤', concept:'how to read Cantonese sounds written in letters',
+var TIERS=[
+ {n:1, name:'Cantonese Child', emoji:'🧒'},
+ {n:2, name:'Cantonese Teen (Junior)', emoji:'🧑'},
+ {n:3, name:'Cantonese Adult (Expert)', emoji:'🎓'}
+];
+var LEVELS=[{
+ n:1, tier:1, name:'Simple Jyutping', emoji:'🔤', concept:'how to read Cantonese sounds written in letters',
  houses:[
   {name:'Sound House', emoji:'🔤',
    story:'Your friend writes the word 一 (one) as “jat1”, and reads it out loud: “yut”.',
@@ -251,7 +259,7 @@ var LEVELS=[
  ]
 },
 {
- n:2, name:'Simple Words', emoji:'📚', concept:'the most useful words in Hong Kong',
+ n:2, tier:1, name:'Simple Words', emoji:'📚', concept:'the most useful words in Hong Kong',
  houses:[
   {name:'Clover House', emoji:'🏠',
    listen:'早晨',
@@ -294,7 +302,7 @@ var LEVELS=[
  ]
 },
 {
- n:3, name:'Simple Tones', emoji:'🎵', concept:'the six tones of Cantonese',
+ n:3, tier:1, name:'Simple Tones', emoji:'🎵', concept:'the six tones of Cantonese',
  houses:[
   {name:'Bell House', emoji:'🔔',
    listen:'詩',
@@ -341,46 +349,7 @@ var LEVELS=[
  ]
 },
 {
- n:4, name:'Simple Phrases', emoji:'💬', concept:'whole sentences you can really use',
- houses:[
-  {name:'Restaurant', emoji:'🍽️',
-   story:'You are at a restaurant and you are thirsty. You want to ask for a glass of water.',
-   ask:'Which sentence asks for water?',
-   opts:['唔該，要杯水','早晨，你好','多謝，再見'],
-   correct:'唔該，要杯水',
-   lesson:'<b>唔該，要杯水</b> (m4 goi1, jiu3 bui1 seoi2) = “A glass of water, please.” 唔該 starts it off politely, 要 means “want”, 杯 is “cup/glass”, 水 is water. 💧',
-   say:'唔該要杯水'},
-  {name:'New Neighbour', emoji:'🤝',
-   story:'A new neighbour moves in next door. You want to say hello and tell her your name.',
-   ask:'What do you say?',
-   opts:['你好，我係…','再見，多謝','早晨，唔該'],
-   correct:'你好，我係…',
-   lesson:'<b>你好，我係…</b> (nei5 hou2, ngo5 hai6…) = “Hello, I am…” 你好 is hello, 我 is I, 係 is am. Then just say your name! 🤝',
-   say:'你好我係'},
-  {name:'Sorry House', emoji:'🙏',
-   story:'You accidentally step on someone’s foot on the MTR.',
-   ask:'What do you say?',
-   opts:['對唔住','早晨','多謝'],
-   correct:'對唔住',
-   lesson:'<b>對唔住</b> (deoi3 m4 zyu6) means SORRY — for something you did wrong. (Remember 唔該 is for “excuse me”, 對唔住 is for “I’m sorry”.) 🙏',
-   say:'對唔住'},
-  {name:'Market', emoji:'🛒',
-   story:'You are at the market and you like a toy, but there is no price on it.',
-   ask:'What do you ask the shopkeeper?',
-   opts:['幾多錢?','你好嗎?','你叫咩名?'],
-   correct:'幾多錢?',
-   lesson:'<b>幾多錢?</b> (gei2 do1 cin2) = “How much money?” 幾多 means “how many/how much”, 錢 means money. Perfect for the market! 🛒',
-   say:'幾多錢'}
- ],
- exam:[
-  {q:'You want a glass of water. 💧', opts:['唔該，要杯水','早晨，你好','多謝，再見'], correct:'唔該，要杯水'},
-  {q:'You step on someone’s foot. 🙏', opts:['對唔住','早晨','多謝'], correct:'對唔住'},
-  {q:'You want to know the price. 🛒', opts:['幾多錢?','你好嗎?','再見'], correct:'幾多錢?'},
-  {q:'You meet someone new and say your name. 🤝', opts:['你好，我係…','多謝，再見','早晨，唔該'], correct:'你好，我係…'}
- ]
-},
-{
- n:5, name:'Simple Numbers', emoji:'🔢', concept:'counting from one to ten',
+ n:4, tier:1, name:'Simple Numbers', emoji:'🔢', concept:'counting from one to ten',
  houses:[
   {name:'Bakery', emoji:'🥖',
    listen:'三',
@@ -425,7 +394,46 @@ var LEVELS=[
   {q:'Which is TEN? 🔟', opts:['十','一','二'], correct:'十'},
   {q:'Which is THREE? 3️⃣', opts:['三','五','四'], correct:'三'}
  ]
-}
+}{
+ n:5, tier:1, name:'Simple Phrases', emoji:'💬', concept:'whole sentences you can really use',
+ houses:[
+  {name:'Restaurant', emoji:'🍽️',
+   story:'You are at a restaurant and you are thirsty. You want to ask for a glass of water.',
+   ask:'Which sentence asks for water?',
+   opts:['唔該，要杯水','早晨，你好','多謝，再見'],
+   correct:'唔該，要杯水',
+   lesson:'<b>唔該，要杯水</b> (m4 goi1, jiu3 bui1 seoi2) = “A glass of water, please.” 唔該 starts it off politely, 要 means “want”, 杯 is “cup/glass”, 水 is water. 💧',
+   say:'唔該要杯水'},
+  {name:'New Neighbour', emoji:'🤝',
+   story:'A new neighbour moves in next door. You want to say hello and tell her your name.',
+   ask:'What do you say?',
+   opts:['你好，我係…','再見，多謝','早晨，唔該'],
+   correct:'你好，我係…',
+   lesson:'<b>你好，我係…</b> (nei5 hou2, ngo5 hai6…) = “Hello, I am…” 你好 is hello, 我 is I, 係 is am. Then just say your name! 🤝',
+   say:'你好我係'},
+  {name:'Sorry House', emoji:'🙏',
+   story:'You accidentally step on someone’s foot on the MTR.',
+   ask:'What do you say?',
+   opts:['對唔住','早晨','多謝'],
+   correct:'對唔住',
+   lesson:'<b>對唔住</b> (deoi3 m4 zyu6) means SORRY — for something you did wrong. (Remember 唔該 is for “excuse me”, 對唔住 is for “I’m sorry”.) 🙏',
+   say:'對唔住'},
+  {name:'Market', emoji:'🛒',
+   story:'You are at the market and you like a toy, but there is no price on it.',
+   ask:'What do you ask the shopkeeper?',
+   opts:['幾多錢?','你好嗎?','你叫咩名?'],
+   correct:'幾多錢?',
+   lesson:'<b>幾多錢?</b> (gei2 do1 cin2) = “How much money?” 幾多 means “how many/how much”, 錢 means money. Perfect for the market! 🛒',
+   say:'幾多錢'}
+ ],
+ exam:[
+  {q:'You want a glass of water. 💧', opts:['唔該，要杯水','早晨，你好','多謝，再見'], correct:'唔該，要杯水'},
+  {q:'You step on someone’s foot. 🙏', opts:['對唔住','早晨','多謝'], correct:'對唔住'},
+  {q:'You want to know the price. 🛒', opts:['幾多錢?','你好嗎?','再見'], correct:'幾多錢?'},
+  {q:'You meet someone new and say your name. 🤝', opts:['你好，我係…','多謝，再見','早晨，唔該'], correct:'你好，我係…'}
+ ]
+},
+
 ];
 var TEACHER={name:'Miss Mei', zh:'美老師', emoji:'👩‍🏫'};
 var CHARS=[{e:'🐰',n:'Rabbit'},{e:'🐱',n:'Cat'},{e:'🐶',n:'Dog'},{e:'🐼',n:'Panda'},{e:'🦊',n:'Fox'},{e:'🥟',n:'Bao Bao'}];
@@ -438,6 +446,8 @@ function me(){ return state.accounts.filter(function(a){return a.id===state.curr
 function blankProg(){ var p={}; LEVELS.forEach(function(L){ p[L.n]={done:{},wrong:{},learned:{},exam:false}; }); return p; }
 function prog(a,L){ if(!a.prog[L]) a.prog[L]={done:{},wrong:{},learned:{},exam:false}; return a.prog[L]; }
 function levelOf(a){ return LEVELS.filter(function(L){return L.n===a.lvl;})[0]||null; }
+function tierOf(L){ return L? (TIERS.filter(function(t){return t.n===L.tier;})[0]||null) : null; }
+function tierLevels(tn){ return LEVELS.filter(function(L){return L.tier===tn;}); }
 function show(id){ Array.prototype.forEach.call(document.querySelectorAll('.screen'),function(s){s.classList.remove('on');}); $(id).classList.add('on'); window.scrollTo(0,0); }
 /* --- voice handling: only ever speak with a real Cantonese voice --- */
 var VOICES=[], yueOK=null;
@@ -511,6 +521,18 @@ function renderVillage(){
   var L=levelOf(a);
   var map=$('vMap');
   $('vChip').textContent=a.char+' '+a.name+(L? ' \u00B7 Lv'+L.n : ' \u00B7 \uD83C\uDFC6');
+  var tb=$('vTier');
+  if(tb){
+    var T=tierOf(L);
+    if(T){
+      var tl=tierLevels(T.n), ti=0;
+      for(var q=0;q<tl.length;q++){ if(tl[q].n===L.n) ti=q+1; }
+      tb.innerHTML=T.emoji+' <b>'+T.name.toUpperCase()+'</b> \u00B7 Level '+ti+' of '+tl.length+
+        '<div class="sub">'+L.emoji+' '+L.name+'</div>';
+    } else {
+      tb.innerHTML='\uD83C\uDFC6 <b>ALL LEVELS COMPLETE</b>';
+    }
+  }
 
   if(!L){
     map.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:24px;">'+
@@ -670,9 +692,11 @@ $('btnHand').addEventListener('click',function(){
     $('examResult').innerHTML='<div class="stars">🎉🎉🎉</div><b>You passed!</b> '+got+' / '+L.exam.length+' correct.';
     setTimeout(function(){
       var next=levelOf(a);
+      var T=tierOf(L);
+      var badge=T? (T.emoji+' '+T.name) : '';
       $('upStars').textContent = next? '🎉🎉🎉' : '🏆🏆🏆';
       $('upText').innerHTML = next?
-        ('<div style="font-size:2.4rem;">🏆</div><b>LEVEL '+L.n+' COMPLETE!</b><br><br>You may now go to <b>Level '+next.n+' — '+next.name+' '+next.emoji+'</b><br><span style="font-size:.9rem;color:#ffe9d0;">New topic: '+next.concept+'</span>') :
+        ('<div style="font-size:2.4rem;">🏆</div><b>LEVEL '+L.n+' COMPLETE!</b>'+(badge?'<br><span style="font-size:.82rem;color:#ffb3c9;">'+badge+'</span>':'')+'<br><br>You may now go to <b>Level '+next.n+' — '+next.name+' '+next.emoji+'</b><br><span style="font-size:.9rem;color:#ffe9d0;">New topic: '+next.concept+'</span>') :
         ('<div style="font-size:3rem;">🏆</div><b>ALL LEVELS COMPLETE!</b><br><br>You finished every level of Cantonese Village, '+a.name+'.<br><span style="font-size:.95rem;color:#ffe9d0;">Miss Mei 美老師 is VERY proud of you. 🌟<br>More levels are coming soon!</span>');
       $('upBtns').innerHTML='<button id="btnUpGo">▶️ CONTINUE</button>';
       $('btnUpGo').addEventListener('click',enterVillage);

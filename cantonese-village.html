@@ -482,6 +482,15 @@ function renderLangBar(){
   LANGS.forEach(function(l){ h+='<button data-lang="'+l.code+'" class="'+(state.lang===l.code?'on':'')+'">'+l.flag+' '+l.label+'</button>'; });
   el.innerHTML=h;
 }
+$('langBar').addEventListener('click',function(e){
+  var b=e.target.closest('button[data-lang]'); if(!b) return;
+  var code=b.getAttribute('data-lang');
+  if(state.lang===code) return;
+  state.lang=code; save();
+  applyStatic(); renderAccounts();
+  if($('s-village').classList.contains('on')) renderVillage();
+  if($('s-school').classList.contains('on')) openSchool();
+});
 
 var TIERS=[
  {n:1, name:'Cantonese Child', zh:'粤语小孩', emoji:'🧒'},

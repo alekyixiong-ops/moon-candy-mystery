@@ -104,6 +104,9 @@
   .result{text-align:center;font-size:1.1rem;line-height:1.7;}
   .stars{font-size:1.9rem;letter-spacing:4px;text-align:center;margin:6px 0;}
   .foot{margin-top:16px;color:#c9a0b8;font-size:.76rem;text-align:center;line-height:1.7;}
+  .langbar{display:flex;gap:8px;justify-content:center;margin:10px 0 2px;flex-wrap:wrap;}
+  .langbar button{font-family:inherit;font-size:.85rem;padding:7px 12px;border-radius:14px;cursor:pointer;background:rgba(255,255,255,.08);border:1px solid rgba(255,212,121,.35);color:#ffe9d0;}
+  .langbar button.on{background:rgba(245,158,11,.35);border-color:#ffd479;color:#fff;font-weight:bold;}
   .tierbar{text-align:center;font-size:.78rem;letter-spacing:1.6px;color:#ffd479;margin:2px 0 10px;line-height:1.5;}
   .tierbar b{color:#ffd479;}
   .tierbar .sub{color:#ffb3c9;letter-spacing:0;font-size:.74rem;}
@@ -114,7 +117,8 @@
 
 <!-- ACCOUNTS -->
 <div class="screen on" id="s-accounts">
-  <h1>🏘️ CANTONESE VILLAGE<small>Choose your account to play</small></h1>
+  <h1><span id="h1Acct">🏘️ CANTONESE VILLAGE</span><small id="h1AcctSub">Choose your account to play</small></h1>
+  <div class="langbar" id="langBar"></div>
   <div class="card" style="margin-top:14px;">
     <div id="acctList"></div>
     <div class="btnrow"><button id="btnAddAcct">➕ ADD ACCOUNT</button></div>
@@ -123,11 +127,11 @@
 
 <!-- NEW ACCOUNT -->
 <div class="screen" id="s-new">
-  <h1>➕ NEW PLAYER</h1>
+  <h1 id="h1New">➕ NEW PLAYER</h1>
   <div class="card" style="margin-top:14px;">
-    <p><b>Step 1.</b> What is your name?</p>
+    <p id="pStep1"><b>Step 1.</b> What is your name?</p>
     <input type="text" id="newName" placeholder="type your name" maxlength="14">
-    <p style="margin-top:16px;"><b>Step 2.</b> Choose your character 🎭</p>
+    <p id="pStep2" style="margin-top:16px;"><b>Step 2.</b> Choose your character 🎭</p>
     <div class="chars" id="charPick"></div>
     <div class="btnrow">
       <button id="btnFinish">✅ FINISH</button>
@@ -173,16 +177,16 @@
 
 <!-- SCHOOL -->
 <div class="screen" id="s-school">
-  <h1>🏫 THE SCHOOL</h1>
+  <h1 id="h1School">🏫 THE SCHOOL</h1>
   <div class="card" style="margin-top:12px;" id="schoolBody"></div>
   <div class="btnrow"><button class="alt" id="btnSchoolBack">🏘️ back to the village</button></div>
 </div>
 
 <!-- EXAM -->
 <div class="screen" id="s-exam">
-  <h1>📝 THE EXAM</h1>
+  <h1 id="h1Exam">📝 THE EXAM</h1>
   <div class="card" style="margin-top:12px;">
-    <p style="font-size:.9rem;">Answer all the questions, then hand in your paper. 📄</p>
+    <p id="pExamIntro" style="font-size:.9rem;">Answer all the questions, then hand in your paper. 📄</p>
     <div id="examBody"></div>
     <div class="btnrow"><button id="btnHand">📄 HAND IN</button></div>
     <div class="result" id="examResult"></div>
@@ -214,10 +218,275 @@ var KEY='***';
 /* ============================================================
    LEVELS — each teaches a DIFFERENT KIND of thing
    ============================================================ */
+/* ============================================================ 中文翻译 (zh) */
+var ZH={
+1:{name:'简单粤拼', concept:'怎样用字母读出粤语的音',
+ houses:[
+  {name:'声音屋',
+   story:'你的朋友把「一」写成「jat1」，然后读出来：「yut」。',
+   ask:'看看「jat1」——字母 J 发什么音？',
+   opts:['y——像「yes」里的音','j——像「jam」里的音','h——像「hat」里的音'],
+   correct:'y——像「yes」里的音',
+   lesson:'在粤拼里，<b>J</b> 就是英语的「y」音。所以「一 jat1」读作「yut」，「日 jat6」是低音的「yut」。千万不要读成「jam」！'},
+  {name:'街边招牌',
+   story:'你看到茶餐厅的招牌，上面把「茶」写成「caa4」。',
+   ask:'看看「caa4」——字母 C 发什么音？',
+   opts:['ts——像「cats」结尾的音','k——像「cat」里的音','s——像「sun」里的音'],
+   correct:'ts——像「cats」结尾的音',
+   lesson:'粤拼的 <b>C</b> 就是「ts」。「茶 caa4」读作「tsaa」。粤语的 C 从来不读「k」。'},
+  {name:'名字屋',
+   story:'早上的问候语「早晨」写成「zou2 san4」。',
+   ask:'看看「zou2」——字母 Z 发什么音？',
+   opts:['j——像「jump」里的音','z——像「zebra」里的音','sh——像「shoe」里的音'],
+   correct:'j——像「jump」里的音',
+   lesson:'粤拼的 <b>Z</b> 就是英语的「j」音。「早晨 zou2 san4」读作「jou sun」，「再見 zoi3 gin3」读作「joy gin」。'},
+  {name:'数字屋',
+   story:'每个粤拼后面都有一个小数字：nei5、hou2、m4、goi1……',
+   ask:'这个小数字是做什么用的？',
+   opts:['它表示声调','它表示有多少个','它是拼写错误'],
+   correct:'它表示声调',
+   lesson:'那个数字就是<b>声调</b>。粤语有<b>六个声调</b>——字母一样、声调不同，就是不同的字！第 3 关会教你。🎵'}
+ ],
+ exam:[
+  {q:'粤拼里，J 发什么音？', opts:['y（yes）','j（jam）','k（cat）'], correct:'y（yes）'},
+  {q:'粤拼里，C 发什么音？', opts:['ts（cats）','s（sun）','ch（chair）'], correct:'ts（cats）'},
+  {q:'粤拼里，Z 发什么音？', opts:['j（jump）','z（zebra）','sh（shoe）'], correct:'j（jump）'},
+  {q:'字后面的数字告诉你……', opts:['声调','数量','字母'], correct:'声调'}
+ ]},
+2:{name:'简单字词', concept:'香港最常用的字词',
+ houses:[
+  {name:'三叶草屋',
+   story:'早上八点，你走过陈太太身边，她正在给花浇水。她抬起头，笑着跟你说了一句话。👂',
+   ask:'仔细听——她说了什么？',
+   opts:['早上好','再见','谢谢你的礼物'],
+   correct:'早上好',
+   lesson:'她说的是「早晨」(zou2 san4)——<b>早上好</b>。中午以前见到谁都可以说。陈太太先跟你打招呼，你也要回她一句。这就是打招呼的小舞蹈！👋'},
+  {name:'茶餐厅',
+   story:'你在茶餐厅坐下，服务员把一杯茶放到你面前。',
+   ask:'你会说什么？',
+   lesson:'「唔該」(m4 goi1) 是香港的万能词——请、谢谢（别人为你做事时），还有借过的意思。别人帮了你，就说「唔該」。'},
+  {name:'小石屋',
+   story:'朋友递给你一份包好的生日礼物，一边递一边跟你说了一句话。👂',
+   ask:'仔细听——她说了什么？',
+   opts:['谢谢','早上好','再见'],
+   correct:'谢谢',
+   lesson:'她说的是「多謝」(do1 ze6)——<b>谢谢</b>。收到礼物、别人真的帮了你忙时用它。（「唔該」是别人为你服务时说的，「多謝」是收到东西时说的！）'},
+  {name:'柳树屋',
+   story:'你要离开朋友家，在门口挥手。',
+   ask:'你会说什么？',
+   lesson:'「再見」(zoi3 gin3) 就是<b>再见</b>，字面意思是「再见面」。「你好」(nei5 hou2) 是见面时说的<b>你好</b>。'}
+ ],
+ exam:[
+  {q:'有人送你生日礼物。🎁'},
+  {q:'早上九点你遇到老师。🌅'},
+  {q:'服务员给你倒水。💧'},
+  {q:'你要回家，挥手说再见。👋'}
+ ]},
+3:{name:'简单声调', concept:'粤语的六个声调',
+ houses:[
+  {name:'钟屋',
+   story:'美老师看着你，吸一口气，唱出一个音。👂 仔细听。',
+   ask:'她唱的是第几声？',
+   lesson:'她唱的是「詩」(si1)——第 <b>1</b> 声：又高又平，像一直吊着一个高音。🎵'},
+  {name:'歌屋',
+   story:'美老师为你唱一个音。👂',
+   ask:'她唱的是第几声？',
+   lesson:'她唱的是「史」(si2)——第 <b>2</b> 声：往上扬 ↗，就像问句的结尾。「史」是历史的意思。'},
+  {name:'鼓屋',
+   story:'美老师又唱一个音。👂',
+   ask:'她唱的是第几声？',
+   lesson:'她唱的是「時」(si4)——第 <b>4</b> 声：往下沉 ↘，声音低，像累了叹一口气。「時」是时间的意思。'},
+  {name:'唱歌屋',
+   story:'美老师再唱一个音。👂',
+   ask:'她唱的是第几声？',
+   lesson:'她唱的是「是」(si6)——第 <b>6</b> 声：又低又平 ➡，像平静地哼一声。粤语有六个声调：1 2 3 4 5 6——字母一样、声调不同，就是不同的字！😱'}
+ ],
+ exam:[
+  {q:'哪一声又高又平？🎵'},
+  {q:'哪一声是往上升的？📈'},
+  {q:'哪一声是往下沉的？📉'},
+  {q:'粤语有几个声调？🔢'}
+ ]},
+4:{name:'简单数字', concept:'从一数到十',
+ houses:[
+  {name:'面包店',
+   story:'你在面包店。老板笑着问你要几个面包。👂',
+   ask:'他说的是哪个数字？',
+   opts:['三个','十个','一个'],
+   correct:'三个',
+   lesson:'他说的是「三」(saam1)——<b>三</b>。注意那个长长的「aa」音：saaam。「一」(jat1) 是一，「十」(sap6) 是十。'},
+  {name:'水果摊',
+   story:'你在水果摊。老板娘问你要几个苹果。👂',
+   ask:'她说的哪个数字？',
+   opts:['五个','四个','两个'],
+   correct:'五个',
+   lesson:'她说的是「五」(ng5)——<b>五</b>。这个最难：用喉咙后面发音，像哼一声——「mmm-ng」。多练习！😤'},
+  {name:'电梯',
+   story:'你和朋友一起坐电梯，她告诉你她住几楼。👂',
+   ask:'她说的是几楼？',
+   opts:['二楼','一楼','十楼'],
+   correct:'二楼',
+   lesson:'她说的是「二」(ji6)——<b>二</b>。在香港到处都能看到「二」：楼层、价钱、巴士路线。'},
+  {name:'红包店',
+   story:'过年了，奶奶告诉你她包了多少个红包。👂',
+   ask:'她说有多少个？',
+   opts:['十个','四个','五个'],
+   correct:'十个',
+   lesson:'她说的是「十」(sap6)——<b>十</b>。学会 1 到 10，你就能拼出所有数字：十一 是十一，二十 是二十。聪明！🧠'}
+ ],
+ exam:[
+  {q:'哪个是「二」？2️⃣'},
+  {q:'哪个是「五」？✋'},
+  {q:'哪个是「十」？🔟'},
+  {q:'哪个是「三」？3️⃣'}
+ ]},
+5:{name:'简单句子', concept:'真正用得上的整句话',
+ houses:[
+  {name:'餐厅',
+   story:'你在餐厅，口渴了，想要一杯水。',
+   ask:'哪一句是「要一杯水」？',
+   lesson:'<b>唔該，要杯水</b> (m4 goi1, jiu3 bui1 seoi2) =「请给我一杯水。」「唔該」开头很有礼貌，「要」是想要，「杯」是杯子，「水」就是水。💧'},
+  {name:'新邻居',
+   story:'隔壁搬来了新邻居。你想跟她打招呼，并告诉她你的名字。',
+   ask:'你会说什么？',
+   lesson:'<b>你好，我係…</b> (nei5 hou2, ngo5 hai6…) =「你好，我是……。」「你好」是打招呼，「我」是我，「係」是「是」。后面直接说你的名字！🤝'},
+  {name:'道歉屋',
+   story:'你在地铁上不小心踩到别人的脚。',
+   ask:'你会说什么？',
+   lesson:'<b>對唔住</b> (deoi3 m4 zyu6) 是<b>对不起</b>——为自己做错的事道歉。（记住：「唔該」是「借过／麻烦你」，「對唔住」才是「对不起」。）🙏'},
+  {name:'街市',
+   story:'你在街市看到一个喜欢的玩具，但上面没有标价。',
+   ask:'你会问老板什么？',
+   lesson:'<b>幾多錢?</b> (gei2 do1 cin2) =「多少钱？」「幾多」是多少，「錢」是钱。逛街市必用！🛒'}
+ ],
+ exam:[
+  {q:'你想要一杯水。💧'},
+  {q:'你踩到别人的脚了。🙏'},
+  {q:'你想知道价钱。🛒'},
+  {q:'你认识新朋友，说出自己的名字。🤝'}
+ ]}
+};
+
+/* ============================================================ 语言 / LANGUAGES */
+var LANGS=[{code:'en',label:'English',flag:'🇬🇧'},{code:'zh',label:'简体中文',flag:'🇨🇳'}];
+var UI={
+en:{
+ appTitle:'🏘️ CANTONESE VILLAGE', appSub:'Choose your account to play',
+ addAcct:'➕ ADD ACCOUNT',
+ noPlayers:'<p style="text-align:center;">No players yet! Tap <b>ADD ACCOUNT</b> to make one. ✨</p>',
+ newPlayer:'➕ NEW PLAYER', step1:'<b>Step 1.</b> What is your name?', namePh:'type your name',
+ step2:'<b>Step 2.</b> Choose your character 🎭', finish:'✅ FINISH', cancel:'cancel',
+ school:'🏫 THE SCHOOL', exam:'📝 THE EXAM',
+ examIntro:'Answer all the questions, then hand in your paper. 📄',
+ handIn:'📄 HAND IN', backVillage:'🏘️ back to the village', backSchool:'🏫 back to the village',
+ schoolLabel:'The School', allDoneChip:'ALL LEVELS COMPLETE 🏆', levelPrefix:'Level',
+ confirmRemove:'Remove this player?', needName:'Please type your name first! 😊',
+ replay:'🔁 replay from Level 1',
+ allDoneTitle:'ALL LEVELS COMPLETE!',
+ allDoneBody:'Well done, {name}! You finished all {n} levels.<br>Miss Mei is very proud of you. 🌟<br><br>More levels are coming soon!',
+ hearAgain:'🔊 hear it again',
+ earsOnly:'👂 <b>Ears only!</b> No characters, no Jyutping — just listen.',
+ noVoice:'🔇 This device has no Cantonese voice — ask a grown-up to add one!',
+ showLetters:'🔤 show me the sound in letters', soundIs:'the sound is ',
+ finishedBtn:'✔️ I have finished this challenge',
+ finishedAt:'You finished the challenge at {place}.',
+ inviteTitle:'📩 An invitation to the school!',
+ inviteBody:'{teacher} would like to see you.<br>Go to the 🏫 School in the village to find out more.',
+ welcome:'“Welcome, {name}! I heard you visited the {house}. Let me explain what that was all about.”',
+ hearIt:'🔊 hear it', gotIt:'😊 Got it, thank you {teacher}!',
+ moreInvites:'You still have {n} more invitation(s).',
+ wellDoneSoFar:'“Well done so far, {name}! You have finished <b>{done} of {total}</b> challenges.<br><br>Go back to the village and visit the houses that are still waiting for you. Then come back for your exam!”',
+ finishedAll:'“You have finished every challenge in <b>{level}</b> {emoji}. Well done!<br><br>Today you learned: <b>{concept}</b>.<br><br>Now it is time for your <b>exam</b>. If you pass, you may go to the next level!”',
+ startExam:'📝 START THE EXAM',
+ alreadyPassed:'“You already passed this level’s exam — wonderful! Move on to the next level, or stay and practise.” 🌟',
+ qNo:'Question {i} of {n}',
+ passed:'<b>You passed!</b> {got} / {n} correct.',
+ notYet:'<b>Not yet!</b> {got} / {n} correct. Miss Mei says: “Come back to the school, look at the lessons again, and try once more. You will get it!” 💪',
+ levelComplete:'LEVEL {n} COMPLETE!',
+ mayGoTo:'You may now go to <b>Level {n} — {name} {emoji}</b><br><span style="font-size:.9rem;color:#ffe9d0;">New topic: {concept}</span>',
+ allLevels:'<b>ALL LEVELS COMPLETE!</b><br><br>You finished every level of Cantonese Village, {name}.<br><span style="font-size:.95rem;color:#ffe9d0;">Miss Mei 美老師 is VERY proud of you. 🌟<br>More levels are coming soon!</span>',
+ cont:'▶️ CONTINUE', langLabel:'🌐 Language', englishOnly:'（English only for now）'
+},
+zh:{
+ appTitle:'🏘️ 粤语村', appSub:'选一个账号，开始玩游戏',
+ addAcct:'➕ 添加账号',
+ noPlayers:'<p style="text-align:center;">还没有玩家！点<b>添加账号</b>创建一个吧。✨</p>',
+ newPlayer:'➕ 新玩家', step1:'<b>第一步：</b>你叫什么名字？', namePh:'输入你的名字',
+ step2:'<b>第二步：</b>选一个角色 🎭', finish:'✅ 完成', cancel:'取消',
+ school:'🏫 学校', exam:'📝 考试',
+ examIntro:'把题目全部答完，然后交卷。📄',
+ handIn:'📄 交卷', backVillage:'🏘️ 回村子', backSchool:'🏫 回村子',
+ schoolLabel:'学校', allDoneChip:'全部关卡完成 🏆', levelPrefix:'第',
+ confirmRemove:'要删除这个玩家吗？', needName:'请先输入你的名字！😊',
+ replay:'🔁 从第 1 关重新开始',
+ allDoneTitle:'全部关卡完成！',
+ allDoneBody:'太棒了，{name}！你完成了全部 {n} 关。<br>美老师为你感到骄傲。🌟<br><br>更多关卡快来了！',
+ hearAgain:'🔊 再听一次',
+ earsOnly:'👂 <b>只用耳朵听！</b>没有文字、没有粤拼——只听声音。',
+ noVoice:'🔇 这台设备没有粤语声音——请大人帮忙添加一个！',
+ showLetters:'🔤 给我看字母拼法', soundIs:'读音是 ',
+ finishedBtn:'✔️ 我完成这一题了',
+ finishedAt:'你完成了「{place}」这一题。',
+ inviteTitle:'📩 学校寄来邀请函！',
+ inviteBody:'{teacher}想见你。<br>到村子里的 🏫 学校去吧。',
+ welcome:'“欢迎你，{name}！我听说你去了{house}。让我讲讲那是怎么回事。”',
+ hearIt:'🔊 听一听', gotIt:'😊 明白了，谢谢{teacher}！',
+ moreInvites:'你还有 {n} 封邀请函。',
+ wellDoneSoFar:'“做得不错，{name}！你已经完成了 <b>{done} / {total}</b> 题。<br><br>回村子里，去还没去过的房子看看。然后再回来考试！”',
+ finishedAll:'“你已经完成了<b>{level}</b> {emoji} 的所有题目，太棒了！<br><br>今天你学会了：<b>{concept}</b>。<br><br>现在该<b>考试</b>了。通过以后就可以进入下一关！”',
+ startExam:'📝 开始考试',
+ alreadyPassed:'“这一关的考试你已经通过了——真棒！可以继续下一关，也可以留下来练习。” 🌟',
+ qNo:'第 {i} 题，共 {n} 题',
+ passed:'<b>通过了！</b>答对 {got} / {n} 题。',
+ notYet:'<b>还没通过！</b>答对 {got} / {n} 题。美老师说：“回学校再看看课文，然后再试一次。你一定可以的！” 💪',
+ levelComplete:'第 {n} 关完成！',
+ mayGoTo:'你可以去<b>第 {n} 关——{name} {emoji}</b>了<br><span style="font-size:.9rem;color:#ffe9d0;">新主题：{concept}</span>',
+ allLevels:'<b>全部关卡完成！</b><br><br>{name}，你完成了粤语村的每一关。<br><span style="font-size:.95rem;color:#ffe9d0;">美老师非常为你骄傲。🌟<br>更多关卡快来了！</span>',
+ cont:'▶️ 继续', langLabel:'🌐 语言', englishOnly:'（暂时只有英文）'
+}};
+function t(k,v){
+  var d=UI[state.lang]||UI.en, s2=(d[k]!==undefined)?d[k]:UI.en[k];
+  if(s2===undefined) s2=k;
+  if(v){ for(var p2 in v){ s2=s2.split('{'+p2+'}').join(v[p2]); } }
+  return s2;
+}
+function tierName(T){ return (!T)?'':((state.lang==='zh'&&T.zh)?T.zh:T.name); }
+function tName(){ return state.lang==='zh' ? '美老师' : (TEACHER.name+' '+TEACHER.zh); }
+function locLev(L){
+  if(!L || state.lang!=='zh') return L;
+  var z=ZH[L.n]; if(!z) return L;
+  var o={}; for(var k in L) o[k]=L[k];
+  if(z.name) o.name=z.name;
+  if(z.concept) o.concept=z.concept;
+  if(z.houses){ o.houses=L.houses.map(function(H,i){ var q={}; for(var k in H) q[k]=H[k]; var hz=z.houses[i]||{}; for(var k2 in hz) q[k2]=hz[k2]; return q; }); }
+  if(z.exam){ o.exam=L.exam.map(function(Q,i){ var q={}; for(var k in Q) q[k]=Q[k]; var qz=z.exam[i]||{}; for(var k2 in qz) q[k2]=qz[k2]; return q; }); }
+  return o;
+}
+function applyStatic(){
+  try{
+  $('h1Acct').textContent=t('appTitle'); $('h1AcctSub').textContent=t('appSub');
+  $('btnAddAcct').textContent=t('addAcct');
+  $('h1New').textContent=t('newPlayer'); $('pStep1').innerHTML=t('step1');
+  $('newName').placeholder=t('namePh'); $('pStep2').innerHTML=t('step2');
+  $('btnFinish').textContent=t('finish'); $('btnCancel').textContent=t('cancel');
+  $('h1School').textContent=t('school'); $('h1Exam').textContent=t('exam');
+  $('pExamIntro').textContent=t('examIntro'); $('btnHand').textContent=t('handIn');
+  $('btnBackVillage').textContent=t('backVillage'); $('btnSchoolBack').textContent=t('backSchool');
+  $('btnExamBack').textContent=t('backVillage');
+  renderLangBar();
+  }catch(e){}
+}
+function renderLangBar(){
+  var el=$('langBar'); if(!el) return;
+  var h='';
+  LANGS.forEach(function(l){ h+='<button data-lang="'+l.code+'" class="'+(state.lang===l.code?'on':'')+'">'+l.flag+' '+l.label+'</button>'; });
+  el.innerHTML=h;
+}
+
 var TIERS=[
- {n:1, name:'Cantonese Child', emoji:'🧒'},
- {n:2, name:'Cantonese Teen (Junior)', emoji:'🧑'},
- {n:3, name:'Cantonese Adult (Expert)', emoji:'🎓'}
+ {n:1, name:'Cantonese Child', zh:'粤语小孩', emoji:'🧒'},
+ {n:2, name:'Cantonese Teen (Junior)', zh:'粤语少年（初级）', emoji:'🧑'},
+ {n:3, name:'Cantonese Adult (Expert)', zh:'粤语成人（专家）', emoji:'🎓'}
 ];
 var LEVELS=[{
  n:1, tier:1, name:'Simple Jyutping', emoji:'🔤', concept:'how to read Cantonese sounds written in letters',
@@ -654,13 +923,14 @@ var TEACHER={name:'Miss Mei', zh:'美老師', emoji:'👩‍🏫'};
 var CHARS=[{e:'🐰',n:'Rabbit'},{e:'🐱',n:'Cat'},{e:'🐶',n:'Dog'},{e:'🐼',n:'Panda'},{e:'🦊',n:'Fox'},{e:'🥟',n:'Bao Bao'}];
 
 /* ============================================================ STATE */
-var state={accounts:[],current:null};
-function load(){ try{var raw=localStorage.getItem(KEY); if(raw) state=JSON.parse(raw);}catch(e){} if(!state.accounts) state.accounts=[]; }
+var state={accounts:[],current:null,lang:'en'};
+function load(){ try{var raw=localStorage.getItem(KEY); if(raw) state=JSON.parse(raw);}catch(e){} if(!state.accounts) state.accounts=[]; if(!state.lang) state.lang='en'; }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
 function me(){ return state.accounts.filter(function(a){return a.id===state.current;})[0]||null; }
 function blankProg(){ var p={}; LEVELS.forEach(function(L){ p[L.n]={done:{},wrong:{},learned:{},exam:false}; }); return p; }
 function prog(a,L){ if(!a.prog[L]) a.prog[L]={done:{},wrong:{},learned:{},exam:false}; return a.prog[L]; }
-function levelOf(a){ return LEVELS.filter(function(L){return L.n===a.lvl;})[0]||null; }
+function levelOfRaw(a){ return LEVELS.filter(function(L){return L.n===a.lvl;})[0]||null; }
+function levelOf(a){ return locLev(levelOfRaw(a)); }
 function tierOf(L){ return L? (TIERS.filter(function(t){return t.n===L.tier;})[0]||null) : null; }
 function tierLevels(tn){ return LEVELS.filter(function(L){return L.tier===tn;}); }
 function show(id){ Array.prototype.forEach.call(document.querySelectorAll('.screen'),function(s){s.classList.remove('on');}); $(id).classList.add('on'); window.scrollTo(0,0); }
@@ -691,10 +961,10 @@ function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor
 var pickChar=CHARS[0].e;
 function renderAccounts(){
   var h='';
-  if(!state.accounts.length){ h='<p style="text-align:center;">No players yet! Tap <b>ADD ACCOUNT</b> to make one. ✨</p>'; }
+  if(!state.accounts.length){ h=t('noPlayers'); }
   else {
     state.accounts.forEach(function(a){
-      var label = a.lvl>LEVELS.length ? 'ALL LEVELS COMPLETE 🏆' : ('Level '+a.lvl+' \u00B7 '+LEVELS[a.lvl-1].name);
+      var label = a.lvl>LEVELS.length ? t('allDoneChip') : (t('levelPrefix')+' '+a.lvl+' \u00B7 '+locLev(LEVELS[a.lvl-1]).name);
       h+='<div class="acct" data-id="'+a.id+'"><div class="av">'+a.char+'</div>'+
          '<div class="nm"><b>'+a.name+'</b><span>'+label+'</span></div>'+
          '<button class="del" data-del="'+a.id+'" title="remove">\u2715</button></div>';
@@ -706,7 +976,7 @@ $('acctList').addEventListener('click',function(e){
   var d=e.target.closest('button[data-del]');
   if(d){
     var id=d.getAttribute('data-del');
-    if(confirm('Remove this player?')){ state.accounts=state.accounts.filter(function(a){return a.id!==id;}); if(state.current===id) state.current=null; save(); renderAccounts(); }
+    if(confirm(t('confirmRemove'))){ state.accounts=state.accounts.filter(function(a){return a.id!==id;}); if(state.current===id) state.current=null; save(); renderAccounts(); }
     return;
   }
   var c=e.target.closest('.acct');
@@ -718,7 +988,7 @@ $('charPick').addEventListener('click',function(e){ var b=e.target.closest('butt
 $('btnCancel').addEventListener('click',function(){ show('s-accounts'); });
 $('btnFinish').addEventListener('click',function(){
   var name=($('newName').value||'').trim();
-  if(!name){ alert('Please type your name first! 😊'); return; }
+  if(!name){ alert(t('needName')); return; }
   var a={id:'a'+Date.now(), name:name, char:pickChar, lvl:1, prog:blankProg()};
   state.accounts.push(a); state.current=a.id; save(); enterVillage();
 });
@@ -742,8 +1012,8 @@ function renderVillage(){
     if(T){
       var tl=tierLevels(T.n), ti=0;
       for(var q=0;q<tl.length;q++){ if(tl[q].n===L.n) ti=q+1; }
-      tb.innerHTML=T.emoji+' <b>'+T.name.toUpperCase()+'</b> \u00B7 Level '+ti+' of '+tl.length+
-        '<div class="sub">'+L.emoji+' '+L.name+'</div>';
+      tb.innerHTML=T.emoji+' <b>'+tierName(T).toUpperCase()+'</b> \u00B7 '+t('levelPrefix')+' '+ti+' / '+tl.length+
+        '<div class="sub">'+L.emoji+' '+L.name+((state.lang==='zh'&&!ZH[L.n])?' \u00B7 '+t('englishOnly'):'')+'</div>';
     } else {
       tb.innerHTML='\uD83C\uDFC6 <b>ALL LEVELS COMPLETE</b>';
     }
@@ -752,9 +1022,9 @@ function renderVillage(){
   if(!L){
     map.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:24px;">'+
       '<div style="font-size:4rem;">🏆</div>'+
-      '<div style="font-size:1.25rem;color:#ffd479;font-weight:bold;">ALL LEVELS COMPLETE!</div>'+
-      '<div style="font-size:.95rem;color:#ffe9d0;line-height:1.7;">Well done, '+a.name+'! You finished all '+LEVELS.length+' levels.<br>Miss Mei is very proud of you. 🌟<br><br>More levels are coming soon!</div>'+
-      '<div class="btnrow" style="max-width:260px;"><button id="btnReplay">🔁 replay from Level 1</button></div>'+
+      '<div style="font-size:1.25rem;color:#ffd479;font-weight:bold;">'+t('allDoneTitle')+'</div>'+
+      '<div style="font-size:.95rem;color:#ffe9d0;line-height:1.7;">'+t('allDoneBody',{name:a.name,n:LEVELS.length})+'</div>'+
+      '<div class="btnrow" style="max-width:260px;"><button id="btnReplay">'+t('replay')+'</button></div>'+
       '</div>';
     $('btnReplay').addEventListener('click',function(){ a.lvl=1; save(); renderVillage(); });
     return;
@@ -774,7 +1044,7 @@ function renderVillage(){
   });
   var schoolBadge = invites? '📩' : (doneCount===L.houses.length ? '🎓' : '');
   h+='<div class="bld" data-b="4" style="left:'+SPOTS[4].x+'%;top:'+SPOTS[4].y+'%">'+
-     '<div class="em">🏫</div><div class="lb">The School</div>'+
+     '<div class="em">🏫</div><div class="lb">'+t('schoolLabel')+'</div>'+
      (schoolBadge? '<div class="badge">'+schoolBadge+'</div>':'')+'</div>';
   h+='<div class="hero" id="hero" style="left:45%;top:80%">'+a.char+'</div>';
   map.innerHTML=h;
@@ -808,11 +1078,11 @@ function openChallenge(i){
   $('cListen').innerHTML='';
   if(H.listen){
     var ok=voiceOK();
-    $('cListen').innerHTML='<button class="listenbtn" id="btnListen">\uD83D\uDD0A hear it again</button>'+
-      (ok? '<div class="novoice">\uD83D\uDC42 <b>Ears only!</b> No characters, no Jyutping \u2014 just listen.</div>'
-         : '<div class="novoice">\uD83D\uDD07 This device has no Cantonese voice \u2014 ask a grown-up to add one!</div>'+
-           '<button class="revealbtn" id="btnReveal">\uD83D\uDD24 show me the sound in letters</button>'+
-           '<div class="novoice" id="revealBox" style="display:none;">the sound is <b>'+H.jy+'</b></div>');
+    $('cListen').innerHTML='<button class="listenbtn" id="btnListen">'+t('hearAgain')+'</button>'+
+      (ok? '<div class="novoice">'+t('earsOnly')+'</div>'
+         : '<div class="novoice">'+t('noVoice')+'</div>'+
+           '<button class="revealbtn" id="btnReveal">'+t('showLetters')+'</button>'+
+           '<div class="novoice" id="revealBox" style="display:none;">'+t('soundIs')+'<b>'+H.jy+'</b></div>');
     $('btnListen').addEventListener('click',function(){ speak(H.listen, this); });
     var rb=$('btnReveal');
     if(rb) rb.addEventListener('click',function(){ $('revealBox').style.display='block'; rb.style.display='none'; });
@@ -833,12 +1103,12 @@ $('cOpts').addEventListener('click',function(e){
   if(!right) P.wrong[curHouse]=true;
   save();
   $('cOpts').style.display='none';
-  $('cAfter').innerHTML='<div class="btnrow"><button id="btnSeen">✔️ I have finished this challenge</button></div>';
+  $('cAfter').innerHTML='<div class="btnrow"><button id="btnSeen">'+t('finishedBtn')+'</button></div>';
   $('btnSeen').addEventListener('click',function(){
-    $('dText').textContent='You finished the challenge at '+H.name+'.';
+    $('dText').textContent=t('finishedAt',{place:H.name});
     $('dInvite').innerHTML = right? '' :
-      '<div class="invite"><div class="t">📩 An invitation to the school!</div>'+
-      '<div class="s">'+TEACHER.name+' '+TEACHER.zh+' would like to see you.<br>Go to the 🏫 School in the village to find out more.</div></div>';
+      '<div class="invite"><div class="t">'+t('inviteTitle')+'</div>'+
+      '<div class="s">'+t('inviteBody',{teacher:tName()})+'</div></div>';
     show('s-done');
   });
 });
@@ -851,22 +1121,22 @@ function openSchool(){
   var h='<div class="teach"><div class="av">'+TEACHER.emoji+'</div><div class="bubble">';
   if(pending.length){
     var i=pending[0], H=L.houses[i];
-    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>“Welcome, '+a.name+'! I heard you visited the '+H.name+'. Let me explain what that was all about.”<br><br>'+H.lesson+
-       '<div><button class="spk" data-say="'+H.say+'">🔊 hear it</button></div></div></div>';
-    h+='<div class="btnrow"><button id="btnGot">😊 Got it, thank you '+TEACHER.name+'!</button></div>';
-    if(pending.length>1) h+='<p style="font-size:.85rem;color:#ffb3c9;text-align:center;">You still have '+(pending.length-1)+' more invitation'+((pending.length-1)>1?'s':'')+'.</p>';
+    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>'+t('welcome',{name:a.name,house:H.name})+'<br><br>'+H.lesson+
+       '<div><button class="spk" data-say="'+H.say+'">'+t('hearIt')+'</button></div></div></div>';
+    h+='<div class="btnrow"><button id="btnGot">'+t('gotIt',{teacher:tName()})+'</button></div>';
+    if(pending.length>1) h+='<p style="font-size:.85rem;color:#ffb3c9;text-align:center;">'+t('moreInvites',{n:pending.length-1})+'</p>';
     $('schoolBody').innerHTML=h;
     $('btnGot').addEventListener('click',function(){ P.learned[i]=true; save(); openSchool(); });
   } else if(doneCount<L.houses.length){
-    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>“Well done so far, '+a.name+'! You have finished <b>'+doneCount+' of '+L.houses.length+'</b> challenges.<br><br>Go back to the village and visit the houses that are still waiting for you. Then come back for your exam!”</div></div>';
+    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>'+t('wellDoneSoFar',{name:a.name,done:doneCount,total:L.houses.length})+'</div></div>';
     $('schoolBody').innerHTML=h;
   } else if(!P.exam){
-    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>“You have finished every challenge in <b>'+L.name+'</b> '+L.emoji+'. Well done!<br><br>Today you learned: <b>'+L.concept+'</b>.<br><br>Now it is time for your <b>exam</b>. If you pass, you may go to the next level!”</div></div>';
-    h+='<div class="btnrow"><button id="btnExam">📝 START THE EXAM</button></div>';
+    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>'+t('finishedAll',{level:L.name,emoji:L.emoji,concept:L.concept})+'</div></div>';
+    h+='<div class="btnrow"><button id="btnExam">'+t('startExam')+'</button></div>';
     $('schoolBody').innerHTML=h;
     $('btnExam').addEventListener('click',startExam);
   } else {
-    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>“You already passed this level’s exam — wonderful! Move on to the next level, or stay and practise.” 🌟</div></div>';
+    h+='<b>'+TEACHER.name+' '+TEACHER.zh+':</b><br>'+t('alreadyPassed')+'</div></div>';
     $('schoolBody').innerHTML=h;
   }
   $('schoolBody').addEventListener('click',function(e){ var b=e.target.closest('button[data-say]'); if(b) speak(b.getAttribute('data-say')); });
@@ -880,8 +1150,8 @@ function startExam(){
   examPicks=L.exam.map(function(){return null;});
   var h='';
   L.exam.forEach(function(Q,qi){
-    h+='<div class="examq"><div class="no">Question '+(qi+1)+' of '+L.exam.length+'</div><div class="qbig">'+Q.q+'</div>'+
-       (Q.say? '<div><button class="spk" data-say="'+Q.say+'">🔊 hear it</button></div>' : '')+
+    h+='<div class="examq"><div class="no">'+t('qNo',{i:qi+1,n:L.exam.length})+'</div><div class="qbig">'+Q.q+'</div>'+
+       (Q.say? '<div><button class="spk" data-say="'+Q.say+'">'+t('hearIt')+'</button></div>' : '')+
        '<div class="opts">';
     shuffle(Q.opts).forEach(function(o){ h+='<button data-q="'+qi+'" data-o="'+o+'">'+o+'</button>'; });
     h+='</div></div>';
@@ -908,27 +1178,27 @@ $('btnHand').addEventListener('click',function(){
     P.exam=true;
     if(a.lvl===L.n) a.lvl=a.lvl+1;        /* always advance, even past the last level */
     save();
-    $('examResult').innerHTML='<div class="stars">🎉🎉🎉</div><b>You passed!</b> '+got+' / '+L.exam.length+' correct.';
+    $('examResult').innerHTML='<div class="stars">🎉🎉🎉</div>'+t('passed',{got:got,n:L.exam.length});
     setTimeout(function(){
       var next=levelOf(a);
       var T=tierOf(L);
-      var badge=T? (T.emoji+' '+T.name) : '';
+      var badge=T? (T.emoji+' '+tierName(T)) : '';
       $('upStars').textContent = next? '🎉🎉🎉' : '🏆🏆🏆';
       $('upText').innerHTML = next?
-        ('<div style="font-size:2.4rem;">🏆</div><b>LEVEL '+L.n+' COMPLETE!</b>'+(badge?'<br><span style="font-size:.82rem;color:#ffb3c9;">'+badge+'</span>':'')+'<br><br>You may now go to <b>Level '+next.n+' — '+next.name+' '+next.emoji+'</b><br><span style="font-size:.9rem;color:#ffe9d0;">New topic: '+next.concept+'</span>') :
-        ('<div style="font-size:3rem;">🏆</div><b>ALL LEVELS COMPLETE!</b><br><br>You finished every level of Cantonese Village, '+a.name+'.<br><span style="font-size:.95rem;color:#ffe9d0;">Miss Mei 美老師 is VERY proud of you. 🌟<br>More levels are coming soon!</span>');
-      $('upBtns').innerHTML='<button id="btnUpGo">▶️ CONTINUE</button>';
+        ('<div style="font-size:2.4rem;">🏆</div><b>'+t('levelComplete',{n:L.n})+'</b>'+(badge?'<br><span style="font-size:.82rem;color:#ffb3c9;">'+badge+'</span>':'')+'<br><br>'+t('mayGoTo',{n:next.n,name:next.name,emoji:next.emoji,concept:next.concept})) :
+        ('<div style="font-size:3rem;">🏆</div>'+t('allLevels',{name:a.name}));
+      $('upBtns').innerHTML='<button id="btnUpGo">'+t('cont')+'</button>';
       $('btnUpGo').addEventListener('click',enterVillage);
       show('s-up');
     },1500);
   } else {
-    $('examResult').innerHTML='<b>Not yet!</b> '+got+' / '+L.exam.length+' correct. Miss Mei says: “Come back to the school, look at the lessons again, and try once more. You will get it!” 💪';
+    $('examResult').innerHTML=t('notYet',{got:got,n:L.exam.length});
   }
 });
 $('btnUpGo').addEventListener('click',enterVillage);
 
 /* ============================================================ BOOT */
-load(); renderChars(); renderAccounts();
+load(); applyStatic(); renderChars(); renderAccounts();
 if(state.current && me()) enterVillage(); else show('s-accounts');
 })();
 </script>

@@ -1211,5 +1211,17 @@ load(); applyStatic(); renderChars(); renderAccounts();
 if(state.current && me()) enterVillage(); else show('s-accounts');
 })();
 </script>
+<!-- library shortcut -->
+<style>
+#libHome{position:fixed;left:14px;bottom:14px;z-index:9998;width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:1.05rem;line-height:1;text-decoration:none;
+  background:rgba(26,16,52,.6);border:1.5px solid rgba(255,255,255,.3);
+  box-shadow:0 5px 14px rgba(0,0,0,.3);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:.8;transition:opacity .15s ease,transform .15s ease,background .15s ease;}
+#libHome:hover,#libHome:focus-visible{opacity:1;transform:scale(1.08);background:rgba(26,16,52,.85);outline:none;}
+@media (max-width:600px){#libHome{width:36px;height:36px;left:10px;bottom:10px;font-size:.95rem;}}
+@media print{#libHome{display:none;}}
+</style>
+<a id="libHome" href="index.html" title="Back to the library" aria-label="Back to the library">&#127968;</a>
 </body>
 </html>

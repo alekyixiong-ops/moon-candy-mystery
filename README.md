@@ -10,6 +10,7 @@ learning games, and a shelf of maths and science labs.
 | Shelf | Pages |
 | --- | --- |
 | 📖 Story | [The Mystery of the Moon-Candy Secret](story.html) — 8 chapters, 3 clues, 1 rotten trick |
+| 🗣️ Speaking | [Speaking Adventures](speaking-adventures/) — 20 speaking adventures with an AI coach |
 | 🎮 Games | [Cantonese Village](cantonese-village.html) (English / 简体中文) · [Bao Bao's Cantonese Quest](bao-bao.html) |
 | 🔢 Maths Lab | [Fraction Lab](fraction-lab.html) · [Trig Lab](trig-lab.html) · [E-Notation Game](e-notation-game.html) · [Rand Lab](rand-lab.html) · [Calculator Decoder](calculator-decoder.html) · [Button Box](button-box.html) |
 | 🔬 Science Lab | [Oobleck Lab](oobleck-lab.html) · [Yeast Breath Lab](yeast-lab.html) · [Rock Cycle](rock-cycle.html) · [Granite vs Volcanic Tuff](rocks-guide.html) · [Rock Detective Notebook](rock.html) |
